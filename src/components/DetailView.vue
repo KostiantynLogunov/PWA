@@ -2,15 +2,16 @@
   <div class="mdl-grid">
     <div class="mdl-cell mdl-cell--8-col">
       <div class="picture">
-        <img :src="cat.url" />
+        <img :src="offer.picture" />
+        {{ offer.picture }}
       </div>
       <div class="info">
-        <span>{{ cat.info }}</span>
+        <span>{{ offer.info }}</span>
       </div>
     </div>
     <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet">
       <div class="comment">
-        <span>{{ cat.comment }}</span>
+        <span>{{ offer.title }}</span>
       </div>
       <div class="actions">
         <router-link class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" to="/post">
@@ -21,16 +22,18 @@
   </div>
 </template>
 <script>
-  import { find } from 'lodash'
   export default {
     data () {
       return {
-        cat: null
+        offer: null
       }
     },
     mounted () {
-      this.cat = find(this.$root.cat, (cat) => cat['.key'] === this.$route.params.id)
+      this.$http.get('http://bestshops.com.ua/api/offer?id=' + this.$route.params.id).then(response => {
+        this.offer = response.data.data
+      })
     }
+
   }
 </script>
 <style scoped>

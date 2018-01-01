@@ -2,51 +2,43 @@
 <template>
   <div>
     
-    <div v-masonry transition-duration="0.3s" item-selector=".item">
-        <div v-masonry-tile class="item image-card" v-for="(offer, index) in offers" @click="displayDetails(offer.id)">
-            <div class="image-card__picture">
-              <img :src="offer.picture" />
-            </div>
-            <div class="image-card__comment mdl-card__actions">
-              <span>{{ offer.title }}</span>
-            </div>
+    <div v-masonry transition-duration="0.3s" item-selector=".card-expansion">
+
+        <div v-masonry-tile class="card-expansion" v-for="(offer, index) in offers" @click="displayDetails(offer.id)">
+          <md-card>
+            <md-card-media>
+              <img :src="offer.picture" alt="People">
+            </md-card-media>
+
+            <md-card-header>
+              <div class="md-title">{{ offer.title }}</div>
+              <div class="md-subhead">{{ offer.network }}</div>
+              <div class="md-subhead">
+                <md-icon>location_on</md-icon>
+                <span>2 miles</span>
+              </div>              
+            </md-card-header>
+
+          </md-card>
         </div>
     </div>
 
-    <router-link class="add-picture-button mdl-button mdl-js-button mdl-button--fab mdl-button--colored" to="/post">
-      <i class="material-icons">add</i>
-    </router-link>
   </div>
 </template>
 ...
 <style scoped>
-  .add-picture-button {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    z-index: 998;
+
+  .card-expansion {
+
   }
-  .image-card {
-    position: relative;
-    margin-bottom: 8px;
-    width: 500px;
+
+  .md-card {
+    width: 400px;
+    margin: 4px;
+    display: inline-block;
+    vertical-align: top;
   }
-  .image-card__picture > img {
-    width:100%;
-  }
-  .image-card__comment {
-    position: absolute;
-    bottom: 0;
-    height: 52px;
-    padding: 16px;
-    text-align: right;
-    background: rgba(0, 0, 0, 0.5);
-  }
-  .image-card__comment > span {
-    color: #fff;
-    font-size: 14px;
-    font-weight: bold;
-  }
+
 </style>
 
 
@@ -66,6 +58,12 @@
       this.$http.get('http://bestshops.com.ua/api/offers').then(response => {
         this.offers = response.data.data
       })
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          this.position = position.coords
+          console.log(this.position)
+        })
+      }
     }
   }
 </script>

@@ -1,24 +1,42 @@
 <template>
-  <div class="mdl-grid">
-    <div class="mdl-cell mdl-cell--8-col">
-      <div class="picture">
-        <img :src="offer.picture" />
-        {{ offer.picture }}
-      </div>
-      <div class="info">
-        <span>{{ offer.info }}</span>
-      </div>
-    </div>
-    <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet">
-      <div class="comment">
-        <span>{{ offer.title }}</span>
-      </div>
-      <div class="actions">
-        <router-link class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" to="/post">
-          ANSWER
-        </router-link>
-      </div>
-    </div>
+  <div>
+    <md-card>
+      <md-card-area md-inset>
+        <md-card-header>
+          <md-card-header-text>
+            <div class="md-title">{{ offer.title }}</div>
+            <div class="md-subhead">Subtitle here</div>
+          </md-card-header-text>
+
+          <md-card-media md-big>
+            <img :src="offer.picture" alt="Avatar">
+          </md-card-media>
+        </md-card-header>
+      </md-card-area>
+
+      <md-card-area md-inset>
+        <md-card-content>
+          <h3 class="md-subheading">Location</h3>
+        </md-card-content>
+      </md-card-area>
+
+      <md-card-content>
+        <h3 class="md-subheading">Today's availability</h3>
+        <div class="card-reservation">
+          <md-icon>access_time</md-icon>
+          <div class="md-button-group">
+            <md-button>5:30PM</md-button>
+            <md-button>7:30PM</md-button>
+            <md-button>9:00PM</md-button>
+          </div>
+        </div>
+      </md-card-content>
+
+      <md-card-actions>
+        <md-button>Action</md-button>
+        <md-button>Action</md-button>
+      </md-card-actions>
+    </md-card>
   </div>
 </template>
 <script>

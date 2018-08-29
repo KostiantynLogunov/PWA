@@ -1,8 +1,8 @@
 {
-  "name": "cropchat",
+  "name": "omc_pwa",
   "version": "1.0.0",
-  "description": "A cat pictures messaging application",
-  "author": "Charles BOCHET <charlesb@theodo.fr>",
+  "description": "OMC PWA",
+  "author": "Igor Shtelmakh <igor.shtelmakh@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
@@ -17,12 +17,14 @@
     "image-capture": "^0.3.5",
     "lodash": "^4.17.4",
     "material-design-lite": "^1.3.0",
+    "npm": "^6.4.0",
     "vue": "^2.3.3",
     "vue-analytics": "^5.2.1",
     "vue-masonry": "^0.10.16",
     "vue-material": "^1.0.0-beta-7",
     "vue-resource": "^1.3.4",
     "vue-router": "^2.3.1",
+    "vuex": "^3.0.1",
     "vuefire": "^1.4.4",
     "xml-parser": "^1.2.1"
   },

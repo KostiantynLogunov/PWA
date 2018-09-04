@@ -16,11 +16,17 @@ import { configureFakeBackend } from './_helpers'
 configureFakeBackend()
 
 Vue.use(Vuefire)
-Vue.use(VueResource)
+
+
+Vue.use(VueResource);
+Vue.http.options.root = 'http://social.loc/api/';
+
+
 Vue.use(VueMasonryPlugin)
 
 Vue.use(VueMaterial)
 Vue.config.productionTip = false
+
 
 new Vue({
     el: '#app',

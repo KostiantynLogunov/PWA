@@ -1,15 +1,15 @@
 <template>
     <div>
-        <h1>Hi {{user.firstName}}!</h1>
+        <h1>Hi {{user.name}}!</h1>
         <p>You're logged in with Vue + Vuex & JWT!!</p>
         <h3>Users from secure api end point:</h3>
-        <em v-if="users.loading">Loading users...</em>
+        <!--<em v-if="users.loading">Loading users...</em>
         <span v-if="users.error" class="text-danger">ERROR: {{users.error}}</span>
         <ul v-if="users.items">
             <li v-for="user in users.items" :key="user.id">
                 {{user.firstName + ' ' + user.lastName}}
             </li>
-        </ul>
+        </ul>-->
         <p>
             <router-link to="/login">Logout</router-link>
         </p>
@@ -20,14 +20,16 @@
 export default {
     computed: {
         user () {
-            return this.$store.state.authentication.user;
+            return JSON.parse(this.$store.state.authentication.user.user_data);
+
+            // return this.$store.state.authentication.user;
         },
         users () {
             return this.$store.state.users.all;
         }
     },
     created () {
-        this.$store.dispatch('users/getAll');
+        // this.$store.dispatch('users/getAll');
     }
 };
 </script>

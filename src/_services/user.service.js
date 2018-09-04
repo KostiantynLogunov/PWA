@@ -1,9 +1,10 @@
-import { config } from '../_services'; 
+// import { config } from '../_services';
 import { authHeader } from '../_helpers';
- 
-console.log(config)
 
-var apiUrl = 'http://localhost:8080'
+import Vue from 'vue'
+// console.log(config)
+
+let apiUrl = 'http://social.loc/api';
 
 export const userService = {
     login,
@@ -11,14 +12,25 @@ export const userService = {
     getAll
 };
 
-function login(username, password) {
+function login(email, password) {
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*' },
+        body: JSON.stringify({ email, password })
     };
+    Vue.http.post('auth/login', JSON.stringify({ email, password }))
+        .then(handleResponse)
+        .then(user => {
+            // console.log(user);
+            console.log(user.token);
+            if (user.token) {
+                // store user details and jwt token in local storage to keep user logged in between page refreshes
+                localStorage.setItem('user', JSON.stringify(user));
+            }
+            return user;
+        });
 
-    return fetch(`${apiUrl}/users/authenticate`, requestOptions)
+    /*return fetch(`${apiUrl}/auth/login`, requestOptions)
         .then(handleResponse)
         .then(user => {
             // login successful if there's a jwt token in the response
@@ -28,7 +40,7 @@ function login(username, password) {
             }
 
             return user;
-        });
+        });*/
 }
 
 function logout() {

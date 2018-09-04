@@ -20,7 +20,7 @@
 export default {
     computed: {
         user () {
-            return JSON.parse(this.$store.state.authentication.user.user_data);
+            return this.$store.state.authentication.user.user_data;
 
             // return this.$store.state.authentication.user;
         },

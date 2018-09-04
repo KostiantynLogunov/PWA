@@ -5,6 +5,7 @@ import Vue from 'vue'
 // console.log(config)
 
 let apiUrl = 'http://social.loc/api';
+// let apiUrl = 'http://social.mybest.com.ua/api';
 
 export const userService = {
     login,
@@ -12,23 +13,42 @@ export const userService = {
     getAll
 };
 
-function login(email, password) {
+async function login(email, password) {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*' },
         body: JSON.stringify({ email, password })
     };
-    Vue.http.post('auth/login', JSON.stringify({ email, password }))
-        .then(handleResponse)
-        .then(user => {
-            // console.log(user);
-            console.log(user.token);
-            if (user.token) {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('user', JSON.stringify(user));
-            }
-            return user;
-        });
+
+    let promise = new Promise((resolve, reject) => {
+
+        Vue.http.post('auth/login', JSON.stringify({ email, password }))
+            .catch((error) => {
+                console.log(error);
+
+                reject(error.data && error.data.msg ? error.data && error.data.msg : 'Something went wrong.');
+            })
+            //.then(response => response.json())
+            .then(response => {
+                // console.log(user);
+                // console.log(user.token);
+
+                // response => response.json()
+
+                let user = response.body;
+
+                // console.log(response.body.token);
+                // console.log(user);
+
+                if (user.token) {
+                    // store user details and jwt token in local storage to keep user logged in between page refreshes
+                    localStorage.setItem('user', JSON.stringify(user));
+                }
+                 resolve (user);
+            });
+    });
+
+    return promise;
 
     /*return fetch(`${apiUrl}/auth/login`, requestOptions)
         .then(handleResponse)
@@ -58,6 +78,7 @@ function getAll() {
 }
 
 function handleResponse(response) {
+
     return response.text().then(text => {
         const data = text && JSON.parse(text);
         if (!response.ok) {

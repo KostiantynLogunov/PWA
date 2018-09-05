@@ -23,6 +23,7 @@ Vue.use(VueResource);
 Vue.http.options.root = 'http://social.mybest.com.ua/api/';
 
 
+
 Vue.use(VueMasonryPlugin)
 
 Vue.use(VueMaterial)

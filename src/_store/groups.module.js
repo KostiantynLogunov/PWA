@@ -23,23 +23,31 @@ export const groups = {
     actions:{
         loadGroups(store){
 
-            // let token = this.$store.state.authentication.user.token;
             let token = JSON.parse(localStorage.getItem('user')).token;
+
+            /*const requestOptions = {
+                method: 'POST',
+                headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin' : '*',
+                        'Authorization': 'Bearer' + token
+                    }
+            };*/
 
             let promise = new Promise((resolve, reject) => {
 
                 Vue.http.get('auth/groups', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
+                        method: 'GET',
+                        headers: { 'Authorization': 'Bearer' + token }
                     }
-                })
+                )
+                    .then(response => {
+                        resolve (store.commit('loadGroups', response.body));
+                    })
                     .catch((error) => {
                         console.log(error);
 
                         reject(error.data && error.data.msg ? error.data && error.data.msg : 'Something went wrong.');
-                    })
-                    .then(response => {
-                        resolve (store.commit('loadGroups', response.body));
                     });
             });
         }

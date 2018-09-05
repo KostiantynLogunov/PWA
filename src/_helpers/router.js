@@ -4,7 +4,8 @@ import Router from 'vue-router';
 import HomeView from '../components/HomeView'
 import LoginView from '../components/LoginView'
 import ActivityView from '../components/ActivityView'
- 
+import GroupView from '../components/GroupsView'
+
 Vue.use(Router);
 
 export const router = new Router({
@@ -13,6 +14,7 @@ export const router = new Router({
     { path: '/', component: HomeView },
     { path: '/login', component: LoginView },
     { path: '/activity', component: ActivityView },
+    { path: '/groups', component: GroupView },
     // otherwise redirect to home
     { path: '*', redirect: '/' }
   ]

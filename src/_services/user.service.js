@@ -4,8 +4,8 @@ import { authHeader } from '../_helpers';
 import Vue from 'vue'
 // console.log(config)
 
-let apiUrl = 'http://social.loc/api';
-// let apiUrl = 'http://social.mybest.com.ua/api';
+// let apiUrl = 'http://social.loc/api';
+let apiUrl = 'http://social.mybest.com.ua/api';
 
 export const userService = {
     login,
@@ -28,17 +28,9 @@ async function login(email, password) {
 
                 reject(error.data && error.data.msg ? error.data && error.data.msg : 'Something went wrong.');
             })
-            //.then(response => response.json())
             .then(response => {
-                // console.log(user);
-                // console.log(user.token);
-
-                // response => response.json()
 
                 let user = response.body;
-
-                // console.log(response.body.token);
-                // console.log(user);
 
                 if (user.token) {
                     // store user details and jwt token in local storage to keep user logged in between page refreshes
@@ -49,18 +41,6 @@ async function login(email, password) {
     });
 
     return promise;
-
-    /*return fetch(`${apiUrl}/auth/login`, requestOptions)
-        .then(handleResponse)
-        .then(user => {
-            // login successful if there's a jwt token in the response
-            if (user.token) {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('user', JSON.stringify(user));
-            }
-
-            return user;
-        });*/
 }
 
 function logout() {
@@ -77,6 +57,7 @@ function getAll() {
     return fetch(`${apiUrl}/users`, requestOptions).then(handleResponse);
 }
 
+/*
 function handleResponse(response) {
 
     return response.text().then(text => {
@@ -94,4 +75,4 @@ function handleResponse(response) {
 
         return data;
     });
-}
+}*/

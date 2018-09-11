@@ -6,6 +6,8 @@ Vue.use(Vuex);
 import { getLocalUser } from "../_helpers/auth";
 import axios from "axios/index";
 
+import {config} from '../_services/config'
+
 const user = getLocalUser();
 
 export const store = new Vuex.Store({
@@ -69,7 +71,11 @@ export const store = new Vuex.Store({
             store.commit('login');
         },
         getGroups(store) {
-            axios.get('http://social.loc/api/mygroups')
+            axios.get(config.apiUrl + '/mygroups', {
+                headers: {
+                    "Authorization": `Bearer ${store.state.currentUser.token}`
+                }
+            })
                 .then((response) => {
                     store.commit('updateGroups', response.data)
                 })

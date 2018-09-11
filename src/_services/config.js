@@ -1,3 +1,4 @@
-export function config() {
-    apiUrl: 'http://social.loc/api'
-}
+export var config = {
+    apiUrl: 'http://social.mybest.com.ua/api'
+    // apiUrl: 'http://social.loc/api'
+};

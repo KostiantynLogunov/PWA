@@ -2,32 +2,25 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import Vuefire from 'vuefire'
-import VueResource from 'vue-resource'
 import App from './App'
-import { router } from './_helpers';
 import VueAnalytics from 'vue-analytics'
-import {VueMasonryPlugin} from 'vue-masonry'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 
 import { store } from './_store'
-import { configureFakeBackend } from './_helpers'
-configureFakeBackend()
+import { router } from './_helpers';
+import {VueMasonryPlugin} from 'vue-masonry'
 
-Vue.use(Vuefire)
+Vue.use(Vuefire);
 
+Vue.use(VueMasonryPlugin);
 
-Vue.use(VueResource);
-// Vue.http.options.root = 'http://social.loc/api/';
-Vue.http.options.root = 'http://social.mybest.com.ua/api/';
+Vue.use(VueMaterial);
+Vue.config.productionTip = false;
 
-
-
-Vue.use(VueMasonryPlugin)
-
-Vue.use(VueMaterial)
-Vue.config.productionTip = false
+import {initialize} from  './_helpers/general'
+initialize(store, router);
 
 
 new Vue({

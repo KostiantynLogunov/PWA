@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h1>Dear {{user.name}}</h1>
+        <h1>Dear {{ currentUser.name }}</h1>
+        <br>
         <div class="manageGroups" v-if="own_groups[0]">
             <h4>Groups you manage:</h4>
             <ul>
@@ -32,21 +33,21 @@
     // import {mapGetters} from 'vuex'
 
 export default {
+    name: 'Groups',
     computed: {
         joingroups() {
-            return this.$store.getters['groups/groupsJoined'];
+            return this.$store.getters.groupsJoined;
 
         },
         own_groups() {
-            return this.$store.getters['groups/groupsManage'];
+            return this.$store.getters.groupsManage;
         },
-        user () {
-            return this.$store.state.authentication.user.user_data;
-            // return this.$store.state.authentication.user;
-        },
+        currentUser () {
+            return this.$store.getters.currentUser;
+        }
     },
     mounted(){
-        return this.$store.dispatch('groups/loadGroups');
+        return this.$store.dispatch('getGroups');
     },
     created () {
         // this.$store.dispatch('users/getAll');

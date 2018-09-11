@@ -1,34 +1,51 @@
 import Vue from 'vue';
-import Router from 'vue-router';
+import VueRouter from 'vue-router';
 
-import HomeView from '../components/HomeView'
-import LoginView from '../components/LoginView'
-import ActivityView from '../components/ActivityView'
-import GroupView from '../components/GroupsView'
+import Home from '../components/Home'
+import Login from '../components/auth/Login'
+import Activity from '../components/Activity'
+import Groups from '../components/user/Groups'
+import User from '../components/user/User'
 
-Vue.use(Router);
+Vue.use(VueRouter);
 
-export const router = new Router({
-  mode: 'history',
-  routes: [
-    { path: '/', component: HomeView },
-    { path: '/login', component: LoginView },
-    { path: '/activity', component: ActivityView },
-    { path: '/groups', component: GroupView },
+const routes = [
+    {
+        path: '/',
+        component: Home,
+        meta: {
+            requiresAuth: true
+        },
+    },
+    {
+        name: 'groups',
+        path: '/groups',
+        component: Groups,
+    },
+    {
+        path: '/login',
+        component: Login
+    },
+    {
+        path: '/activity',
+        component: Activity
+    },
+    {
+        name: 'user',
+        path: ':username',
+        component: User,
+        meta: {
+            requiresAuth: true
+        },
+    },
     // otherwise redirect to home
-    { path: '*', redirect: '/' }
-  ]
+    {
+        path: '*',
+        redirect: '/'
+    }
+];
+
+export const router = new VueRouter({
+    routes,
+    mode: 'history'
 });
-
-router.beforeEach((to, from, next) => {
-  // redirect to login page if not logged in and trying to access a restricted page
-  const publicPages = ['/login'];
-  const authRequired = !publicPages.includes(to.path);
-  const loggedIn = localStorage.getItem('user');
-
-  if (authRequired && !loggedIn) {
-    return next('/login');
-  }
-
-  next();
-})

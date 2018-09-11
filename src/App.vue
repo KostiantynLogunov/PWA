@@ -10,7 +10,7 @@
 
                 <div class="md-toolbar-section-end">
                     <md-button class="md-icon-button">
-                        <md-icon>more_vert</md-icon>
+                        <md-icon>more_very</md-icon>
                     </md-button>
                 </div>
             </md-app-toolbar>
@@ -24,7 +24,7 @@
                         <span class="md-list-item-text">Home page</span>
                     </md-list-item>
 
-                    <md-list-item to="/groups">
+                    <md-list-item to="/groups" v-if="currentUser">
                         <md-icon><i class="fas fa-users"></i></md-icon>
                         <span class="md-list-item-text">Groups</span>
                     </md-list-item>
@@ -36,9 +36,9 @@
                     </md-list-item>
 
 
-                    <md-list-item to="/login" v-if="this.$store.state.authentication.user">
-                        <md-icon>send</md-icon>
-                        <span class="md-list-item-text">Logout</span>
+                    <md-list-item v-if="currentUser" @click.prevent="logout">
+                        <md-icon><i class="fas fa-sign-out-alt"></i></md-icon>
+                        <span class="md-list-item-text" >Logout</span>
                     </md-list-item>
 
                 </md-list>
@@ -47,16 +47,16 @@
             <md-app-content>
 
 
-                <div class="jumbotron">
+                <!--<div class="jumbotron">
                     <div class="container">
                         <div class="row">
                             <div class="col-sm-6 offset-sm-3">
-                                <div v-if="alert.message" :class="`alert ${alert.type}`">{{alert.message}}</div>
+                                &lt;!&ndash;<div v-if="alert.message" :class="`alert ${alert.type}`">{{alert.message}}</div>&ndash;&gt;
 
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>-->
 
                 <router-view></router-view>
 
@@ -78,16 +78,18 @@
             }
         },
         computed: {
-            alert () {
-                return this.$store.state.alert
+            currentUser() {
+              return this.$store.state.currentUser
             }
         },
-        watch:{
-            $route (to, from){
-                // clear alert on location change
-                this.$store.dispatch('alert/clear');
+        methods: {
+            logout() {
+                this.$store.commit('logout');
+                this.$router.push('/login');
+                this.menuVisible = false;
             }
         }
+
     }
 </script>
 

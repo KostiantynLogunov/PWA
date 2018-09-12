@@ -44,7 +44,7 @@
                 </md-list>
             </md-app-drawer>
 
-            <md-app-content>
+            <md-app-content  style="background: #EFF3F6" >
 
 
                 <!--<div class="jumbotron">
@@ -93,4 +93,13 @@
     }
 </script>
 
+<style>
+    .page-container{
+        background: #EFF3F6;
+    }
+    body{
+        height: 300px;
+
+    }
+</style>
 

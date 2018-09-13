@@ -4,7 +4,10 @@ import VueRouter from 'vue-router';
 import Home from '../components/Home'
 import Login from '../components/auth/Login'
 import Activity from '../components/Activity'
-import Groups from '../components/user/Groups'
+import someGroup from '../components/group/someGroup'
+import newGroup from '../components/group/newGroup'
+import myGroups from '../components/group/myGroups'
+import myGroupsList from '../components/group/myGroupsList'
 import User from '../components/user/User'
 
 Vue.use(VueRouter);
@@ -20,7 +23,27 @@ const routes = [
     {
         name: 'groups',
         path: '/groups',
-        component: Groups,
+        component: myGroups,
+        meta: {
+            requiresAuth: true
+        },
+        children: [
+            {
+                name: 'myGroupsList',
+                path: '/',
+                component: myGroupsList,
+            },
+            {
+                name: 'newGroup',
+                path: 'new',
+                component: newGroup,
+            },
+            {
+                name: 'someGroup',
+                path: ':groupname',
+                component: someGroup,
+            },
+        ]
     },
     {
         path: '/login',

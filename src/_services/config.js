@@ -5,5 +5,4 @@ export var config = {
     // apiUrl: 'http://social.loc/api',
     // imgUrl: 'http://social.loc/group/avatar/',
     // imgDefaultGroup: 'http://social.loc/group/avatar/default-group-avatar.png',
-    
 };

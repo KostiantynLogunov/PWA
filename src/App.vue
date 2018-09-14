@@ -8,9 +8,10 @@
                 </md-button>
                 <span class="md-title">OMC</span>
 
-                <div class="md-toolbar-section-end">
+                <div class="md-toolbar-section-end" v-if="$route.name === 'myGroupsList' || $route.matched[0].name === 'groups'">
                     <md-button class="md-icon-button">
-                        <md-icon>more_very</md-icon>
+                        <i class="fas fa-chevron-circle-down"></i>
+                        <!--<md-icon>more_very</md-icon>-->
                     </md-button>
                 </div>
             </md-app-toolbar>
@@ -74,12 +75,12 @@
         name: 'app',
         data: function () {
             return {
-                menuVisible: false
+                menuVisible: false,
             }
         },
         computed: {
             currentUser() {
-              return this.$store.state.currentUser
+                return this.$store.state.currentUser
             }
         },
         methods: {
@@ -89,7 +90,6 @@
                 this.menuVisible = false;
             }
         }
-
     }
 </script>
 

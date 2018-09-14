@@ -64,7 +64,7 @@ export const store = new Vuex.Store({
         updateGroups(state, data){
             state.groupsManage = data.own_groups;
             state.groupsJoined = data.joingroup;
-        },
+        }
     },
     actions: {
         login(store) {

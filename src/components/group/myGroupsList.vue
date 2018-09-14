@@ -113,9 +113,8 @@
                 })
                     .then((response) => {
                         this.groupDelete.group_id = false;
+                        this.$store.dispatch('getGroups');
                         this.pandding = true;
-                        this.$router.push({ name: 'myGroupsList'});
-                        location.reload();
                     })
                     .catch((err) => {
                         this.groupDelete.group_id = true;
@@ -143,9 +142,6 @@
         },
         mounted(){
             return this.$store.dispatch('getGroups');
-        },
-        created () {
-            // this.$store.dispatch('users/getAll');
         }
     };
 </script>

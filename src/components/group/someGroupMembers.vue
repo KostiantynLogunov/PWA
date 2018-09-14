@@ -1,12 +1,12 @@
 <template>
     <div class="">
-        <router-view></router-view>
+        someGroupMembers
     </div>
 </template>
 
 <script>
     export default {
-        name: "someGroup"
+        name: "someGroupMembers"
     }
 </script>
 

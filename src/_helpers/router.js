@@ -5,6 +5,8 @@ import Home from '../components/Home'
 import Login from '../components/auth/Login'
 import Activity from '../components/Activity'
 import someGroup from '../components/group/someGroup'
+import someGroupPosts from '../components/group/someGroupPosts'
+import someGroupMembers from '../components/group/someGroupMembers'
 import newGroup from '../components/group/newGroup'
 import myGroups from '../components/group/myGroups'
 import myGroupsList from '../components/group/myGroupsList'
@@ -21,7 +23,7 @@ const routes = [
         },
     },
     {
-        name: 'groups',
+        // name: 'groups',
         path: '/groups',
         component: myGroups,
         meta: {
@@ -38,11 +40,26 @@ const routes = [
                 path: 'new',
                 component: newGroup,
             },
+        ]
+    },
+    {
+        // name: 'someGroup',
+        path: '/',
+        component: someGroup,
+        meta: {
+            requiresAuth: true
+        },
+        children: [
             {
-                name: 'someGroup',
+                name: 'someGroupPosts',
                 path: ':groupname',
-                component: someGroup,
+                component: someGroupPosts,
             },
+            {
+                name: 'someGroupMembers',
+                path: ':groupname/members',
+                component: someGroupMembers,
+            }
         ]
     },
     {

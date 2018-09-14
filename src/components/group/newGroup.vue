@@ -130,12 +130,6 @@
                 }
             }
         }
-        /*computed: {
-            currentUser() {
-                return this.$store.getters.currentUser
-            }
-        },
-        */
     }
 </script>
 

@@ -26,7 +26,7 @@
                                 </span>
 
                                 <!--<router-link :to="`/${group.username}`">-->
-                                <router-link :to="{ name: 'someGroup', params:  { groupname: group.username} }">
+                                <router-link :to="{ name: 'someGroupPosts', params:  { groupname: group.username} }">
                                     {{ group.name }}
                                 </router-link>
                             </span>

@@ -41,7 +41,14 @@
                 <md-ripple>
                     <md-card-header>
                         <div class="md-title">
-                            <img :src="avatarUrl + post.author.avatar_url[0].source" alt="avatar">
+
+                            <span v-if="post.author.avatar_url[0]">
+                                    <img :src="avatarUrl + post.author.avatar_url[0].source" alt="avatar">
+                                </span>
+                            <span v-else>
+                                    <img :src="avatarDefaultUrl" alt="default">
+                                </span>
+
                             {{ post.author.name }}
                         </div>
                         <div class="md-subhead">Created {{ post.created_at }}</div>
@@ -81,7 +88,8 @@
             groupPosts: false,
             avatarUrl: config.avatarUrl,
             showSidepanel: false,
-            apiUrl: config.apiUrl
+            apiUrl: config.apiUrl,
+            avatarDefaultUrl: config.avatarDefaultUrl
         }),
         mounted(){
             this.updatePosts();
@@ -95,7 +103,9 @@
                     }
                 })
                     .then((response) => {
+
                         this.groupPosts = response.data.groupPosts;
+                        console.log(this.groupPosts);
                     });
             },
             createPost() {

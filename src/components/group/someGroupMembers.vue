@@ -10,9 +10,12 @@
             <md-tab id="tab-pages" md-label="Members">
                 <md-list class="md-triple-line">
                     <md-list-item v-for="member in members" :key="member.id">
-                        <md-avatar>
-                            <img :src="avatarUrl + member.avatar_url[0].source" alt="People">
-                        </md-avatar>
+                            <md-avatar v-if="member.avatar">
+                                    <img :src="member.avatar" alt="People">
+                            </md-avatar>
+                            <md-avatar v-else>
+                                    <img :src="avatarDefaultUrl" alt="">
+                            </md-avatar>
 
                         <div class="md-list-item-text">
                             <span>{{ member.name }}</span>
@@ -29,8 +32,11 @@
                 Admins here:
                 <md-list class="md-triple-line">
                     <md-list-item v-for="admin in admins" :key="admin.id">
-                        <md-avatar>
-                            <img :src="avatarUrl + admin.avatar_url[0].source" alt="People">
+                        <md-avatar v-if="admin.avatar">
+                            <img :src="admin.avatar" alt="People">
+                        </md-avatar>
+                        <md-avatar v-else>
+                            <img :src="avatarDefaultUrl" alt="">
                         </md-avatar>
 
                         <div class="md-list-item-text">
@@ -63,6 +69,7 @@
                 admins: [],
                 sending: false,
                 avatarUrl: config.avatarUrl,
+                avatarDefaultUrl: config.avatarDefaultUrl
             }
         },
         mounted() {

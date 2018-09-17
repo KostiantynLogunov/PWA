@@ -12,5 +12,5 @@ test/unit/coverage
 *.ntvs*
 *.njsproj
 *.sln
-src/_services/config.js
+#src/_services/config.js
 

@@ -18,6 +18,7 @@ export const store = new Vuex.Store({
         auth_error: null,
         groupsManage: [],
         groupsJoined: [],
+        groupPosts: []
     },
     getters: {
         isLoading(state){
@@ -37,6 +38,9 @@ export const store = new Vuex.Store({
         },
         groupsJoined(state){
             return state.groupsJoined;
+        },
+        groupPosts(state) {
+            return state.groupPosts;
         }
     },
     mutations: {
@@ -64,6 +68,9 @@ export const store = new Vuex.Store({
         updateGroups(state, data){
             state.groupsManage = data.own_groups;
             state.groupsJoined = data.joingroup;
+        },
+        updateGroupPosts(state, data) {
+            state.groupPosts = data.groupPosts;
         }
     },
     actions: {
@@ -84,5 +91,19 @@ export const store = new Vuex.Store({
                     reject("errorr!!");
                 })*/
         },
+        getGroupPosts(store) {
+            axios.get(config.apiUrl + '/group-posts', {
+                headers: {
+                    "Authorization": `Bearer ${store.state.currentUser.token}`
+                }
+            })
+                .then((response) => {
+                    store.commit('updateGroupPosts', response.data)
+                })
+            /*.catch((err) => {
+                console.log(err);
+                reject("errorr!!");
+            })*/
+        }
     }
 });

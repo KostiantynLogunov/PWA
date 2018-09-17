@@ -4,5 +4,6 @@ export var config = {
     // imgDefaultGroup: 'http://social.mybest.com.ua/group/avatar/default-group-avatar.png',
     apiUrl: 'http://social.loc/api',
     imgUrl: 'http://social.loc/group/avatar/',
+    avatarUrl: 'http://social.loc/user/avatar/',
     imgDefaultGroup: 'http://social.loc/group/avatar/default-group-avatar.png',
 };

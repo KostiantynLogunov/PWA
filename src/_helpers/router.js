@@ -44,7 +44,7 @@ const routes = [
     },
     {
         // name: 'someGroup',
-        path: '/',
+        path: '/groups/:groupname',
         component: someGroup,
         meta: {
             requiresAuth: true
@@ -52,12 +52,12 @@ const routes = [
         children: [
             {
                 name: 'someGroupPosts',
-                path: ':groupname',
+                path: '',
                 component: someGroupPosts,
             },
             {
                 name: 'someGroupMembers',
-                path: ':groupname/members',
+                path: 'members',
                 component: someGroupMembers,
             }
         ]

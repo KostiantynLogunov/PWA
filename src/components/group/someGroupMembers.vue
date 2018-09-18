@@ -29,7 +29,6 @@
                 </md-list>
             </md-tab>
             <md-tab id="tab-posts" md-label="Admins">
-                Admins here:
                 <md-list class="md-triple-line">
                     <md-list-item v-for="admin in admins" :key="admin.id">
                         <md-avatar v-if="admin.avatar">

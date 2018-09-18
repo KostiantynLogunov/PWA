@@ -7,6 +7,9 @@ import Activity from '../components/Activity'
 import someGroup from '../components/group/someGroup'
 import someGroupPosts from '../components/group/someGroupPosts'
 import someGroupMembers from '../components/group/someGroupMembers'
+import someGroupEvents from '../components/group/someGroupEvents'
+import someGroupTasks from '../components/group/someGroupTasks'
+import someGroupChecklists from '../components/group/someGroupChecklists'
 import newGroup from '../components/group/newGroup'
 import myGroups from '../components/group/myGroups'
 import myGroupsList from '../components/group/myGroupsList'
@@ -59,7 +62,22 @@ const routes = [
                 name: 'someGroupMembers',
                 path: 'members',
                 component: someGroupMembers,
-            }
+            },
+            {
+                name: 'someGroupEvents',
+                path: 'events',
+                component: someGroupEvents,
+            },
+            {
+                name: 'someGroupTasks',
+                path: 'tasks',
+                component: someGroupTasks,
+            },
+            {
+                name: 'someGroupChecklists',
+                path: 'checklists',
+                component: someGroupChecklists,
+            },
         ]
     },
     {

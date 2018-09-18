@@ -8,7 +8,7 @@
 
         <md-drawer class="md-right" :md-active.sync="showSidepanel">
             <md-toolbar class="md-transparent" md-elevation="0">
-                <span class="md-title">Favorites</span>
+                <span class="md-title">Group Menu</span>
             </md-toolbar>
 
             <md-list>
@@ -17,22 +17,22 @@
                     <span class="md-list-item-text">Members</span>
                 </md-list-item>
 
-                <md-list-item to="/1" >
+                <md-list-item :to="{ name: 'someGroupEvents' }">
                     <md-icon><i class="far fa-calendar-alt"></i></md-icon>
                     <span class="md-list-item-text">Events</span>
                 </md-list-item>
 
-                <md-list-item to="/2" >
+                <md-list-item :to="{ name: 'someGroupPosts' }">
                     <md-icon><i class="far fa-clipboard"></i></md-icon>
                     <span class="md-list-item-text">Post</span>
                 </md-list-item>
 
-                <md-list-item to="/3" >
+                <md-list-item :to="{ name: 'someGroupTasks' }" >
                     <md-icon><i class="fas fa-thumbtack"></i></md-icon>
                     <span class="md-list-item-text">Tasks</span>
                 </md-list-item>
 
-                <md-list-item to="#" >
+                <md-list-item :to="{ name: 'someGroupChecklists' }"  >
                     <md-icon><i class="fas fa-tasks"></i></md-icon>
                     <span class="md-list-item-text">Checklists</span>
                 </md-list-item>

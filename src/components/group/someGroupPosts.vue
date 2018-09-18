@@ -103,9 +103,7 @@
                     }
                 })
                     .then((response) => {
-
                         this.groupPosts = response.data.groupPosts;
-                        console.log(this.groupPosts);
                     });
             },
             createPost() {

@@ -1,5 +1,6 @@
 export var config = {
 
+
     // apiUrl: 'http://social.mybest.com.ua/api',
     // imgUrl: 'http://social.mybest.com.ua/group/avatar/',
     // avatarUrl: 'http://social.mybest.com.ua/user/avatar/',

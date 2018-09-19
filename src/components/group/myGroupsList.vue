@@ -56,10 +56,12 @@
                                     <img :src="imgDefaultGroup" alt="default">
                                 </span>
 
-                                {{ group.name }}
+                                <router-link :to="{ name: 'someGroupPosts', params:  { groupname: group.username} }">
+                                    {{ group.name }}
+                                </router-link>
                             </span>
 
-                            <md-button class="md-raised md-primary">UnJoin</md-button>
+                            <md-button class="md-raised md-accent" @click="unjoin(group.username)">UnJoin</md-button>
                         </li>
                     </ul>
                 </div>
@@ -128,6 +130,16 @@
             pushToNewGroup() {
                 this.$router.push({ name: 'newGroup'})
             },
+            unjoin(groupname) {
+                axios.delete(config.apiUrl + '/group-unjoin/' + groupname, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.state.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.$store.dispatch('getGroups')
+                    });
+            }
         },
         computed: {
             joingroups() {

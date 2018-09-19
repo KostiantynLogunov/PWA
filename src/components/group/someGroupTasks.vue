@@ -23,7 +23,7 @@
                             <div class="md-layout-item md-small-size-100">
                                 <md-field>
                                     <label for="description">Description</label>
-                                    <md-textarea name="description" id="description" autocomplete="given-name" v-model="form.tidescriptiontle" :disabled="sending" />
+                                    <md-textarea name="description" id="description" autocomplete="given-name" v-model="form.description" :disabled="sending" />
                                 </md-field>
                             </div>
 
@@ -116,7 +116,7 @@
                                     <div class="md-layout md-gutter">
                                         <div class="md-layout-item md-small-size-100">
                                             <md-field :class="">
-                                                <label for="title">Comment</label>
+                                                <label for="comment">Comment</label>
                                                 <md-input name="comment" id="comment" autocomplete="given-name" v-model="comment" :disabled="sendingComment" />
                                             </md-field>
                                         </div>

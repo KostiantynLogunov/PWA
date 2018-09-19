@@ -36,22 +36,25 @@
         </form>
         <br>
         <div class="alert alert-warning" v-if="groupPosts.length == 0">No posts were found...</div>
-        <div v-for="post in groupPosts">
+        <div v-for="post in groupPosts" :key="post.id">
             <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
                 <md-ripple>
                     <md-card-header>
                         <div class="md-title">
 
-                            <span v-if="post.author.avatar_url[0]">
-                                    <img :src="avatarUrl + post.author.avatar_url[0].source" alt="avatar">
+                            <span v-if="post.user">
+                                    <img :src="post.user.avatar" alt="avatar">
                                 </span>
                             <span v-else>
                                     <img :src="avatarDefaultUrl" alt="default">
                                 </span>
 
-                            {{ post.author.name }}
+                            {{ post.user.name }}
                         </div>
-                        <div class="md-subhead">Created {{ post.created_at }}</div>
+                        <div class="md-subhead">
+
+                            {{ convertDate(post.created_at) | moment("from") }}
+                        </div>
                     </md-card-header>
 
                     <md-card-content>
@@ -59,11 +62,67 @@
                     </md-card-content>
 
                     <md-card-actions>
-                        <md-button><i class="far fa-thumbs-up"></i>
+                        <md-button class="md-primary" @click="likePost(post.id)" :disabled="liking"><i class="far fa-thumbs-up"></i>
                             Like</md-button>
-                        <md-button><i class="far fa-comment"></i>
+                        <md-button @click="turnComment(post.id)"><i class="far fa-comment"></i>
                             Comment</md-button>
                     </md-card-actions>
+                    <transition name="boom">
+                        <md-card-content v-if="comenntsVisable.indexOf(post.id) >= 0">
+                            <form novalidate class="md-layout" @submit.prevent="">
+                                <md-card class="md-layout-item md-size-50 md-small-size-100">
+                                    <md-card-content>
+                                        <div class="md-layout md-gutter">
+                                            <div class="md-layout-item md-small-size-100">
+                                                <md-field :class="">
+                                                    <label for="comment">Comment</label>
+                                                    <md-input @keyup.enter="sendComment(post.id)" name="comment" id="comment" autocomplete="given-name" v-model="formComment.comment" :disabled="sendingComment" />
+                                                </md-field>
+                                            </div>
+                                        </div>
+                                        <div class="errors" v-if="errorsComment">
+                                            <ul>
+                                                <li v-for="(fieldsError, fieldName) in errorsComment" :key="fieldName">
+                                                    {{ fieldsError.join('\n') }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                            </form>
+
+                            <br>
+                            <div v-for="comment in post.comments">
+                                <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
+                                    <md-ripple>
+                                        <md-card-header>
+                                            <div class="md-title">
+                                                <span v-if="comment.user.avatar">
+                                                    <img :src="comment.user.avatar" alt="avatar">
+                                                </span>
+                                                <span v-else>
+                                                    <img :src="avatarDefaultUrl" alt="">
+                                                </span>
+                                                {{ comment.user.name }}
+                                            </div>
+                                            <div class="md-subhead">{{ convertDate(comment.created_at) | moment("from") }}</div>
+                                        </md-card-header>
+
+                                        <md-card-content class="comment-description">
+                                            <h6>{{ comment.description }}</h6>
+                                        </md-card-content>
+
+                                        <md-card-actions>
+                                            <md-button class="md-primary"><i class="far fa-thumbs-up"></i></md-button>
+                                            <md-button class="md-accent"><i class="fas fa-times"></i></md-button>
+                                            <md-button><i class="far fa-share-square"></i></md-button>
+                                        </md-card-actions>
+                                    </md-ripple>
+                                </md-card>
+                                <br>
+                            </div>
+                        </md-card-content>
+                    </transition>
                 </md-ripple>
             </md-card>
             <br>
@@ -84,12 +143,21 @@
             },
             postSaved: false,
             sending: false,
+            liking: false,
             errors: null,
+            errorsComment: null,
             groupPosts: false,
             avatarUrl: config.avatarUrl,
             showSidepanel: false,
             apiUrl: config.apiUrl,
-            avatarDefaultUrl: config.avatarDefaultUrl
+            avatarDefaultUrl: config.avatarDefaultUrl,
+            comenntsVisable: [],
+            sendingComment: false,
+
+            formComment: {
+                comment: '',
+                post_id: '',
+            },
         }),
         mounted(){
             this.updatePosts();
@@ -103,9 +171,11 @@
                     }
                 })
                     .then((response) => {
+                        console.log(response.data.groupPosts);
                         this.groupPosts = response.data.groupPosts;
                     });
             },
+
             createPost() {
 
                 this.errors = null;
@@ -127,6 +197,7 @@
                     }
                 })
                     .then((response) => {
+                        this.form.post = '';
                         this.sending = false;
                         this.updatePosts();
                     })
@@ -137,6 +208,7 @@
                         console.log(errorMessage);
                     })
             },
+
             getConstraints(){
                 return {
                     post: {
@@ -148,8 +220,95 @@
                     },
                 }
             },
+
             createEvent(){
                 console.log('createEvent')
+            },
+
+            convertDate(datetimeString) {
+                let utcTZ = this.$moment.tz(datetimeString, 'UTC').format();
+                let currentTZ = this.$moment(utcTZ.valueOf());
+                return currentTZ;
+            },
+
+            likePost(post_id) {
+                // this.liking = true;
+                axios.put(config.apiUrl + '/like-post/' + post_id, [], {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.state.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        // this.liking = false;
+                        console.log(response);
+                    })
+                    .catch((err) => {
+                        let errorMessage = err.response.data.message || err.message;
+                        // this.liking = false ;
+                        console.log(errorMessage);
+                    })
+            },
+
+            validateComment(){
+                return {
+                    comment: {
+                        presence: true,
+                        length: {
+                            minimum: 2,
+                            message: 'Must be at least 2 characters long'
+                        }
+                    },
+                }
+            },
+
+            sendComment(post_id) {
+                console.log('sending comments...');
+                // let comment = this.htmlEntities(this.comment);
+                // this.comment = '';
+
+                this.errorsComment = null;
+
+                const constraints = this.validateComment();
+
+                const errors = validate(this.$data.formComment, constraints);
+
+                if (errors) {
+                    this.errorsComment = errors;
+                    return ;
+                }
+
+
+                this.sendingComment = true;
+                this.formComment.post_id = +post_id;
+                // send to api this.form.post
+                axios.post(this.apiUrl + '/post-comment', this.formComment, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.state.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.formComment.comment = '';
+                        this.sendingComment = false;
+                        this.updatePosts();
+                    })
+                    .catch((err) => {
+                        let errorMessage = err.response.data.message || err.message;
+                        this.errors = err.response.data;
+                        this.sendingComment = false ;
+                        console.log(errorMessage);
+                    });
+            },
+
+            turnComment(post_id) {
+                if (this.comenntsVisable.indexOf(post_id) >= 0) {
+                    this.comenntsVisable.splice(this.comenntsVisable.indexOf(post_id), 1)
+                } else {
+                    this.comenntsVisable.push(post_id)
+                }
+            },
+
+            htmlEntities(str) {
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g,'&apos');
             }
         }
     }
@@ -179,6 +338,23 @@
     img{
         height: 40px;
         padding-right: 10px;
+    }
+
+    .boom-enter-active{
+        animation: slideIn 0.5s;
+    }
+
+    .boom-leave-active{
+        animation: slideOut 0.5s;
+    }
+
+    @keyframes slideIn {
+        from {transform: translateX(-1000px)}
+        to {transform: translateX(0px)}
+    }
+    @keyframes slideOut {
+        from {transform: translateX(0px)}
+        to {transform: translateX(-2000px)}
     }
 
 </style>

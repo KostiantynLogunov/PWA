@@ -5,6 +5,13 @@ import Vuefire from 'vuefire'
 import App from './App'
 import VueAnalytics from 'vue-analytics'
 import VueMaterial from 'vue-material'
+import VueMoment from 'vue-moment'
+import moment from 'moment-timezone'
+
+Vue.use(VueMoment, {
+    moment,
+});
+
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 
@@ -13,6 +20,7 @@ import { router } from './_helpers';
 import {VueMasonryPlugin} from 'vue-masonry'
 
 Vue.use(Vuefire);
+
 
 Vue.use(VueMasonryPlugin);
 

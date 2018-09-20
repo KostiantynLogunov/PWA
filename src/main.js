@@ -18,8 +18,10 @@ import 'vue-material/dist/theme/default.css'
 import { store } from './_store'
 import { router } from './_helpers';
 import {VueMasonryPlugin} from 'vue-masonry'
-
+// import {myDatepicker} from 'vue-datepicker'
+// Vue.use(myDatepicker);
 Vue.use(Vuefire);
+
 
 
 Vue.use(VueMasonryPlugin);

@@ -64,7 +64,9 @@
         </div>
 
         <br>
-        <div class="alert alert-warning" v-if="!groupChecklist">No Checklist yet....</div>
+        <div class="alert alert-warning" v-if="!groupChecklist">No Checklist yet....
+            <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
+        </div>
         <div v-for="checklist in groupChecklist">
             <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
                 <md-ripple>
@@ -117,59 +119,67 @@
                     </md-card-content>
 
                     <md-card-actions>
-                        <md-button @click="comenntsVisable = !comenntsVisable; comment = ''"><i class="far fa-comments"></i>
+                        <md-button @click="turnComment(checklist.id)"><i class="far fa-comments"></i>
                             Comments</md-button>
 
                     </md-card-actions>
-                    <md-card-content v-if="comenntsVisable">
-                        <form novalidate class="md-layout" @submit.prevent="sendCommit">
-                            <md-card class="md-layout-item md-size-50 md-small-size-100">
-                                <md-card-content>
-                                    <div class="md-layout md-gutter">
-                                        <div class="md-layout-item md-small-size-100">
-                                            <md-field :class="">
-                                                <label for="title">Comment</label>
-                                                <md-input name="comment" id="comment" autocomplete="given-name" v-model="comment" :disabled="sendingComment" />
-                                            </md-field>
+                    <transition name="boom">
+                        <md-card-content v-if="comenntsVisable.indexOf(checklist.id) >= 0">
+                            <form novalidate class="md-layout" @submit.prevent="">
+                                <md-card class="md-layout-item md-size-50 md-small-size-100">
+                                    <md-card-content>
+                                        <div class="md-layout md-gutter">
+                                            <div class="md-layout-item md-small-size-100">
+                                                <md-field :class="">
+                                                    <label for="comment">Comment</label>
+                                                    <md-input name="comment" id="comment" @keyup.enter="sendComment(checklist.id)" autocomplete="given-name" v-model="formComment.comment" :disabled="sendingComment" />
+                                                </md-field>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                </md-card-content>
-                            </md-card>
-                        </form>
-
-                        <br>
-                        <div v-for="remark in checklist.remark">
-                            <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
-                                <md-ripple>
-                                    <md-card-header>
-                                        <div class="md-title">
-                                            <span v-if="remark.user.avatar">
-                                                <img :src="remark.user.avatar" alt="avatar">
-                                            </span>
-                                            <span v-else>
-                                                <img :src="avatarDefaultUrl" alt="">
-                                            </span>
-                                            {{ remark.user.name }}
+                                        <div class="errors" v-if="errorsComment">
+                                            <ul>
+                                                <li v-for="(fieldsError, fieldName) in errorsComment" :key="fieldName">
+                                                    {{ fieldsError.join('\n') }}
+                                                </li>
+                                            </ul>
                                         </div>
-                                        <div class="md-subhead">Created {{ remark.created_at }}</div>
-                                    </md-card-header>
-
-                                    <md-card-content class="comment-description">
-                                        <h6>{{ remark.text }}</h6>
                                     </md-card-content>
+                                </md-card>
+                            </form>
 
-                                    <md-card-actions>
-                                        <md-button class="md-primary"><i class="far fa-thumbs-up"></i>
-                                        </md-button>
-                                        <md-button class="md-accent"><i class="fas fa-times"></i>
-                                        </md-button>
-                                    </md-card-actions>
-                                </md-ripple>
-                            </md-card>
                             <br>
-                        </div>
-                    </md-card-content>
+                            <div v-for="remark in checklist.remark">
+                                <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
+                                    <md-ripple>
+                                        <md-card-header>
+                                            <div class="md-title">
+                                                <span v-if="remark.user.avatar">
+                                                    <img :src="remark.user.avatar" alt="avatar">
+                                                </span>
+                                                <span v-else>
+                                                    <img :src="avatarDefaultUrl" alt="">
+                                                </span>
+                                                {{ remark.user.name }}
+                                            </div>
+                                            <div class="md-subhead">{{ convertDate(remark.created_at) | moment("from") }}</div>
+                                        </md-card-header>
+
+                                        <md-card-content class="comment-description">
+                                            <h6>{{ remark.text }}</h6>
+                                        </md-card-content>
+
+                                        <md-card-actions>
+                                            <md-button class="md-primary"><i class="far fa-thumbs-up"></i>
+                                            </md-button>
+                                            <md-button class="md-accent"><i class="fas fa-times"></i>
+                                            </md-button>
+                                        </md-card-actions>
+                                    </md-ripple>
+                                </md-card>
+                                <br>
+                            </div>
+                        </md-card-content>
+                    </transition>
                 </md-ripple>
             </md-card>
             <br>
@@ -191,8 +201,6 @@
                 members: '',
                 event: '',
             },
-            comment: '',
-            sendingComment: false,
             creatingForm: false,
             checklistSaved: false,
             sending: false,
@@ -201,22 +209,33 @@
             avatarUrl: config.avatarUrl,
             apiUrl: config.apiUrl,
             avatarDefaultUrl: config.avatarDefaultUrl,
-            comenntsVisable: false,
+
+            sendingComment: false,
+            comenntsVisable: [],
+            formComment: {
+                comment: '',
+                checklist_id: '',
+                type: 'checklist'
+            },
+            errorsComment: null,
+
+            pandingResponseServer: false
         }),
         mounted(){
             this.updateChecklist();
         },
         methods: {
             updateChecklist(){
+                this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group-checklists/' + this.$route.params.groupname, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.state.currentUser.token}`
                     }
                 })
                     .then((response) => {
+                        this.pandingResponseServer = false;
                         if (response.data.group_checklist.length)
                             this.groupChecklist = response.data.group_checklist;
-                        console.log(this.groupChecklist);
                     });
             },
 
@@ -253,6 +272,43 @@
                         console.log(errorMessage);
                     })*/
             },
+
+            sendComment(checklist_id) {
+
+                this.errorsComment = null;
+
+                const constraints = this.validateComment();
+
+                const errors = validate(this.$data.formComment, constraints);
+
+                if (errors) {
+                    this.errorsComment = errors;
+                    return ;
+                }
+
+
+                this.sendingComment = true;
+                this.formComment.checklist_id = +checklist_id;
+                // send to api this.form.post
+                axios.post(this.apiUrl + '/task-comment', this.formComment, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.state.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.formComment.comment = '';
+                        this.sendingComment = false;
+                        this.updateChecklist();
+                    })
+                    .catch((err) => {
+                        let errorMessage = err.response.data.message || err.message;
+                        this.errors = err.response.data;
+                        this.sendingComment = false ;
+                        console.log(errorMessage);
+                    });
+            },
+
+
             getConstraints(){
                 return {
                     title: {
@@ -265,8 +321,12 @@
                 }
             },
 
-            sendCommit() {
-                console.log('sending comments...');
+            turnComment(task_id) {
+                if (this.comenntsVisable.indexOf(task_id) >= 0) {
+                    this.comenntsVisable.splice(this.comenntsVisable.indexOf(task_id), 1)
+                } else {
+                    this.comenntsVisable.push(task_id)
+                }
             },
 
             convertDate(datetimeString) {
@@ -274,6 +334,22 @@
                 let currentTZ = this.$moment(utcTZ.valueOf());
                 return currentTZ;
             },
+
+            validateComment(){
+                return {
+                    comment: {
+                        presence: true,
+                        length: {
+                            minimum: 2,
+                            message: 'Must be at least 2 characters long'
+                        }
+                    },
+                }
+            },
+
+            htmlEntities(str) {
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g,'&apos');
+            }
 
         }
     }
@@ -311,6 +387,23 @@
         padding: 5px;
         margin-left: 10px;
         margin-right: 10px;
+    }
+
+    .boom-enter-active{
+        animation: slideIn 0.5s;
+    }
+
+    .boom-leave-active{
+        animation: slideOut 0.5s;
+    }
+
+    @keyframes slideIn {
+        from {transform: translateX(-1000px)}
+        to {transform: translateX(0px)}
+    }
+    @keyframes slideOut {
+        from {transform: translateX(0px)}
+        to {transform: translateX(-2000px)}
     }
 
 </style>

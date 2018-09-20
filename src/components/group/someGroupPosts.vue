@@ -36,6 +36,7 @@
         </form>
         <br>
         <div class="alert alert-warning" v-if="groupPosts.length == 0">No posts were found...</div>
+        <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         <div v-for="post in groupPosts" :key="post.id">
             <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
                 <md-ripple>
@@ -52,7 +53,6 @@
                             {{ post.user.name }}
                         </div>
                         <div class="md-subhead">
-
                             {{ convertDate(post.created_at) | moment("from") }}
                         </div>
                     </md-card-header>
@@ -145,19 +145,22 @@
             sending: false,
             liking: false,
             errors: null,
-            errorsComment: null,
             groupPosts: false,
+
             avatarUrl: config.avatarUrl,
             showSidepanel: false,
             apiUrl: config.apiUrl,
             avatarDefaultUrl: config.avatarDefaultUrl,
+
             comenntsVisable: [],
             sendingComment: false,
-
             formComment: {
                 comment: '',
                 post_id: '',
             },
+            errorsComment: null,
+
+            pandingResponseServer: false
         }),
         mounted(){
             this.updatePosts();
@@ -165,13 +168,14 @@
 
         methods: {
             updatePosts(){
+                this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group-posts/' + this.$route.params.groupname, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.state.currentUser.token}`
                     }
                 })
                     .then((response) => {
-                        console.log(response.data.groupPosts);
+                        this.pandingResponseServer = false;
                         this.groupPosts = response.data.groupPosts;
                     });
             },
@@ -263,8 +267,7 @@
 
             sendComment(post_id) {
                 console.log('sending comments...');
-                // let comment = this.htmlEntities(this.comment);
-                // this.comment = '';
+                this.formComment.comment = this.htmlEntities(this.formComment.comment);
 
                 this.errorsComment = null;
 

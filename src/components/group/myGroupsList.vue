@@ -40,6 +40,7 @@
                 <div v-else>
                     <div class="alert alert-warning">
                         <i>Haven't managed any groups yet!</i>
+                        <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
                     </div>
                 </div>
             </md-content>
@@ -94,7 +95,8 @@
                 },
                 imgUrl: config.imgUrl,
                 imgDefaultGroup: config.imgDefaultGroup,
-                apiUrl: config.apiUrl
+                apiUrl: config.apiUrl,
+                pandingResponseServer: false
             }
         },
         methods: {
@@ -143,6 +145,7 @@
         },
         computed: {
             joingroups() {
+                this.pandingResponseServer = false;
                 return this.$store.getters.groupsJoined;
             },
             own_groups() {
@@ -153,6 +156,7 @@
             }
         },
         mounted(){
+            this.pandingResponseServer = true;
             return this.$store.dispatch('getGroups');
         }
     };

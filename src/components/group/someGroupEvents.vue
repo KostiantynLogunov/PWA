@@ -26,7 +26,7 @@
             <md-tab id="tab-pages" md-label="Ongoing">
                 <md-list class="md-triple-line" v-if="ongoing_events">
                     <md-list-item v-for="event in ongoing_events" :key="event.id">
-                        <md-avatar v-if="event.user.avatar">
+                        <md-avatar v-if="event.user">
                             <img :src="event.user.avatar" alt="People">
                         </md-avatar>
                         <md-avatar v-else>
@@ -48,7 +48,7 @@
             <md-tab id="tab-posts" md-label="Upcoming">
                 <md-list class="md-triple-line" v-if="upcoming_events">
                     <md-list-item v-for="event in upcoming_events" :key="event.id">
-                        <md-avatar v-if="event.user.avatar">
+                        <md-avatar v-if="event.user">
                             <img :src="event.user.avatar" alt="People">
                         </md-avatar>
                         <md-avatar v-else>

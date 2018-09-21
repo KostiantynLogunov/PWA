@@ -18,11 +18,12 @@ import 'vue-material/dist/theme/default.css'
 import { store } from './_store'
 import { router } from './_helpers';
 import {VueMasonryPlugin} from 'vue-masonry'
-// import {myDatepicker} from 'vue-datepicker'
-// Vue.use(myDatepicker);
+
+import datePicker from 'vue-bootstrap-datetimepicker';
+import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+Vue.use(datePicker);
+
 Vue.use(Vuefire);
-
-
 
 Vue.use(VueMasonryPlugin);
 
@@ -33,9 +34,14 @@ import {initialize} from  './_helpers/general'
 initialize(store, router);
 
 
+
+
 new Vue({
     el: '#app',
     router,
     store,
     render: h => h(App)
 });
+
+// app.js
+

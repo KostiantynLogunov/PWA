@@ -23,7 +23,7 @@ export function initialize(store, router) {
         return Promise.reject(error);
     });
 
-    if (store.state.currentUser) {
+    /*if (store.state.currentUser) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${store.state.currentUser.token}`;
-    }
+    }*/
 }

@@ -1,6 +1,12 @@
 <template>
     <div class="page-container md-layout-column">
         <form novalidate class="md-layout" @submit.prevent="createPost">
+            <!--SNACKBAR-->
+            <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
+                <span>You created new post!</span>
+                <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+            </md-snackbar>
+            <!--SNACKBAR-->
             <md-card class="md-layout-item md-size-50 md-small-size-100">
                 <md-card-header>
                     <div class="md-title">What's going on ?</div>
@@ -147,6 +153,10 @@
             errors: null,
             groupPosts: false,
 
+            showSnackbarPost: false,
+            position: 'center',
+            duration: 4000,
+
             avatarUrl: config.avatarUrl,
             showSidepanel: false,
             apiUrl: config.apiUrl,
@@ -203,6 +213,7 @@
                     .then((response) => {
                         this.form.post = '';
                         this.sending = false;
+                        this.showSnackbarPost = true;
                         this.updatePosts();
                     })
                     .catch((err) => {

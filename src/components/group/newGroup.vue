@@ -65,7 +65,8 @@
                 },
                 errors: null,
                 pandding: false,
-                apiUrl: config.apiUrl
+                apiUrl: config.apiUrl,
+
             };
         },
         methods: {
@@ -92,14 +93,14 @@
                         }
                     })
                         .then((response) => {
-                            this.pandding = false;
                             this.$router.push({ name: 'myGroupsList'});
                         })
                         .catch((err) => {
                             let errorMessage = err.response.data.message || err.message;
                             this.errors = err.response.data;
-                            this.pandding = false ;
-                            console.log(errorMessage);
+                        })
+                        .finally(() => {
+                            this.pandding = false;
                         })
 
 

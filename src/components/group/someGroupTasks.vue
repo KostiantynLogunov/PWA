@@ -5,6 +5,10 @@
         </div>
         <div v-else>
             <form novalidate class="md-layout" @submit.prevent="createTask" >
+                <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
+                    <span>You added new task !</span>
+                    <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+                </md-snackbar>
                 <md-card class="md-layout-item md-size-50 md-small-size-100">
                     <md-card-header>
                         <div class="md-title">Creating Task</div>
@@ -13,7 +17,6 @@
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-small-size-100">
-                                <!--<md-field :class="getValidationClass('firstName')">-->
                                 <md-field :class="">
                                     <label for="title">Title</label>
                                     <md-input name="title" id="title" autocomplete="given-name" v-model="form.title" :disabled="sending" />
@@ -39,16 +42,14 @@
                                 </md-field>
 
                                     <div class="md-layout md-gutter">
-                                        <div class="row">
-                                            <span>Departure Date：</span>
-                                            <!--<date-picker :date="startTime" :option="option" :limit="limit"></date-picker>-->
-                                        </div>
-                                        <!--<div class="md-layout-item md-small-size-50">
-                                            <md-datepicker v-model="selectedDate_from" md-immediately/>
-                                        </div>
+                                            <div class="md-layout-item md-small-size-50">
+                                                <label>START DATE</label>
+                                                <date-picker v-model="form.start_date" :config="options"></date-picker>
+                                            </div>
                                         <div class="md-layout-item md-small-size-50">
-                                            <md-datepicker v-model="selectedDate_to" />
-                                        </div>-->
+                                            <label>END DATE</label>
+                                            <date-picker v-model="form.end_date" :config="options"></date-picker>
+                                        </div>
                                     </div>
 
 
@@ -77,8 +78,6 @@
                                                     Not any events
                                                 </md-option>
                                             </div>
-
-
                                         </md-select>
                                     </md-field>
                                 </div>
@@ -133,6 +132,17 @@
                         </div>
                         <div v-else>
                             <div class="alert alert-warning">No responsable user !</div>
+                        </div>
+                        <br>
+                        <div class="">
+                            <span v-if="task.user.avatar">
+                                                    <img :src="task.user.avatar" alt="avatar">
+                                                </span>
+                            <span v-else>
+                                                    <img :src="avatarDefaultUrl" alt="">
+                                                </span>
+                            {{ task.user.name }}
+                            <div class="md-subhead">{{ convertDate(task.created_at) | moment("from") }}</div>
                         </div>
                     </md-card-content>
 
@@ -210,13 +220,15 @@
 </template>
 
 <script>
+
+
     import validate from 'validate.js'
     import axios from 'axios'
     import {config} from '../../_services/config'
-    // import {myDatepicker} from 'vue-datepicker'
 
     export default {
         name: "someGroupTasks",
+
         data: () => ({
             form: {
                 title: '',
@@ -224,7 +236,29 @@
                 status: '',
                 members: '',
                 event: '',
+                start_date: null,
+                end_date: null,
             },
+            options: {
+                format: 'YYYY/MM/DD HH:mm',
+                useCurrent: false,
+                showClear: true,
+                showClose: true,
+                icons: {
+                    time: 'far fa-clock',
+                    date: 'far fa-calendar',
+                    up: 'fas fa-arrow-up',
+                    down: 'fas fa-arrow-down',
+                    previous: 'fas fa-chevron-left',
+                    next: 'fas fa-chevron-right',
+                    today: 'fas fa-calendar-check',
+                    clear: 'far fa-trash-alt',
+                    close: 'far fa-times-circle'
+                }
+            },
+            showSnackbar: false,
+            position: 'center',
+            duration: 4000,
 
 
             creatingForm: false,
@@ -249,67 +283,7 @@
             pandingResponseServer: false,
             selectedDate_from: null,
             selectedDate_to: null,
-
-
-            // for Vue 2.0
-            startTime: {
-                time: ''
-            },
-            endtime: {
-                time: ''
-            },
-            option: {
-                type: 'day',
-                week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                format: 'YYYY-MM-DD HH:mm',
-                placeholder: 'when?',
-                inputStyle: {
-                    'display': 'inline-block',
-                    'padding': '6px',
-                    'line-height': '22px',
-                    'font-size': '16px',
-                    'border': '2px solid #fff',
-                    'box-shadow': '0 1px 3px 0 rgba(0, 0, 0, 0.2)',
-                    'border-radius': '2px',
-                    'color': '#5F5F5F'
-                },
-                color: {
-                    header: '#ccc',
-                    headerText: '#f00'
-                },
-                buttons: {
-                    ok: 'Ok',
-                    cancel: 'Cancel'
-                },
-                overlayOpacity: 0.5, // 0.5 as default
-                dismissible: true // as true as default
-            },
-            timeoption: {
-                type: 'min',
-                week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                format: 'YYYY-MM-DD HH:mm'
-            },
-            multiOption: {
-                type: 'multi-day',
-                week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                format:"YYYY-MM-DD HH:mm"
-            },
-            limit: [{
-                type: 'weekday',
-                available: [1, 2, 3, 4, 5]
-                },
-                {
-                    type: 'fromto',
-                    from: '2016-02-01',
-                    to: '2016-02-20'
-            }]
         }),
-        components: {
-            // 'date-picker': myDatepicker
-        },
         mounted(){
             this.updateTasks();
         },
@@ -325,14 +299,11 @@
                         this.pandingResponseServer = false;
                         this.groupTasks = response.data.group_tasks;
                         this.group_events = response.data.group_events;
-                        console.log(response.data.group_events);
+                        console.log(response.data.group_tasks);
                     });
             },
 
             createTask() {
-
-                console.log('creating new task....');
-
                 this.errors = null;
 
                 const constraints = this.getConstraints();
@@ -343,24 +314,27 @@
                     this.errors = errors;
                     return ;
                 }
-
                 this.sending = true;
                 // send to api this.form.post
-                /*axios.post(this.apiUrl + '/group-tasks/' + this.$route.params.groupname, this.$data.form, {
+                axios.put(this.apiUrl + '/group-tasks/' + this.$route.params.groupname, this.$data.form, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.state.currentUser.token}`
                     }
                 })
                     .then((response) => {
-                        this.sending = false;
-                        this.updatePosts();
+                        this.showSnackbar = true;
+                        this.clearForm();
+                        this.updateTasks();
                     })
                     .catch((err) => {
                         let errorMessage = err.response.data.message || err.message;
                         this.errors = err.response.data;
-                        this.sending = false ;
+
                         console.log(errorMessage);
-                    })*/
+                    })
+                    .finally(() => {
+                        this.sending = false;
+                    })
             },
             getConstraints(){
                 return {
@@ -370,6 +344,26 @@
                             minimum: 3,
                             message: 'Must be at least 3 characters long'
                         }
+                    },
+                    description: {
+                        presence: true,
+                        length: {
+                            minimum: 5,
+                            message: 'Must be at least 5 characters long'
+                        }
+                    },
+                    status: {
+                        presence: true,
+                        length: {
+                            minimum: 3,
+                            message: 'Must be at least 3 characters long'
+                        }
+                    },
+                    start_date: {
+                        presence: true,
+                    },
+                    end_date: {
+                        presence: true,
                     },
                 }
             },
@@ -435,8 +429,19 @@
                     },
                 }
             },
+
             htmlEntities(str) {
                 return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g,'&apos');
+            },
+
+            clearForm(){
+                this.form.title = '';
+                this.form.description = '';
+                this.form.status = '';
+                this.form.members = '';
+                this.form.event = '';
+                this.form.start_date = '';
+                this.form.end_date = '';
             }
         }
     }

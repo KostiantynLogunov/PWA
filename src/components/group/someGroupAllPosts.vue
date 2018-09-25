@@ -16,7 +16,7 @@
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-small-size-100">
                             <md-field>
-                                <md-textarea name="post" id="post" autocomplete="given-name" v-model="form.post" :disabled="sending" />
+                                <md-textarea name="post" id="post" autocomplete="given-post" v-model="form.post" :disabled="sending" />
                             </md-field>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                                             <div class="md-layout-item md-small-size-100">
                                                 <md-field :class="">
                                                     <label for="comment">Comment</label>
-                                                    <md-input @keyup.enter="sendComment(post.id)" name="comment" id="comment" autocomplete="given-name" v-model="formComment.comment" :disabled="sendingComment" />
+                                                    <md-input @keyup.enter="sendComment(post.id)" name="comment" id="comment" autocomplete="given-comment" v-model="formComment.comment" :disabled="sendingComment" />
                                                 </md-field>
                                             </div>
                                         </div>
@@ -183,7 +183,7 @@
             },
             updatePosts(){
                 this.pandingResponseServer = true;
-                axios.get(config.apiUrl + '/group-posts/' + this.$route.params.groupname, {
+                axios.get(config.apiUrl + '/group-all-posts/' + this.$route.params.groupname, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.state.currentUser.token}`
                     }

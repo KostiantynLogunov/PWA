@@ -174,7 +174,7 @@
                                             <div class="md-layout-item md-small-size-100">
                                                 <md-field :class="">
                                                     <label for="comment">Comment</label>
-                                                    <md-input name="comment" id="comment" @keyup.enter="sendComment(checklist.id)" autocomplete="given-name" v-model="formComment.comment" :disabled="sendingComment" />
+                                                    <md-input name="comment" id="comment" @keyup.enter="sendComment(checklist.id)" autocomplete="given-comment" v-model="formComment.comment" :disabled="sendingComment" />
                                                 </md-field>
                                             </div>
                                         </div>

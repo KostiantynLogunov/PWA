@@ -28,7 +28,7 @@
 
                                 <md-field :class="">
                                     <label for="location">Location</label>
-                                    <md-input name="location" id="location" autocomplete="given-name" v-model="event.location" :disabled="sending" />
+                                    <md-input name="location" id="location" autocomplete="given-location" v-model="event.location" :disabled="sending" />
                                 </md-field>
                             </div>
 
@@ -69,7 +69,7 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
                                         <label for="about">About</label>
-                                        <md-textarea name="about" id="about" autocomplete="given-name" v-model="event.about" :disabled="sending" />
+                                        <md-textarea name="about" id="about" autocomplete="given-about" v-model="event.about" :disabled="sending" />
                                     </md-field>
                                 </div>
                             </div>

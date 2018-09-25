@@ -19,14 +19,14 @@
                             <div class="md-layout-item md-small-size-100">
                                 <md-field :class="">
                                     <label for="title">Title</label>
-                                    <md-input name="title" id="title" autocomplete="given-name" v-model="form.title" :disabled="sending" />
+                                    <md-input name="title" id="title" autocomplete="given-title" v-model="form.title" :disabled="sending" />
                                 </md-field>
                             </div>
 
                             <div class="md-layout-item md-small-size-100">
                                 <md-field>
                                     <label for="description">Description</label>
-                                    <md-textarea name="description" id="description" autocomplete="given-name" v-model="form.description" :disabled="sending" />
+                                    <md-textarea name="description" id="description" autocomplete="given-description" v-model="form.description" :disabled="sending" />
                                 </md-field>
                             </div>
 
@@ -56,7 +56,7 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field :class="">
                                         <label for="members">Members</label>
-                                        <md-input name="members" id="members" autocomplete="given-name" v-model="form.members" :disabled="sending" />
+                                        <md-input name="members" id="members" autocomplete="given-members" v-model="form.members" :disabled="sending" />
                                     </md-field>
                                 </div>
 
@@ -163,7 +163,7 @@
                                             <div class="md-layout-item md-small-size-100">
                                                 <md-field :class="">
                                                     <label for="comment">Comment</label>
-                                                    <md-input name="comment" id="comment" @keyup.enter="sendComment(task.id)" autocomplete="given-name" v-model="formComment.comment" :disabled="sendingComment" />
+                                                    <md-input name="comment" id="comment" @keyup.enter="sendComment(task.id)" autocomplete="given-comment" v-model="formComment.comment" :disabled="sendingComment" />
                                                 </md-field>
                                             </div>
                                         </div>

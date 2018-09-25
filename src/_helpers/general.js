@@ -24,6 +24,6 @@ export function initialize(store, router) {
     });
 
     /*if (store.state.currentUser) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${store.state.currentUser.token}`;
+        axios.defaults.headers.common["Authorization"] = `Bearer ${store.getters.currentUser.token}`;
     }*/
 }

@@ -33,7 +33,7 @@
                             <div class="md-layout-item md-small-size-100">
                                 <md-field :class="">
                                     <label>Status</label>
-                                    <md-select name="status" id="status" v-model="form.status" md-dense :disabled="sending">
+                                    <md-select name="status" id="status" v-model="form.status" md-dense :disabled="sending" placeholder="Please select">
                                         <md-option value="New">New</md-option>
                                         <md-option value="In progress">In progress</md-option>
                                         <md-option value="Complated">Complated</md-option>
@@ -136,11 +136,11 @@
                         <br>
                         <div class="">
                             <span v-if="task.user.avatar">
-                                                    <img :src="task.user.avatar" alt="avatar">
-                                                </span>
+                                <img :src="task.user.avatar" alt="avatar">
+                            </span>
                             <span v-else>
-                                                    <img :src="avatarDefaultUrl" alt="">
-                                                </span>
+                                <img :src="avatarDefaultUrl" alt="">
+                            </span>
                             {{ task.user.name }}
                             <div class="md-subhead">{{ convertDate(task.created_at) | moment("from") }}</div>
                         </div>
@@ -299,7 +299,7 @@
                         this.pandingResponseServer = false;
                         this.groupTasks = response.data.group_tasks;
                         this.group_events = response.data.group_events;
-                        console.log(response.data.group_tasks);
+                        // console.log(response.data.group_tasks);
                     });
             },
 

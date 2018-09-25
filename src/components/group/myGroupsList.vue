@@ -26,7 +26,7 @@
                                 </span>
 
                                 <!--<router-link :to="`/${group.username}`">-->
-                                <router-link :to="{ name: 'someGroupPosts', params:  { groupname: group.username} }">
+                                <router-link :to="{ name: 'someGroupAllPosts', params:  { groupname: group.username} }">
                                     {{ group.name }}
                                 </router-link>
                             </span>
@@ -57,7 +57,7 @@
                                     <img :src="imgDefaultGroup" alt="default">
                                 </span>
 
-                                <router-link :to="{ name: 'someGroupPosts', params:  { groupname: group.username} }">
+                                <router-link :to="{ name: 'someGroupAllPosts', params:  { groupname: group.username} }">
                                     {{ group.name }}
                                 </router-link>
                             </span>

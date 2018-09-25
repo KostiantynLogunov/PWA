@@ -5,12 +5,14 @@ import Home from '../components/Home'
 import Login from '../components/auth/Login'
 import Activity from '../components/Activity'
 import someGroup from '../components/group/someGroup'
+import someGroupAllPosts from '../components/group/someGroupAllPosts'
 import someGroupPosts from '../components/group/someGroupPosts'
 import someGroupMembers from '../components/group/someGroupMembers'
 import someGroupEvents from '../components/group/someGroupEvents'
 import someGroupTasks from '../components/group/someGroupTasks'
 import someGroupChecklists from '../components/group/someGroupChecklists'
 import newGroup from '../components/group/newGroup'
+import newGroupEvent from '../components/group/newGroupEvent'
 import myGroups from '../components/group/myGroups'
 import myGroupsList from '../components/group/myGroupsList'
 import User from '../components/user/User'
@@ -54,9 +56,9 @@ const routes = [
         },
         children: [
             {
-                name: 'someGroupPosts',
+                name: 'someGroupAllPosts',
                 path: '',
-                component: someGroupPosts,
+                component: someGroupAllPosts,
             },
             {
                 name: 'someGroupMembers',
@@ -67,6 +69,16 @@ const routes = [
                 name: 'someGroupEvents',
                 path: 'events',
                 component: someGroupEvents,
+            },
+            {
+                name: 'newEvent',
+                path: 'new-event',
+                component: newGroupEvent,
+            },
+            {
+                name: 'someGroupPosts',
+                path: 'posts',
+                component: someGroupPosts,
             },
             {
                 name: 'someGroupTasks',

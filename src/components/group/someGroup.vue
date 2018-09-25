@@ -78,11 +78,6 @@
             <router-view></router-view>
         </md-content>
     </div>
-    <!--<div class="page-container">
-        <h1> The <span class="text-danger">{{ $route.params.groupname }}</span> group is here</h1>
-
-        <router-view></router-view>
-    </div>-->
 </template>
 
 <script>

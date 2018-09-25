@@ -1,10 +1,16 @@
 <template>
     <div class="page-container md-layout-column">
+        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
+            <span>You added a new CheckList !</span>
+            <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+        </md-snackbar>
+
         <div class="text-center" v-if="!creatingForm">
             <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create CheckList</md-button>
         </div>
         <div v-else>
             <form novalidate class="md-layout" @submit.prevent="createCheckList" >
+
                 <md-card class="md-layout-item md-size-50 md-small-size-100">
                     <md-card-header>
                         <div class="md-title">Creating CheckList</div>
@@ -13,31 +19,73 @@
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-small-size-100">
-                                <!--<md-field :class="getValidationClass('firstName')">-->
-                                <md-field :class="">
+                                <md-field>
                                     <label for="title">Title</label>
-                                    <md-input name="title" id="title" autocomplete="given-name" v-model="form.title" :disabled="sending" />
+                                    <md-input name="title" id="title" autocomplete="title" v-model="form.title" :disabled="sending" />
                                 </md-field>
                             </div>
 
                             <div class="md-layout-item md-small-size-100">
                                 <md-field>
                                     <label for="description">Description</label>
-                                    <md-textarea name="description" id="description" autocomplete="given-name" v-model="form.description" :disabled="sending" />
+                                    <md-textarea name="description" id="description" autocomplete="description" v-model="form.description" :disabled="sending" />
                                 </md-field>
+                            </div>
+
+                            <div class="text-center w-100">
+                                <div class="viewport">
+                                    <h6>To Do List</h6>
+                                    <input v-model="newTodo" :disabled="sending" />
+                                    <md-button class="md-icon-button md-list-action" @click="AddTodo(newTodo)" >
+                                        <md-icon class="md-primary" >
+                                            <i class="fas fa-plus-circle"></i>
+                                        </md-icon>
+                                    </md-button>
+
+                                    <md-list>
+                                        <md-list-item v-for="(todo, key, index) in form.todolist"
+                                                      :key="key">
+                                            <span class="w-100"
+                                                  v-on:click="todo.check = !todo.check"
+                                                  :style="todo.check ? 'text-decoration: line-through' : ''"
+                                            >
+                                                {{ todo.todo }}
+                                                </span>
+
+                                            <md-button class="md-icon-button md-list-action" @click="deleteTodo(key)">
+                                                <md-icon class="md-accent" ><i class="fas fa-times-circle"></i></md-icon>
+                                            </md-button>
+                                        </md-list-item>
+                                    </md-list>
+                                </div>
                             </div>
 
                             <div class="md-layout-item md-small-size-100">
                                 <md-field :class="">
                                     <label for="members">Members</label>
-                                    <md-input name="members" id="members" autocomplete="given-name" v-model="form.members" :disabled="sending" />
+                                    <md-input name="members" id="members" autocomplete="members" v-model="form.responsible_user" :disabled="sending" />
                                 </md-field>
                             </div>
 
                             <div class="md-layout-item md-small-size-100">
                                 <md-field :class="">
-                                    <label for="event">Target Event</label>
-                                    <md-input name="event" id="event" autocomplete="given-name" v-model="form.event" :disabled="sending" />
+                                    <label>Target Event</label>
+                                    <md-select name="event" id="event" v-model="form.target_event" md-dense :disabled="sending" placeholder="Please choose event">
+
+                                        <div v-if="group_events.length">
+                                            <div v-for="group_event in group_events">
+                                                <md-option :value="group_event.timeline.name">
+                                                    {{ group_event.timeline.name }}
+                                                </md-option>
+                                            </div>
+
+                                        </div>
+                                        <div v-else>
+                                            <md-option  value="" disabled>
+                                                Not any events
+                                            </md-option>
+                                        </div>
+                                    </md-select>
                                 </md-field>
                             </div>
                         </div>
@@ -72,12 +120,6 @@
                 <md-ripple>
                     <md-card-header>
                         <div class="md-title">
-                            <!--<span v-if="task.author.avatar_url[0]">
-                                    <img :src="avatarUrl + task.author.avatar_url[0].source" alt="avatar">
-                                </span>
-                            <span v-else>
-                                    <img :src="avatarDefaultUrl" alt="default">
-                            </span>-->
                             {{ checklist.title }}
                         </div>
                     </md-card-header>
@@ -198,9 +240,19 @@
             form: {
                 title: '',
                 description: '',
-                members: '',
-                event: '',
+                todolist: {},
+                responsible_user: '',
+                target_event: '',
             },
+            group_events: null,
+            alrDateIterator: 0,
+            newTodo: null,
+
+            showSnackbar: false,
+            position: 'center',
+            duration: 4000,
+
+
             creatingForm: false,
             checklistSaved: false,
             sending: false,
@@ -225,6 +277,21 @@
             this.updateChecklist();
         },
         methods: {
+            AddTodo(newTodo){
+                if (!newTodo) return;
+
+                this.$set(this.form.todolist,this.alrDateIterator, '');
+                let oneTodo = {
+                    todo: newTodo,
+                    check: false
+                };
+                this.form.todolist[this.alrDateIterator] = oneTodo;
+                this.alrDateIterator++;
+                this.newTodo = null;
+            },
+            deleteTodo(key){
+                this.$delete(this.form.todolist,key);
+            },
             updateChecklist(){
                 this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group-checklists/' + this.$route.params.groupname, {
@@ -236,12 +303,11 @@
                         this.pandingResponseServer = false;
                         if (response.data.group_checklist.length)
                             this.groupChecklist = response.data.group_checklist;
+                        this.group_events = response.data.group_events;
                     });
             },
 
             createCheckList() {
-
-                console.log('creating new checklist....');
 
                 this.errors = null;
 
@@ -254,23 +320,29 @@
                     return ;
                 }
 
+                this.pandingResponseServer = true;
                 this.sending = true;
                 // send to api this.form.post
-                /*axios.post(this.apiUrl + '/group-tasks/' + this.$route.params.groupname, this.$data.form, {
+                axios.post(this.apiUrl + '/group-checklists/' + this.$route.params.groupname, this.$data.form, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.state.currentUser.token}`
                     }
                 })
                     .then((response) => {
-                        this.sending = false;
-                        this.updatePosts();
+                        this.showSnackbar = true;
+                        this.creatingForm = false;
+                        this.clearForm();
+                        this.updateChecklist();
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;
-                        this.sending = false ;
-                        console.log(errorMessage);
-                    })*/
+                        // let errorMessage = err.response.message || err.message;
+                        // this.errors = err.response.data;
+                        console.log(err);
+                    })
+                    .finally(() => {
+                        this.sending = false;
+                        this.pandingResponseServer = false;
+                    })
             },
 
             sendComment(checklist_id) {
@@ -297,14 +369,16 @@
                 })
                     .then((response) => {
                         this.formComment.comment = '';
-                        this.sendingComment = false;
+
                         this.updateChecklist();
                     })
                     .catch((err) => {
                         let errorMessage = err.response.data.message || err.message;
                         this.errors = err.response.data;
-                        this.sendingComment = false ;
                         console.log(errorMessage);
+                    })
+                    .finally(() => {
+                        this.sendingComment = false;
                     });
             },
 
@@ -316,6 +390,13 @@
                         length: {
                             minimum: 3,
                             message: 'Must be at least 3 characters long'
+                        }
+                    },
+                    description: {
+                        presence: true,
+                        length: {
+                            minimum: 10,
+                            message: 'Must be at least 10 characters long'
                         }
                     },
                 }
@@ -349,6 +430,14 @@
 
             htmlEntities(str) {
                 return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g,'&apos');
+            },
+
+            clearForm(){
+                this.form.title = '';
+                this.form.description = '';
+                this.form.todolist = {};
+                this.form.responsible_user = '';
+                this.form.target_event = '';
             }
 
         }
@@ -404,6 +493,15 @@
     @keyframes slideOut {
         from {transform: translateX(0px)}
         to {transform: translateX(-2000px)}
+    }
+
+    .viewport {
+        width: 220px;
+        max-width: 100%;
+        display: inline-block;
+        vertical-align: top;
+        overflow: auto;
+        border: 1px solid rgba(#000, .12);
     }
 
 </style>

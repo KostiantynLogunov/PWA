@@ -62,9 +62,6 @@
 
                                             <i class="fas fa-times-circle"><md-tooltip md-direction="bottom">Close</md-tooltip></i>
                                         </div>
-
-
-
                                 </div>
                                 <div class="text-center">
                                     <md-button type="button" class="md-primary" @click="AddAltDate">Add new alternative date</md-button>

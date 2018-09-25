@@ -8,6 +8,8 @@ import VueMaterial from 'vue-material'
 import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
 
+
+
 Vue.use(VueMoment, {
     moment,
 });
@@ -33,7 +35,13 @@ Vue.config.productionTip = false;
 import {initialize} from  './_helpers/general'
 initialize(store, router);
 
+import FullCalendar from 'vue-full-calendar'
+Vue.use(FullCalendar)
 
+try {
+    window.$ = window.jQuery = require('jquery');
+
+} catch (e) {}
 
 
 new Vue({

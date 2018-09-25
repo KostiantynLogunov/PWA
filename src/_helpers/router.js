@@ -11,6 +11,7 @@ import someGroupMembers from '../components/group/someGroupMembers'
 import someGroupEvents from '../components/group/someGroupEvents'
 import someGroupTasks from '../components/group/someGroupTasks'
 import someGroupChecklists from '../components/group/someGroupChecklists'
+import someGroupDutyRoster from '../components/group/someGroupDutyRoster'
 import newGroup from '../components/group/newGroup'
 import newGroupEvent from '../components/group/newGroupEvent'
 import myGroups from '../components/group/myGroups'
@@ -89,6 +90,11 @@ const routes = [
                 name: 'someGroupChecklists',
                 path: 'checklists',
                 component: someGroupChecklists,
+            },
+            {
+                name: 'someGroupDutyRoster',
+                path: 'duty-roster',
+                component: someGroupDutyRoster,
             },
         ]
     },

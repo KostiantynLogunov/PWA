@@ -37,7 +37,7 @@
                     <span class="md-list-item-text">Checklists</span>
                 </md-list-item>
 
-                <md-list-item to="#" >
+                <md-list-item :to="{ name: 'someGroupDutyRoster' }"  >
                     <md-icon><i class="fas fa-calendar-alt"></i></md-icon>
                     <span class="md-list-item-text">Duty roster</span>
                 </md-list-item>

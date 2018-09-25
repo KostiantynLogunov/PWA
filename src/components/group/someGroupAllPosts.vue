@@ -183,7 +183,7 @@
             },
             updatePosts(){
                 this.pandingResponseServer = true;
-                axios.get(config.apiUrl + '/group-all-posts/' + this.$route.params.groupname, {
+                axios.get(config.apiUrl + '/group-posts/' + this.$route.params.groupname, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.state.currentUser.token}`
                     }

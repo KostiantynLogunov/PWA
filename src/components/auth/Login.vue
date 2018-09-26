@@ -10,13 +10,13 @@
 
                     <md-field >
                         <label for="email">Email</label>
-                        <md-input type="email" name="email" id="email" autocomplete="email" v-model="form.email" :disabled="sending" />
+                        <md-input type="email" name="email" id="email" v-model="form.email" :disabled="sending" />
                     </md-field>
 
                     <div class="md-layout-item md-small-size-100">
                         <md-field >
                             <label for="password">Password</label>
-                            <md-input type="password" name="password" id="password" autocomplete="given-name" v-model="form.password" :disabled="sending" />
+                            <md-input type="password" name="password" id="password" v-model="form.password" :disabled="sending" />
                         </md-field>
                     </div>
                 </md-card-content>

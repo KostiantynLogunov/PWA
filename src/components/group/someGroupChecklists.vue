@@ -23,40 +23,39 @@
                                     <label for="title">Title</label>
                                     <md-input name="title" id="title" autocomplete="title" v-model="form.title" :disabled="sending" />
                                 </md-field>
-                            </div>
 
-                            <div class="md-layout-item md-small-size-100">
                                 <md-field>
                                     <label for="description">Description</label>
                                     <md-textarea name="description" id="description" autocomplete="description" v-model="form.description" :disabled="sending" />
                                 </md-field>
-                            </div>
 
-                            <div class="text-center w-100">
-                                <div class="viewport">
-                                    <h6>To Do List</h6>
-                                    <input v-model="newTodo" :disabled="sending" />
-                                    <md-button class="md-icon-button md-list-action" @click="AddTodo(newTodo)" >
-                                        <md-icon class="md-primary" >
-                                            <i class="fas fa-plus-circle"></i>
-                                        </md-icon>
-                                    </md-button>
 
-                                    <md-list>
-                                        <md-list-item v-for="(todo, key, index) in form.todolist"
-                                                      :key="key">
-                                            <span class="w-100"
-                                                  v-on:click="todo.check = !todo.check"
-                                                  :style="todo.check ? 'text-decoration: line-through' : ''"
-                                            >
-                                                {{ todo.todo }}
-                                                </span>
+                                <div class="text-center w-100">
+                                    <div class="viewport">
+                                        <h6>To Do List</h6>
+                                        <input v-model="newTodo" :disabled="sending" />
+                                        <md-button class="md-icon-button md-list-action" @click="AddTodo(newTodo)" >
+                                            <md-icon class="md-primary" >
+                                                <i class="fas fa-plus-circle"></i>
+                                            </md-icon>
+                                        </md-button>
 
-                                            <md-button class="md-icon-button md-list-action" @click="deleteTodo(key)">
-                                                <md-icon class="md-accent" ><i class="fas fa-times-circle"></i></md-icon>
-                                            </md-button>
-                                        </md-list-item>
-                                    </md-list>
+                                        <md-list>
+                                            <md-list-item v-for="(todo, key, index) in form.todolist"
+                                                          :key="key">
+                                                <span class="w-100"
+                                                      v-on:click="todo.check = !todo.check"
+                                                      :style="todo.check ? 'text-decoration: line-through' : ''"
+                                                >
+                                                    {{ todo.todo }}
+                                                    </span>
+
+                                                <md-button class="md-icon-button md-list-action" @click="deleteTodo(key)">
+                                                    <md-icon class="md-accent" ><i class="fas fa-times-circle"></i></md-icon>
+                                                </md-button>
+                                            </md-list-item>
+                                        </md-list>
+                                    </div>
                                 </div>
                             </div>
 
@@ -65,9 +64,7 @@
                                     <label for="members">Members</label>
                                     <md-input name="members" id="members" autocomplete="members" v-model="form.responsible_user" :disabled="sending" />
                                 </md-field>
-                            </div>
 
-                            <div class="md-layout-item md-small-size-100">
                                 <md-field :class="">
                                     <label>Target Event</label>
                                     <md-select name="event" id="event" v-model="form.target_event" md-dense :disabled="sending" placeholder="Please choose event">

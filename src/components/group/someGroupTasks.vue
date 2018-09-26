@@ -21,25 +21,25 @@
                                     <label for="title">Title</label>
                                     <md-input name="title" id="title" autocomplete="given-title" v-model="form.title" :disabled="sending" />
                                 </md-field>
-                            </div>
 
-                            <div class="md-layout-item md-small-size-100">
                                 <md-field>
                                     <label for="description">Description</label>
                                     <md-textarea name="description" id="description" autocomplete="given-description" v-model="form.description" :disabled="sending" />
                                 </md-field>
-                            </div>
 
-                            <div class="md-layout-item md-small-size-100">
                                 <md-field :class="">
                                     <label>Status</label>
-                                    <md-select name="status" id="status" v-model="form.status" md-dense :disabled="sending" placeholder="Please select">
+                                    <md-select name="status" id="status" v-model="form.status" md-dense :disabled="sending" placeholder="Please select status">
                                         <md-option value="New">New</md-option>
                                         <md-option value="In progress">In progress</md-option>
                                         <md-option value="Complated">Complated</md-option>
                                         <md-option value="Postponed">Postponed</md-option>
                                     </md-select>
                                 </md-field>
+                            </div>
+
+                            <div class="md-layout-item md-small-size-100">
+
 
                                     <div class="md-layout md-gutter">
                                             <div class="md-layout-item md-small-size-50">

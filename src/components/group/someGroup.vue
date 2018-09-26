@@ -12,63 +12,63 @@
             </md-toolbar>
 
             <md-list>
-                <!--<md-list-item :to="{ name: 'someGroupMembers' }">-->
-                <md-list-item @click.prevent="goToLink('someGroupMembers')">
+                <md-list-item :to="{ name: 'someGroupMembers' }" @click="closeSideMenu">
+                <!--<md-list-item @click.prevent="goToLink('someGroupMembers')">-->
                     <md-icon><i class="fas fa-users"></i></md-icon>
                     <span class="md-list-item-text">Members</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupEvents')">
+                <md-list-item :to="{ name: 'someGroupEvents' }"  @click="closeSideMenu">
                     <md-icon><i class="far fa-calendar-alt"></i></md-icon>
                     <span class="md-list-item-text">Events</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupPosts')">
+                <md-list-item :to="{ name: 'someGroupPosts' }"  @click="closeSideMenu">
                     <md-icon><i class="far fa-clipboard"></i></md-icon>
                     <span class="md-list-item-text">Posts</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupTasks')">
+                <md-list-item :to="{ name: 'someGroupTasks' }"   @click="closeSideMenu">
                     <md-icon><i class="fas fa-thumbtack"></i></md-icon>
                     <span class="md-list-item-text">Tasks</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupChecklists')">
+                <md-list-item :to="{ name: 'someGroupChecklists' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-tasks"></i></md-icon>
                     <span class="md-list-item-text">Checklists</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupDutyRoster')">
+                <md-list-item :to="{ name: 'someGroupDutyRoster' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-calendar-alt"></i></md-icon>
                     <span class="md-list-item-text">Duty roster</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupSharing')">
+                <md-list-item  :to="{ name: 'someGroupSharing' }"  @click="closeSideMenu">
                     <md-icon><i class="far fa-share-square"></i></md-icon>
                     <span class="md-list-item-text">Sharing</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupDocuments')">
+                <md-list-item  :to="{ name: 'someGroupDocuments' }"  @click="closeSideMenu">
                     <md-icon><i class="far fa-file-alt"></i></md-icon>
                     <span class="md-list-item-text">Documents</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupServices')">
+                <md-list-item  :to="{ name: 'someGroupServices' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-file-signature"></i></md-icon>
                     <span class="md-list-item-text">Helping services</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupNotes')">
+                <md-list-item  :to="{ name: 'someGroupNotes' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-book-open"></i></md-icon>
                     <span class="md-list-item-text">Notes</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupSettings')">
+                <md-list-item  :to="{ name: 'someGroupSettings' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-cogs"></i></md-icon>
                     <span class="md-list-item-text">Group settings</span>
                 </md-list-item>
 
-                <md-list-item @click.prevent="goToLink('someGroupExit')">
+                <md-list-item  :to="{ name: 'someGroupExit' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-sign-out-alt"></i></md-icon>
                     <span class="md-list-item-text">Exit group</span>
                 </md-list-item>
@@ -90,9 +90,9 @@
             }
         },
         methods: {
-            goToLink(link) {
+            closeSideMenu() {
                 this.showSidepanel = false;
-                this.$router.push({ name: link });
+                // this.$router.push({ name: link });
             },
 
         }

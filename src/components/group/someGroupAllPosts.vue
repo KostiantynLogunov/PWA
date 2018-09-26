@@ -38,7 +38,7 @@
                 </md-card-actions>
             </md-card>
 
-            <md-snackbar :md-active.sync="postSaved">The user post was saved with success!</md-snackbar>
+            <md-snackbar :md-active.sync="postSaved">The post was saved with success!</md-snackbar>
         </form>
         <br>
         <div class="alert alert-warning" v-if="groupPosts.length == 0">No posts were found...</div>

@@ -2,7 +2,7 @@
     <div class="page-container md-layout-column">
         <br>
         <md-tabs  md-alignment="centered">
-            <md-tab id="tab-home" md-label="All" style="min-height: 120px;">
+            <md-tab :key="key" id="tab-home" md-label="All" style="min-height: 120px;">
                 <md-list class="md-triple-line" v-if="group_events">
                     <md-list-item  v-for="event in group_events" :key="event.id">
                         <md-avatar v-if="event.user.avatar">
@@ -64,7 +64,7 @@
                         <span class="md-primary">{{ event.created_at }}</span>
                         <!--</md-button>-->
                     </md-list-item>
-                    {{ updateRander() }}
+                    {{ updateRender()}}
                 </md-list>
                 <md-list v-else>
                     <div class="alert alert-warning">No events added yet!</div>
@@ -89,6 +89,7 @@
         name: "someGroupEvents",
         data() {
             return {
+                key: 0,
                 group_events: [],
                 ongoing_events: [],
                 upcoming_events: [],
@@ -120,7 +121,7 @@
 
         },
         computed:{
-            updateRander(){
+            updateRender(){
                 this.$forceUpdate;
             }
         }

@@ -221,7 +221,6 @@
 
 <script>
 
-
     import validate from 'validate.js'
     import axios from 'axios'
     import {config} from '../../_services/config'

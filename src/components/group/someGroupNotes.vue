@@ -1,10 +1,196 @@
 <template>
-    <h1>Here is Notes</h1>
+    <div class="page-container md-layout-column">
+        <div class="text-center" v-if="!creatingForm">
+            <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create Note</md-button>
+        </div>
+        <div v-else>
+            <form novalidate class="md-layout" @submit.prevent="createNote" >
+                <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
+                    <span>You added new note successful !</span>
+                    <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+                </md-snackbar>
+                <md-card class="md-layout-item md-size-50 md-small-size-100">
+                    <md-card-header>
+                        <div class="md-title">Creating Note</div>
+                    </md-card-header>
+
+                    <md-card-content>
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item md-small-size-100">
+                                <md-field :class="">
+                                    <label for="title">Title</label>
+                                    <md-input name="title" id="title" v-model="form.title" :disabled="sending" />
+                                </md-field>
+
+                                <md-field>
+                                    <label for="description">Description</label>
+                                    <md-textarea name="description" id="description" v-model="form.description" :disabled="sending" />
+                                </md-field>
+
+                                <md-field>
+                                    <label for="tag">Tags:</label>
+                                    <md-textarea name="tag" id="tag" v-model="form.tag" :disabled="sending" />
+                                </md-field>
+                            </div>
+                        </div>
+                        <div class="errors" v-if="errors">
+                            <ul>
+                                <li v-for="(fieldsError, fieldName) in errors" :key="fieldName">
+                                    {{ fieldsError.join('\n') }}
+                                </li>
+                            </ul>
+                        </div>
+                    </md-card-content>
+                    <md-progress-bar md-mode="indeterminate" v-if="sending" />
+                    <md-card-actions>
+                        <md-button type="button" class="md-accent" @click="creatingForm = false"><i class="fas fa-minus-circle"></i></md-button>
+                        <md-button type="submit" class="md-primary md-raised" :disabled="sending"><i class="fas fa-plus-circle"></i></md-button>
+                    </md-card-actions>
+                </md-card>
+                <md-snackbar :md-active.sync="noteSaved">The user saved note successfull!</md-snackbar>
+            </form>
+        </div>
+        <br>
+        <div class="alert alert-warning" v-if="groupNotes.length == 0">No notes were found...</div>
+        <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
+        <div v-for="note in groupNotes" :key="note.id">
+            <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
+                <md-ripple>
+
+                    <md-card-header>
+                        <div class="md-title">
+                            {{ note.title }}
+                        </div>
+                        <div class="md-subhead">
+                            {{ convertDate(note.created_at) | moment("from") }}
+                        </div>
+                    </md-card-header>
+
+                    <md-card-content>
+                        {{ note.description }}
+                        <hr>
+                        <i class="fas fa-tags"></i>
+                        {{ note.tag }}
+                    </md-card-content>
+
+                    <md-card-actions>
+                        <md-button class="md-primary"><i class="far fa-edit"></i></md-button>
+                        <md-button class="md-accent"><i class="far fa-trash-alt"></i></md-button>
+                    </md-card-actions>
+
+                </md-ripple>
+            </md-card>
+            <br>
+        </div>
+    </div>
 </template>
 
 <script>
+    import validate from 'validate.js'
+    import axios from 'axios'
+    import {config} from '../../_services/config'
+
     export default {
-        name: "someGroupNotes"
+        name: "someGroupNotes",
+        data: () => ({
+            form:{
+                title: '',
+                description: '',
+                tag: '',
+            },
+            noteSaved: false,
+            sending: false,
+            errors: null,
+            groupNotes: false,
+            creatingForm: false,
+
+            showSnackbarNote: false,
+            position: 'center',
+            duration: 4000,
+            pandingResponseServer: false,
+            showSnackbar: false,
+        }),
+        mounted(){
+            this.updateNotes();
+        },
+        methods: {
+            updateNotes(){
+                this.pandingResponseServer = true;
+                axios.get(config.apiUrl + '/group_notes/' + this.$route.params.groupname, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.groupNotes = response.data.notes;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    })
+                    .finally( () => {
+                        this.pandingResponseServer = false;
+                    });
+            },
+
+            createNote() {
+
+                console.log('Creating note....');
+                return;
+
+                /*this.errors = null;
+
+                const constraints = this.getConstraints();
+
+                const errors = validate(this.$data.form, constraints);
+
+                if (errors) {
+                    this.errors = errors;
+                    return ;
+                }
+
+                this.sending = true;
+                // send to api this.form.post
+                axios.post(this.apiUrl + '/group-posts/' + this.$route.params.groupname, this.$data.form, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.state.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.form.post = '';
+                        this.sending = false;
+                        this.showSnackbarPost = true;
+                        this.updatePosts();
+                    })
+                    .catch((err) => {
+                        let errorMessage = err.response.data.message || err.message;
+                        this.errors = err.response.data;
+                        this.sending = false ;
+                        console.log(errorMessage);
+                    })*/
+            },
+
+            getConstraints(){
+                return {
+                    post: {
+                        presence: true,
+                        length: {
+                            minimum: 5,
+                            message: 'Must be at least 5 characters long'
+                        }
+                    },
+                }
+            },
+
+            convertDate(datetimeString) {
+                let utcTZ = this.$moment.tz(datetimeString, 'UTC').format();
+                let currentTZ = this.$moment(utcTZ.valueOf());
+                return currentTZ;
+            },
+
+            htmlEntities(str) {
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g,'&apos');
+            }
+        }
     }
 </script>
 

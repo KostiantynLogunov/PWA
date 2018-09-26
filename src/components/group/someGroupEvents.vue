@@ -64,11 +64,19 @@
                         <span class="md-primary">{{ event.created_at }}</span>
                         <!--</md-button>-->
                     </md-list-item>
+                    {{ updateRander() }}
                 </md-list>
                 <md-list v-else>
                     <div class="alert alert-warning">No events added yet!</div>
                 </md-list>
             </md-tab>
+
+            <md-tab id="tab-new" md-label="New">
+                <div class="text-center">
+                    <md-button type="button" class="md-raised md-primary" @click="CreateEvent">Create event</md-button>
+                </div>
+            </md-tab>
+
         </md-tabs>
     </div>
 </template>
@@ -90,6 +98,7 @@
         },
         created() {
             this.getEvents();
+
         },
         methods: {
             getEvents(){
@@ -104,6 +113,16 @@
                         this.upcoming_events = response.data.upcoming_events;
                     });
             },
+
+            CreateEvent(){
+                this.$router.push({ name: 'newEvent'})
+            },
+
+        },
+        computed:{
+            updateRander(){
+                this.$forceUpdate;
+            }
         }
     }
 </script>

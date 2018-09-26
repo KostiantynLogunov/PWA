@@ -21,12 +21,12 @@
                 <md-toolbar class="md-transparent" md-elevation="0">Main Menu:</md-toolbar>
 
                 <md-list>
-                    <md-list-item to="/">
+                    <md-list-item @click.prevent="goHome">
                         <md-icon>move_to_inbox</md-icon>
                         <span class="md-list-item-text">Home page</span>
                     </md-list-item>
 
-                    <md-list-item to="/groups" v-if="currentUser">
+                    <md-list-item @click.prevent="goGroups" v-if="currentUser">
                         <md-icon><i class="fas fa-users"></i></md-icon>
                         <span class="md-list-item-text">Groups</span>
                     </md-list-item>
@@ -47,18 +47,6 @@
             </md-app-drawer>
 
             <md-app-content  style="background: #EFF3F6" >
-
-
-                <!--<div class="jumbotron">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-6 offset-sm-3">
-                                &lt;!&ndash;<div v-if="alert.message" :class="`alert ${alert.type}`">{{alert.message}}</div>&ndash;&gt;
-
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
 
                 <router-view></router-view>
 
@@ -90,6 +78,15 @@
                 this.$store.commit('logout');
                 this.$router.push('/login');
                 this.menuVisible = false;
+            },
+            goGroups() {
+                this.menuVisible = false;
+                this.$router.push('/groups');
+
+            },
+            goHome() {
+                this.menuVisible = false;
+                this.$router.push('/');
             }
         }
     }
@@ -104,10 +101,10 @@
         max-width: calc(100vw - 125px);
     }
     md-content {
-        padding: 16px;
+        /*padding: 16px;*/
     }
-    body{
-        height: 300px;
+    .md-app{
+        min-height: 100vh;
     }
 </style>
 

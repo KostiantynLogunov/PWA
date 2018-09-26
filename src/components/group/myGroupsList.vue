@@ -165,14 +165,14 @@
 <style scoped>
     .md-layout-item {
         height: 80%;
-        margin: 10px;
+        /*margin: 10px;*/
         min-width: 100px;
     }
     .header{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 20px;
+        /*padding: 20px;*/
         flex-wrap: wrap;
     }
     li{

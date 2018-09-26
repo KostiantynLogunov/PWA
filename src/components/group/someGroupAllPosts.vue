@@ -350,8 +350,8 @@
         list-style: none;
     }
     md-card{
-        margin: 20px;
-        padding: 20px;
+        /*margin: 20px;*/
+        /*padding: 20px;*/
     }
     img{
         height: 40px;

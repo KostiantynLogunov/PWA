@@ -95,6 +95,7 @@
                 upcoming_events: [],
                 sending: false,
                 avatarDefaultUrl: config.avatarDefaultUrl,
+                errors: false,
             }
         },
         created() {
@@ -112,6 +113,10 @@
                         this.group_events = response.data.group_events;
                         this.ongoing_events = response.data.ongoing_events;
                         this.upcoming_events = response.data.upcoming_events;
+                    })
+                    .catch((err) => {
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     });
             },
 

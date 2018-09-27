@@ -8,7 +8,9 @@ import VueMaterial from 'vue-material'
 import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
 
+import VueClipboard from 'vue-clipboard2'
 
+Vue.use(VueClipboard);
 
 Vue.use(VueMoment, {
     moment,

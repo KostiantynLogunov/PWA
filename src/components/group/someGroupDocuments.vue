@@ -3,7 +3,7 @@
         <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
     </div>
     <div class="md-layout" v-else>
-        <md-table v-model="documents" md-sort="name" md-sort-order="asc" md-card md-fixed-header>
+        <md-table v-model="documents" md-sort="name" md-sort-order="asc" md-card >
             <md-table-toolbar>
                 <h1 class="md-title">Documents</h1>
             </md-table-toolbar>
@@ -81,7 +81,8 @@
                         this.groupDocuments = group_documents;
                     })
                     .catch((err) => {
-                        console.log(err);
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
                     .finally( () => {
                         this.pandingResponseServer = false;
@@ -96,5 +97,9 @@
 </script>
 
 <style scoped>
+
+    .md-table{
+        overflow: auto;
+    }
 
 </style>

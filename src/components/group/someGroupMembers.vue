@@ -68,7 +68,8 @@
                 admins: [],
                 sending: false,
                 avatarUrl: config.avatarUrl,
-                avatarDefaultUrl: config.avatarDefaultUrl
+                avatarDefaultUrl: config.avatarDefaultUrl,
+                errors: false
             }
         },
         mounted() {
@@ -88,6 +89,10 @@
                     .then((response) => {
                         this.members = response.data.group_members;
                         // console.log(this.members);
+                    })
+                    .catch((err) => {
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     });
             },
             getGroupAdmins(){
@@ -99,6 +104,10 @@
                     .then((response) => {
                         this.admins = response.data.group_admins;
                         // console.log(this.members);
+                    })
+                    .catch((err) => {
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     });
             }
         }

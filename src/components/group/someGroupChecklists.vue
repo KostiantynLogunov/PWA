@@ -301,6 +301,10 @@
                         if (response.data.group_checklist.length)
                             this.groupChecklist = response.data.group_checklist;
                         this.group_events = response.data.group_events;
+                    })
+                    .catch((err) => {
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     });
             },
 
@@ -332,9 +336,8 @@
                         this.updateChecklist();
                     })
                     .catch((err) => {
-                        // let errorMessage = err.response.message || err.message;
-                        // this.errors = err.response.data;
-                        console.log(err);
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
                     .finally(() => {
                         this.sending = false;
@@ -370,9 +373,8 @@
                         this.updateChecklist();
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;
-                        console.log(errorMessage);
+                        this.errorsComment = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errorsComment);
                     })
                     .finally(() => {
                         this.sendingComment = false;

@@ -104,6 +104,7 @@
                 showSidepanel: false,
                 showConfirm: false,
                 pandingResponseServer: false,
+                errors: false
             }
         },
         methods: {
@@ -125,9 +126,8 @@
                         this.$router.push({name: 'myGroupsList'})
                     })
                     .catch((err) => {
-                        /*let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;*/
-                        console.log(errorMessage);
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
                     .finally(() => {
                         this.pandingResponseServer = false;

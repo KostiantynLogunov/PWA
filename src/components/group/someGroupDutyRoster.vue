@@ -96,7 +96,8 @@
                         // console.log(response.data.group_tasks);
                     })
                     .catch((err) => {
-                        console.log(err);
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
                     .finally( () => {
                         this.pandingResponseServer = false;

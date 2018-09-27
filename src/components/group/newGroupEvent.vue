@@ -182,8 +182,8 @@
                         this.$router.push({ name: 'myGroupsList'});
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
                     .finally(() => {
                         this.sending = false;

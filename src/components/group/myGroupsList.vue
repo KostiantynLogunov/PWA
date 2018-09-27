@@ -96,7 +96,8 @@
                 imgUrl: config.imgUrl,
                 imgDefaultGroup: config.imgDefaultGroup,
                 apiUrl: config.apiUrl,
-                pandingResponseServer: false
+                pandingResponseServer: false,
+                errors: false,
             }
         },
         methods: {
@@ -118,15 +119,14 @@
                     .then((response) => {
                         this.groupDelete.group_id = false;
                         this.$store.dispatch('getGroups');
-                        this.pandding = true;
                     })
                     .catch((err) => {
-                        this.groupDelete.group_id = true;
-                        let errorMessage = err.response.data.message || err.message;
-                        // this.errors = err.response.data;
-                        this.pandding = false ;
-                        console.log(errorMessage);
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
+                    .finally(() => {
+                        this.pandding = true;
+                    });
 
             },
             pushToNewGroup() {
@@ -140,6 +140,10 @@
                 })
                     .then((response) => {
                         this.$store.dispatch('getGroups')
+                    })
+                    .catch((err) => {
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     });
             }
         },

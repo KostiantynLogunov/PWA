@@ -301,10 +301,8 @@
                         // console.log(response.data.group_tasks);
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;
-
-                        console.log(errorMessage);
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
                     .finally(() => {
                         this.pandingResponseServer = false;
@@ -336,10 +334,8 @@
                         this.updateTasks();
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;
-
-                        console.log(errorMessage);
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
                     .finally(() => {
                         this.sending = false;
@@ -402,15 +398,15 @@
                 })
                     .then((response) => {
                         this.formComment.comment = '';
-                        this.sendingComment = false;
                         this.updateTasks();
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;
-                        this.sendingComment = false ;
-                        console.log(errorMessage);
-                    });
+                        this.errorsComment = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errorsComment);
+                    })
+                    .finally(() => {
+                        this.sendingComment = false;
+                });
             },
 
             turnComment(task_id) {

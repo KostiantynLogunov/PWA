@@ -1,7 +1,13 @@
 <template>
     <div class="page-container md-layout-column">
         <div class="text-center" v-if="!creatingForm">
-            <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create Note</md-button>
+            <md-empty-state
+                    md-icon="devices_other"
+                    md-label="Create your Note"
+                    md-description="Creating Note, you'll be able to upload your design and collaborate with people.">
+                <md-button class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create your Note</md-button>
+            </md-empty-state>
+
         </div>
         <div v-else>
             <form novalidate class="md-layout" @submit.prevent="createNote" >
@@ -125,7 +131,8 @@
                         this.groupNotes = response.data.notes;
                     })
                     .catch((err) => {
-                        console.log(err);
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
                     .finally( () => {
                         this.pandingResponseServer = false;
@@ -157,16 +164,17 @@
                 })
                     .then((response) => {
                         this.form.post = '';
-                        this.sending = false;
                         this.showSnackbarPost = true;
                         this.updatePosts();
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;
-                        this.sending = false ;
-                        console.log(errorMessage);
-                    })*/
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
+                    })
+                    .finally( () => {
+                        this.sending = false;
+                    });
+                    */
             },
 
             getConstraints(){

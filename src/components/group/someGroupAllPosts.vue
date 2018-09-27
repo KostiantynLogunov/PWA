@@ -191,6 +191,10 @@
                     .then((response) => {
                         this.pandingResponseServer = false;
                         this.groupPosts = response.data.groupPosts;
+                    })
+                    .catch((err) => {
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     });
             },
 
@@ -216,16 +220,16 @@
                 })
                     .then((response) => {
                         this.form.post = '';
-                        this.sending = false;
                         this.showSnackbarPost = true;
                         this.updatePosts();
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;
-                        this.sending = false ;
-                        console.log(errorMessage);
+                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errors);
                     })
+                    .finally(() => {
+                        this.sending = false;
+                    });
             },
 
             getConstraints(){
@@ -262,9 +266,8 @@
                         console.log(response);
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        // this.liking = false ;
-                        console.log(errorMessage);
+                        this.errorsComment = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errorsComment);
                     })
             },
 
@@ -306,14 +309,14 @@
                 })
                     .then((response) => {
                         this.formComment.comment = '';
-                        this.sendingComment = false;
                         this.updatePosts();
                     })
                     .catch((err) => {
-                        let errorMessage = err.response.data.message || err.message;
-                        this.errors = err.response.data;
-                        this.sendingComment = false ;
-                        console.log(errorMessage);
+                        this.errorsComment = err.response.data.message || err.response.data ||  err.message || err.data;
+                        console.log(this.errorsComment);
+                    })
+                    .finally( () => {
+                        this.sendingComment = false;
                     });
             },
 

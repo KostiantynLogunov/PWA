@@ -295,10 +295,20 @@
                     }
                 })
                     .then((response) => {
-                        this.pandingResponseServer = false;
+
                         this.groupTasks = response.data.group_tasks;
                         this.group_events = response.data.group_events;
                         // console.log(response.data.group_tasks);
+                    })
+                    .catch((err) => {
+                        let errorMessage = err.response.data.message || err.message;
+                        this.errors = err.response.data;
+
+                        console.log(errorMessage);
+                    })
+                    .finally(() => {
+                        this.pandingResponseServer = false;
+                        // this.sending = false;
                     });
             },
 
@@ -333,7 +343,7 @@
                     })
                     .finally(() => {
                         this.sending = false;
-                    })
+                    });
             },
             getConstraints(){
                 return {

@@ -68,32 +68,71 @@
                     <span class="md-list-item-text">Group settings</span>
                 </md-list-item>
 
-                <md-list-item  :to="{ name: 'someGroupExit' }"  @click="closeSideMenu">
+                <md-list-item    @click="showConfirm = true">
                     <md-icon><i class="fas fa-sign-out-alt"></i></md-icon>
-                    <span class="md-list-item-text">Exit group</span>
+                    <span class="md-list-item-text">Exit group
+                        <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
+                    </span>
                 </md-list-item>
             </md-list>
         </md-drawer>
 
+
+
         <md-content>
             <router-view></router-view>
         </md-content>
+        <md-dialog-confirm
+                :md-active.sync="showConfirm"
+                md-title="Are you sure you want to exit from this group?"
+                md-content="if you confirm you will leave this group."
+                md-confirm-text="Agree"
+                md-cancel-text="Disagree"
+                @md-cancel="showConfirm = false"
+                @md-confirm="unjoin" />
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
+    import {config} from '../../_services/config'
+
     export default {
         name: "someGroup",
         data(){
             return {
-                showSidepanel: false
+                showSidepanel: false,
+                showConfirm: false,
+                pandingResponseServer: false,
             }
         },
         methods: {
             closeSideMenu() {
                 this.showSidepanel = false;
-                // this.$router.push({ name: link });
             },
+            unjoin() {
+                this.showConfirm = false;
+
+                this.pandingResponseServer = true;
+
+                axios.delete(config.apiUrl + '/group-unjoin/' + this.$route.params.groupname, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.showSidepanel = false;
+                        this.$router.push({name: 'myGroupsList'})
+                    })
+                    .catch((err) => {
+                        /*let errorMessage = err.response.data.message || err.message;
+                        this.errors = err.response.data;*/
+                        console.log(errorMessage);
+                    })
+                    .finally(() => {
+                        this.pandingResponseServer = false;
+                    });
+            }
 
         }
     }

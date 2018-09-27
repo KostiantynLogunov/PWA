@@ -17,7 +17,6 @@ import someGroupDocuments from '../components/group/someGroupDocuments'
 import someGroupServices from '../components/group/someGroupServices'
 import someGroupNotes from '../components/group/someGroupNotes'
 import someGroupSettings from '../components/group/someGroupSettings'
-import someGroupExit from '../components/group/someGroupExit'
 import newGroup from '../components/group/newGroup'
 import newGroupEvent from '../components/group/newGroupEvent'
 import myGroups from '../components/group/myGroups'
@@ -126,11 +125,6 @@ const routes = [
                 name: 'someGroupSettings',
                 path: 'settings',
                 component: someGroupSettings,
-            },
-            {
-                name: 'someGroupExit',
-                path: 'exit',
-                component: someGroupExit,
             },
         ]
     },

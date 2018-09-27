@@ -1,5 +1,5 @@
 <template>
-    <h1>Here is Settings</h1>
+    <h1>Here are Settings your groups...</h1>
 </template>
 
 <script>

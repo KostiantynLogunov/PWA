@@ -7,14 +7,10 @@
                     md-description="Creating Note, you'll be able to upload your design and collaborate with people.">
                 <md-button class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create your Note</md-button>
             </md-empty-state>
-
         </div>
+
         <div v-else>
             <form novalidate class="md-layout" @submit.prevent="createNote" >
-                <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
-                    <span>You added new note successful !</span>
-                    <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
-                </md-snackbar>
                 <md-card class="md-layout-item md-size-50 md-small-size-100">
                     <md-card-header>
                         <div class="md-title">Creating Note</div>
@@ -53,9 +49,9 @@
                         <md-button type="submit" class="md-primary md-raised" :disabled="sending"><i class="fas fa-plus-circle"></i></md-button>
                     </md-card-actions>
                 </md-card>
-                <md-snackbar :md-active.sync="noteSaved">The user saved note successfull!</md-snackbar>
             </form>
         </div>
+
         <br>
         <div class="alert alert-warning" v-if="groupNotes.length == 0">No notes were found...</div>
         <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
@@ -83,10 +79,12 @@
                         <md-button class="md-primary"><i class="far fa-edit"></i></md-button>
                         <md-button class="md-accent"><i class="far fa-trash-alt"></i></md-button>
                     </md-card-actions>
-
                 </md-ripple>
             </md-card>
-            <br>
+            <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="noteSaved" md-persistent>
+                <span>You added new note successful !</span>
+                <md-button class="md-accent" @click="noteSaved = false">Close</md-button>
+            </md-snackbar>
         </div>
     </div>
 </template>
@@ -115,6 +113,9 @@
             duration: 4000,
             pandingResponseServer: false,
             showSnackbar: false,
+
+            position: 'center',
+            duration: 4000,
         }),
         mounted(){
             this.updateNotes();
@@ -141,10 +142,7 @@
 
             createNote() {
 
-                console.log('Creating note....');
-                return;
-
-                /*this.errors = null;
+                this.errors = null;
 
                 const constraints = this.getConstraints();
 
@@ -156,16 +154,20 @@
                 }
 
                 this.sending = true;
+
+                this.formEntities();
+
                 // send to api this.form.post
-                axios.post(this.apiUrl + '/group-posts/' + this.$route.params.groupname, this.$data.form, {
+                axios.post(config.apiUrl + '/group_notes/' + this.$route.params.groupname, this.$data.form, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.state.currentUser.token}`
                     }
                 })
                     .then((response) => {
-                        this.form.post = '';
-                        this.showSnackbarPost = true;
-                        this.updatePosts();
+                        this.formClear();
+                        this.creatingForm = false;
+                        this.noteSaved = true;
+                        this.updateNotes();
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
@@ -174,12 +176,18 @@
                     .finally( () => {
                         this.sending = false;
                     });
-                    */
             },
 
             getConstraints(){
                 return {
-                    post: {
+                    title: {
+                        presence: true,
+                        length: {
+                            minimum: 3,
+                            message: 'Must be at least 3 characters long'
+                        }
+                    },
+                    description: {
                         presence: true,
                         length: {
                             minimum: 5,
@@ -197,11 +205,32 @@
 
             htmlEntities(str) {
                 return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g,'&apos');
+            },
+
+            formEntities(){
+                this.form.title = this.htmlEntities(this.form.title);
+                this.form.description = this.htmlEntities(this.form.description);
+                this.form.tag = this.htmlEntities(this.form.tag);
+            },
+
+            formClear() {
+                this.form.title='';
+                this.form.description='';
+                this.form.tag='';
             }
         }
     }
 </script>
 
 <style scoped>
+    .errors{
+        color: orangered;
+        border-radius: 5px;
+        padding: 21px 0 2px 0;
+    }
 
+    .md-card{
+        margin: 10px;
+        padding: 10px;
+    }
 </style>

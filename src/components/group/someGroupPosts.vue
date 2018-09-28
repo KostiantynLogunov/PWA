@@ -1,12 +1,23 @@
 <template>
     <div class="page-container md-layout-column">
+        <!--SNACKBAR-->
+        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
+            <span>You created new post!</span>
+            <md-button class="md-accent" @click="showSnackbarPost = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
+        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="flagDeletePost" md-persistent>
+            <span>You deleted post successfull!</span>
+            <md-button class="md-accent" @click="flagDeletePost = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
+        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="updatedPost" md-persistent>
+            <span>You updated new post!</span>
+            <md-button class="md-accent" @click="updatedPost = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
         <form novalidate class="md-layout" @submit.prevent="createPost">
-            <!--SNACKBAR-->
-            <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
-                <span>You created new post!</span>
-                <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
-            </md-snackbar>
-            <!--SNACKBAR-->
+
             <md-card class="md-layout-item md-size-50 md-small-size-100">
                 <md-card-header>
                     <div class="md-title">What's going on ?</div>
@@ -38,28 +49,85 @@
                 </md-card-actions>
             </md-card>
 
-            <md-snackbar :md-active.sync="postSaved">The user post was saved with success!</md-snackbar>
         </form>
         <br>
+
         <div class="alert alert-warning" v-if="groupPosts.length == 0">No posts were found...</div>
         <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         <div v-for="post in groupPosts" :key="post.id">
             <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
                 <md-ripple>
+                    <div v-if="deletingPost == post.id">
+                        <md-progress-bar md-mode="indeterminate" class="md-accent" v-if="deletingPost != 0" />
+                    </div>
                     <md-card-header>
                         <div class="md-title">
+                            <md-list-item>
+                                <div>
+                                    <span v-if="post.user">
+                                        <img :src="post.user.avatar" alt="avatar">
+                                    </span>
+                                    <span v-else>
+                                        <img :src="avatarDefaultUrl" alt="default">
+                                    </span>
 
-                            <span v-if="post.user">
-                                    <img :src="post.user.avatar" alt="avatar">
-                                </span>
-                            <span v-else>
-                                    <img :src="avatarDefaultUrl" alt="default">
-                                </span>
+                                    {{ post.user.name }}
+                                </div>
 
-                            {{ post.user.name }}
+                                <div class="deleteErrors" v-if="deleteErrors">
+                                    <p v-for="error in deleteErrors">{{ error }}</p>
+                                </div>
+
+                                <md-dialog :md-active.sync="editingPost">
+                                    <md-progress-bar md-mode="indeterminate" v-show="processingPost" />
+
+                                    <form novalidate class="md-layout" @submit.prevent="editPost(value_edit_post.id)">
+                                        <md-dialog-title>Editing post</md-dialog-title>
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <md-textarea name="post" v-model="value_edit_post.post" :disabled="processingPost" />
+                                            </md-field>
+                                        </div>
+
+                                        <div class="deleteErrors" v-if="updateErrors">
+                                            <p v-for="error in updateErrors">{{ error }}</p>
+                                        </div>
+
+                                        <div class="errors" v-if="editErrors">
+                                            <ul>
+                                                <li v-for="(fieldsError, fieldName) in editErrors" :key="fieldName">
+                                                    {{ fieldsError.join('\n') }}
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <md-dialog-actions>
+                                            <md-button :disabled="processingPost" class="md-primary" @click="CancelEditingPost(post.id)">Close</md-button>
+                                            <md-button :disabled="processingPost"
+                                                       type="submit"
+                                                       class="md-accent md-raised"
+                                            >Update</md-button>
+                                        </md-dialog-actions>
+                                    </form>
+                                </md-dialog>
+
+                                <div v-show="checkAdmin(post.user_id)">
+                                    <md-menu md-size="small" md-align-trigger>
+                                        <md-button class="md-icon-button md-list-action" md-menu-trigger>
+                                            <md-icon class="md-primary"><i class="fas fa-angle-down"></i></md-icon>
+                                        </md-button>
+
+                                        <md-menu-content>
+                                            <md-menu-item @click="onFormUpdatePost(post.id, post.description)" :disabled="processingPost"><span><i class="far fa-edit"></i> Edit</span></md-menu-item>
+                                            <md-menu-item @click="deletePost(post.id)" :disabled="deletingPost != 0"><span><i class="fas fa-trash"></i> Delete</span></md-menu-item>
+                                        </md-menu-content>
+                                    </md-menu>
+                                </div>
+
+                            </md-list-item>
                         </div>
                         <div class="md-subhead">
-                            {{ convertDate(post.created_at) | moment("from") }}
+                            {{ convertDate(post.updated_at) | moment("from") }}
                         </div>
                     </md-card-header>
 
@@ -73,6 +141,7 @@
                         <md-button @click="turnComment(post.id)"><i class="far fa-comment"></i>
                             Comment</md-button>
                     </md-card-actions>
+
                     <transition name="boom">
                         <md-card-content v-if="comenntsVisable.indexOf(post.id) >= 0">
                             <form novalidate class="md-layout" @submit.prevent="">
@@ -151,6 +220,7 @@
             sending: false,
             liking: false,
             errors: null,
+            deleteErrors: false,
             groupPosts: false,
 
             showSnackbarPost: false,
@@ -170,13 +240,97 @@
             },
             errorsComment: null,
 
-            pandingResponseServer: false
+            pandingResponseServer: false,
+
+            currentUser: false,
+            deletingPost: 0,
+            flagDeletePost: false,
+            editingPost: false,
+            value_edit_post: {
+                post: '',
+                id: null,
+            },
+            editErrors: null,
+            updatedPost: false,
+            processingPost: false,
+            updateErrors: null,
         }),
         mounted(){
             this.updatePosts();
+            this.currentUser = this.$store.getters.currentUser;
         },
 
         methods: {
+            CancelEditingPost(value){
+                console.log(value);
+                this.editingPost = false;
+                this.value_edit_post.post = '';
+            },
+            onFormUpdatePost(id, description){
+                this.editingPost = true;
+                this.value_edit_post.id = id;
+                this.value_edit_post.post = description;
+            },
+            editPost(post_id){
+                this.editErrors = null;
+                const constraints = this.getConstraints();
+                const errors = validate(this.$data.value_edit_post, constraints);
+                if (errors) {
+                    this.editErrors = errors;
+                    return ;
+                }
+                this.processingPost = true;
+
+                this.value_edit_post.post = this.htmlEntities(this.value_edit_post.post);
+
+                axios.put(config.apiUrl + '/group-posts/' + post_id, this.$data.value_edit_post, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.updatePosts();
+                        this.updatedPost = true;
+                        this.CancelEditingPost();
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.updateErrors = data_errors;
+                        // console.log(this.updateErrors);
+                    })
+                    .finally(() => {
+                        this.processingPost = false;
+                    });
+
+            },
+            deletePost(post_id){
+                // console.log(post_id); return;
+                this.deletingPost = post_id;
+                axios.delete(config.apiUrl + '/group-posts/' + post_id, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.updatePosts();
+                        this.flagDeletePost = true;
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.deleteErrors = data_errors;
+                        console.log(this.deleteErrors);
+                    })
+                    .finally(() => {
+                        this.deletingPost = 0;
+                    });
+            },
+            checkAdmin(user_id){
+               return this.currentUser.id == user_id;
+            },
             CreateEvent(){
                 this.$router.push({ name: 'newEvent'})
             },
@@ -342,7 +496,7 @@
         left: 0;
     }
 
-    .errors{
+    .errors, .deleteErrors{
         /*background: lightcoral;*/
         color: orangered;
         border-radius: 5px;
@@ -377,4 +531,13 @@
         to {transform: translateX(-2000px)}
     }
 
+    .md-menu-item:hover{
+        cursor: pointer;
+        background: lightgrey;
+    }
+    .md-dialog{
+        padding-right: 5px;
+        padding-left: 5px;
+        /*margin: 20px;*/
+    }
 </style>

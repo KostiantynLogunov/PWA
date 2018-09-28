@@ -1,17 +1,17 @@
 <template>
     <div class="page-container md-layout-column">
         <!--SNACKBAR-->
-        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
+        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
             <span>You created new post!</span>
             <md-button class="md-accent" @click="showSnackbarPost = false">Close</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
-        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="flagDeletePost" md-persistent>
+        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeletePost" md-persistent>
             <span>You deleted post successfull!</span>
             <md-button class="md-accent" @click="flagDeletePost = false">Close</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
-        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="updatedPost" md-persistent>
+        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="updatedPost" md-persistent>
             <span>You updated new post!</span>
             <md-button class="md-accent" @click="updatedPost = false">Close</md-button>
         </md-snackbar>
@@ -224,7 +224,7 @@
             groupPosts: false,
 
             showSnackbarPost: false,
-            position: 'center',
+            position: 'left',
             duration: 4000,
 
             avatarUrl: config.avatarUrl,
@@ -262,7 +262,6 @@
 
         methods: {
             CancelEditingPost(value){
-                console.log(value);
                 this.editingPost = false;
                 this.value_edit_post.post = '';
             },

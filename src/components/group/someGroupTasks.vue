@@ -325,7 +325,7 @@
                 // send to api this.form.post
                 axios.put(this.apiUrl + '/group-tasks/' + this.$route.params.groupname, this.$data.form, {
                     headers: {
-                        "Authorization": `Bearer ${this.$store.state.currentUser.token}`
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
                     }
                 })
                     .then((response) => {

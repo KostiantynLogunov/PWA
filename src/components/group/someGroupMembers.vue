@@ -5,6 +5,12 @@
             <span>You updated info about member!</span>
             <md-button class="md-accent" @click="showSnackbarPost = false">Close</md-button>
         </md-snackbar>
+        <!--SNACKBAR-->
+        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="deletedMember" md-persistent>
+            <span>You deleted a member!</span>
+            <md-button class="md-accent" @click="deletedMember = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
         <br>
         <md-tabs  md-alignment="centered">
             <md-tab id="tab-home" md-label="Add member">
@@ -38,8 +44,8 @@
                                                 :value="index"
                                         >{{ role }}</option>
                                     </select>
-                                    <button  type="submit" class="btn btn-sm btn-success" @click=""><i class="fas fa-check-circle"></i></button>
-                                    <button  type="button" class="btn btn-sm btn-danger" @click="deleteMember(member.id)"><i class="fas fa-trash"></i></button>
+                                    <button  type="submit" class="btn btn-sm btn-success" :disabled="sending == member.id"><i class="fas fa-check-circle"></i></button>
+                                    <button  type="button" class="btn btn-sm btn-danger" @click="deleteMember(member.id, member.pivot.group_id)" :disabled="sending == member.id"><i class="fas fa-trash"></i></button>
                                     <md-progress-spinner :md-diameter="20" :md-stroke="4" md-mode="indeterminate" v-if="sending == member.id"></md-progress-spinner>
                                 </div>
 
@@ -102,6 +108,7 @@
                 assignErrors: null,
 
                 showSnackbarPost: false,
+                deletedMember: false,
                 position: 'left',
                 duration: 4000,
             }
@@ -145,8 +152,34 @@
                         this.sending = 0;
                     });
             },
-            deleteMember(member_id){
-                console.log('delete member ' + member_id);
+            deleteMember(member_id, group_id){
+
+                this.assignErrors = null;
+                this.sending = member_id;
+
+                let info_member = {
+                    user_id: member_id,
+                    group_id: group_id,
+                };
+
+                let headers = {"Authorization": `Bearer ${this.$store.getters.currentUser.token}`};
+
+                axios.delete(config.apiUrl + '/group_members', { params: info_member, headers })
+                    .then((response) => {
+                        this.getMembers();
+                        this.deletedMember = true;
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.assignErrors = data_errors;
+                        // console.log(data_errors);
+                    })
+                    .finally(() => {
+                        info_member = null;
+                        this.sending = 0;
+                    });
             },
             addMember() {
                 console.log('adding new members');

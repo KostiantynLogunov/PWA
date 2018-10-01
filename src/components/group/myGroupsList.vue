@@ -135,7 +135,7 @@
             unjoin(groupname) {
                 axios.delete(config.apiUrl + '/group-unjoin/' + groupname, {
                     headers: {
-                        "Authorization": `Bearer ${this.$store.state.currentUser.token}`
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
                     }
                 })
                     .then((response) => {

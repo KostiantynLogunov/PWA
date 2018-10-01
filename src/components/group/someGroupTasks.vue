@@ -1,14 +1,29 @@
 <template>
     <div class="page-container md-layout-column">
+        <!--SNACKBAR-->
+        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteTask" md-persistent>
+            <span>You deleted a task!</span>
+            <md-button class="md-accent" @click="flagDeleteTask = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
+        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
+            <span>You added new task !</span>
+            <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
+        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="updatedTask" md-persistent>
+            <span>You edited a task !</span>
+            <md-button class="md-accent" @click="updatedTask = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
         <div class="text-center" v-if="!creatingForm">
-            <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create Task</md-button>
+            <div v-if="checkGroupAuthor()">
+                <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true; editingTask = null" :disabled="sending">Create Task</md-button>
+            </div>
         </div>
         <div v-else>
             <form novalidate class="md-layout" @submit.prevent="createTask" >
-                <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
-                    <span>You added new task !</span>
-                    <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
-                </md-snackbar>
+
                 <md-card class="md-layout-item md-size-50 md-small-size-100">
                     <md-card-header>
                         <div class="md-title">Creating Task</div>
@@ -149,11 +164,19 @@
                     <md-card-actions>
                         <md-button @click="turnComment(task.id)"><i class="far fa-comments"></i>
                                 Comments</md-button>
-                        <md-button class=""><i class="far fa-edit"></i>
-                            Edit</md-button>
-                        <md-button class="md-accent"><i class="far fa-trash-alt"></i>
-                            Delete</md-button>
+                        <div v-if="checkAdmin(task.author_id) || checkGroupAuthor()">
+                            <md-button :disabled="editingTask == task.id" @click="onFormEditTask(task.title, task.description, task.status, task.responsible_user, task.target_event, task.time_from, task.time_till, task.id)"><i class="far fa-edit"></i>
+                                Edit</md-button>
+                            <md-button class="md-accent" :disabled="deletingTask" @click="deleteTask(task.id)"><i class="far fa-trash-alt"></i>
+                                Delete</md-button>
+                        </div>
+
                     </md-card-actions>
+                    <div class="errors" v-if="deleteErrors">
+                        <p v-for="error in deleteErrors">{{ error }}</p>
+                    </div>
+
+
                     <transition name="boom">
                         <md-card-content v-if="comenntsVisable.indexOf(task.id) >= 0">
                             <form novalidate class="md-layout" @submit.prevent="">
@@ -213,6 +236,111 @@
                         </md-card-content>
                     </transition>
                 </md-ripple>
+
+                <div v-if="editingTask == task.id">
+                    <form novalidate class="md-layout" @submit.prevent="editTask()">
+                        <md-card class="md-layout-item md-size-100 md-small-size-100">
+                            <h5 class="text-center">Editing Task</h5>
+
+                            <md-card-content>
+                                <div class="md-layout md-gutter">
+                                    <div class="md-layout-item md-small-size-100">
+                                        <md-field :class="">
+                                            <label for="title">Title</label>
+                                            <md-input name="title" v-model="value_edit_task.title" :disabled="processingTask" />
+                                        </md-field>
+
+                                        <md-field>
+                                            <label for="description">Description</label>
+                                            <md-textarea name="description" v-model="value_edit_task.description" :disabled="processingTask" />
+                                        </md-field>
+
+                                        <md-field>
+                                            <label>Status</label>
+                                            <md-select name="status" v-model="value_edit_task.status" :disabled="processingTask" :placeholder="value_edit_task.status">
+                                                <md-option value="New">New</md-option>
+                                                <md-option value="In progress">In progress</md-option>
+                                                <md-option value="Complated">Complated</md-option>
+                                                <md-option value="Postponed">Postponed</md-option>
+                                            </md-select>
+                                        </md-field>
+                                    </div>
+
+                                    <div class="md-layout-item md-small-size-100">
+                                        <div class="md-layout md-gutter">
+                                            <div class="md-layout-item md-small-size-50">
+                                                <label>START DATE</label>
+                                                <date-picker v-model="value_edit_task.start_date" :config="options"></date-picker>
+                                            </div>
+                                            <div class="md-layout-item md-small-size-50">
+                                                <label>END DATE</label>
+                                                <date-picker v-model="value_edit_task.end_date" :config="options"></date-picker>
+                                            </div>
+                                        </div>
+
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field :class="">
+                                                <label for="members">Members</label>
+                                                <md-input name="members" v-model="value_edit_task.members" :disabled="processingTask" />
+                                            </md-field>
+                                        </div>
+
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field :class="">
+                                                <label>Target Event</label>
+                                                <md-select name="event" v-model="value_edit_task.event" md-dense :disabled="processingTask">
+                                                    <div v-if="group_events.length">
+                                                        <div v-for="group_event in group_events">
+                                                            <md-option :value="group_event.timeline.name">
+                                                                {{ group_event.timeline.name }}
+                                                            </md-option>
+                                                        </div>
+                                                    </div>
+                                                    <div v-else>
+                                                        <md-option  value="" disabled>
+                                                            Not any events
+                                                        </md-option>
+                                                    </div>
+                                                </md-select>
+                                            </md-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="errors" v-if="errors">
+                                    <ul>
+                                        <li v-for="(fieldsError, fieldName) in errors" :key="fieldName">
+                                            {{ fieldsError.join('\n') }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </md-card-content>
+                            <md-progress-bar md-mode="indeterminate" v-if="processingTask" />
+                            <md-card-actions>
+                                <md-dialog-actions>
+                                    <md-button :disabled="processingTask" class="md-primary" @click="CancelEditingTask">Close</md-button>
+                                    <md-button :disabled="processingTask"
+                                               type="submit"
+                                               class="md-accent md-raised"
+                                    >Update</md-button>
+                                </md-dialog-actions>
+                            </md-card-actions>
+                            <div class="deleteErrors" v-if="updateErrors">
+                                <p v-for="error in updateErrors">{{ error }}</p>
+                            </div>
+
+                            <div class="errors" v-if="editErrors">
+                                <ul>
+                                    <li v-for="(fieldsError, fieldName) in editErrors" :key="fieldName">
+                                        {{ fieldsError.join('\n') }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </md-card>
+
+
+
+                    </form>
+                </div>
             </md-card>
             <br>
         </div>
@@ -282,11 +410,138 @@
             pandingResponseServer: false,
             selectedDate_from: null,
             selectedDate_to: null,
+
+            currentUser: false,
+            id_author_of_group: null,
+            flagDeleteTask: false,
+            deleteErrors: false,
+            deletingTask: false,
+            editingTask: [],
+            editErrors: false,
+            updatedTask: false,
+            processingTask: false,
+            updateErrors: false,
+
+            value_edit_task: {
+                title: null,
+                description: null,
+                status: null,
+                members: null,
+                event: null,
+                start_date: null,
+                end_date: null,
+                id: null,
+            },
         }),
         mounted(){
             this.updateTasks();
+            this.currentUser = this.$store.getters.currentUser;
         },
         methods: {
+            CancelEditingTask(){
+                this.editingTask = null;
+                this.clearTaskEDitForm();
+            },
+
+            clearTaskEDitForm(){
+                this.value_edit_task.title = null;
+                this.value_edit_task.description = null;
+                this.value_edit_task.status = null;
+                this.value_edit_task.members = null;
+                this.value_edit_task.event = null;
+                this.value_edit_task.start_date = null;
+                this.value_edit_task.end_date = null;
+                this.value_edit_task.id = null;
+            },
+
+            onFormEditTask(task_title, task_description, task_status, task_members, task_event, task_start_date, task_end_date, task_id){
+                this.clearTaskEDitForm();
+
+                this.editingTask = this.htmlEntities(task_id);
+
+                this.errors = null;
+                this.errorsComment = null;
+                this.updateErrors = null;
+                this.editErrors = null;
+
+                this.value_edit_task.title = this.htmlEntities(task_title);
+                this.value_edit_task.description = this.htmlEntities(task_description);
+                this.value_edit_task.status = this.htmlEntities(task_status);
+                this.value_edit_task.members = this.htmlEntities(task_members);
+                this.value_edit_task.event = this.htmlEntities(task_event);
+                this.value_edit_task.start_date = this.htmlEntities(task_start_date);
+                this.value_edit_task.end_date = this.htmlEntities(task_end_date);
+                this.value_edit_task.id = this.htmlEntities(task_id);
+            },
+
+            checkAdmin(user_id){
+                return this.currentUser.id == user_id;
+            },
+
+            checkGroupAuthor() {
+                return this.id_author_of_group == this.currentUser.id;
+            },
+
+            editTask(){
+                this.errors = null;
+                this.errorsComment = null;
+                this.updateErrors = null;
+                this.editErrors = null;
+
+                const constraints = this.getConstraints();
+                const errors = validate(this.$data.value_edit_task, constraints);
+                if (errors) {
+                    this.editErrors = errors;
+                    return ;
+                }
+                this.processingTask = true;
+
+                axios.put(config.apiUrl + '/group-tasks/' + this.$route.params.groupname, this.$data.value_edit_task, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.updateTasks();
+                        this.updatedTask = true;
+                        this.CancelEditingTask();
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.updateErrors = data_errors;
+                        // console.log(this.updateErrors);
+                    })
+                    .finally(() => {
+                        this.processingTask = false;
+                    });
+            },
+
+            deleteTask(task_id){
+                this.deletingTask = true;
+                axios.delete(config.apiUrl + '/group_tasks/' + task_id, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.updateTasks();
+                        this.flagDeleteTask = true;
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.deleteErrors = data_errors;
+                        console.log(this.deleteErrors);
+                    })
+                    .finally(() => {
+                        this.deletingTask = 0;
+                        this.deletingTask = false;
+                    });
+            },
+
             updateTasks(){
                 this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group-tasks/' + this.$route.params.groupname, {
@@ -295,7 +550,8 @@
                     }
                 })
                     .then((response) => {
-
+                        // console.log(response.data.id_author_of_group);
+                        this.id_author_of_group = response.data.id_author_of_group;
                         this.groupTasks = response.data.group_tasks;
                         this.group_events = response.data.group_events;
                         // console.log(response.data.group_tasks);
@@ -311,6 +567,7 @@
             },
 
             createTask() {
+
                 this.errors = null;
 
                 const constraints = this.getConstraints();
@@ -323,7 +580,7 @@
                 }
                 this.sending = true;
                 // send to api this.form.post
-                axios.put(this.apiUrl + '/group-tasks/' + this.$route.params.groupname, this.$data.form, {
+                axios.post(this.apiUrl + '/group-tasks/' + this.$route.params.groupname, this.$data.form, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
                     }
@@ -332,6 +589,7 @@
                         this.showSnackbar = true;
                         this.clearForm();
                         this.updateTasks();
+                        this.creatingForm = false;
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
@@ -341,6 +599,7 @@
                         this.sending = false;
                     });
             },
+
             getConstraints(){
                 return {
                     title: {
@@ -467,7 +726,7 @@
         padding: 21px 0 2px 0;
     }
     li {
-        list-style: none;
+        /*list-style: none;*/
     }
     md-card{
         margin: 20px;

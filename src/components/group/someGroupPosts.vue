@@ -102,7 +102,7 @@
                                         </div>
 
                                         <md-dialog-actions>
-                                            <md-button :disabled="processingPost" class="md-primary" @click="CancelEditingPost(post.id)">Close</md-button>
+                                            <md-button :disabled="processingPost" class="md-primary" @click="CancelEditingPost()">Close</md-button>
                                             <md-button :disabled="processingPost"
                                                        type="submit"
                                                        class="md-accent md-raised"
@@ -261,7 +261,7 @@
         },
 
         methods: {
-            CancelEditingPost(value){
+            CancelEditingPost(){
                 this.editingPost = false;
                 this.value_edit_post.post = '';
             },
@@ -305,7 +305,6 @@
 
             },
             deletePost(post_id){
-                // console.log(post_id); return;
                 this.deletingPost = post_id;
                 axios.delete(config.apiUrl + '/group-posts/' + post_id, {
                     headers: {

@@ -1,12 +1,26 @@
 <template>
     <div class="page-container md-layout-column">
+        <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
             <span>You added a new CheckList !</span>
             <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
         </md-snackbar>
+        <!--SNACKBAR-->
+        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteCheckList" md-persistent>
+            <span>You deleted a CheckList!</span>
+            <md-button class="md-accent" @click="flagDeleteCheckList = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
+        <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="updatedChecklist" md-persistent>
+            <span>You edited a Checklist !</span>
+            <md-button class="md-accent" @click="updatedChecklist = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
 
         <div class="text-center" v-if="!creatingForm">
-            <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create CheckList</md-button>
+            <div v-if="checkGroupAuthor()">
+                <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create CheckList</md-button>
+            </div>
         </div>
         <div v-else>
             <form novalidate class="md-layout" @submit.prevent="createCheckList" >
@@ -61,13 +75,13 @@
 
                             <div class="md-layout-item md-small-size-100">
                                 <md-field :class="">
-                                    <label for="members">Members</label>
-                                    <md-input name="members" id="members" autocomplete="members" v-model="form.responsible_user" :disabled="sending" />
+                                    <label>Members</label>
+                                    <md-input name="members" autocomplete="members" v-model="form.responsible_user" :disabled="sending" />
                                 </md-field>
 
                                 <md-field :class="">
                                     <label>Target Event</label>
-                                    <md-select name="event" id="event" v-model="form.target_event" md-dense :disabled="sending" placeholder="Please choose event">
+                                    <md-select name="event"  v-model="form.target_event" md-dense :disabled="sending" placeholder="Please choose event">
 
                                         <div v-if="group_events.length">
                                             <div v-for="group_event in group_events">
@@ -112,7 +126,7 @@
         <div class="alert alert-warning" v-if="!groupChecklist">No Checklist yet....
             <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         </div>
-        <div v-for="checklist in groupChecklist">
+        <div v-for="checklist in groupChecklist" :key="checklist.id">
             <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
                 <md-ripple>
                     <md-card-header>
@@ -149,19 +163,144 @@
                                 {{ convertDate(checklist.updated_at) | moment("from", "now") }}
                             </div>
                             <div class="md-layout-item">
-                                <md-button class=""><i class="far fa-edit"></i>
-                                    Edit</md-button>
-                                <md-button class="md-accent"><i class="far fa-trash-alt"></i>
-                                    Delete</md-button>
+
                             </div>
                         </div>
                     </md-card-content>
 
                     <md-card-actions>
+                        <div v-if="checkAdmin(checklist.author_id) || checkGroupAuthor()">
+                            <md-button :disabled="editingChecklist == checklist.id" @click="onFormEditChecklist(checklist.title, checklist.description, checklist.todolist, checklist.responsible_user, checklist.target_event, checklist.id)"><i class="far fa-edit"></i>
+                                Edit</md-button>
+                            <md-button class="md-accent" :disabled="deleteProcess" @click="deleteChecklist(checklist.id)"><i class="far fa-trash-alt"></i>
+                                Delete</md-button>
+                        </div>
                         <md-button @click="turnComment(checklist.id)"><i class="far fa-comments"></i>
                             Comments</md-button>
-
                     </md-card-actions>
+
+                    <div v-if="deletingChecklist == checklist.id">
+                        <md-progress-bar class="md-accent"  md-mode="indeterminate" v-if="deleteProcess" />
+                        <div class="errors" v-if="deleteErrors">
+                            <p v-for="error in deleteErrors">{{ error }}</p>
+                        </div>
+                    </div>
+
+                    <div v-if="editingChecklist == checklist.id">
+                        <form novalidate class="md-layout" @submit.prevent="editChecklist()">
+
+                            <md-card class="md-layout-item md-size-50 md-small-size-100">
+                                <md-card-header>
+                                    <div class="md-title text-center">Editing CheckList</div>
+                                </md-card-header>
+
+                                <md-card-content>
+                                    <div class="md-layout md-gutter">
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label for="title">Title</label>
+                                                <md-input name="title" v-model="value_edit_checklist.title" :disabled="processingChecklist" />
+                                            </md-field>
+
+                                            <md-field>
+                                                <label for="description">Description</label>
+                                                <md-textarea name="description" v-model="value_edit_checklist.description" :disabled="processingChecklist" />
+                                            </md-field>
+
+                                            <div class="text-center w-100">
+                                                <div class="viewport">
+                                                    <h6>To Do List</h6>
+                                                    <input v-model="newTodo" :disabled="processingChecklist" />
+                                                    <md-button class="md-icon-button md-list-action" @click="AddTodo(newTodo)" >
+                                                        <md-icon class="md-primary" >
+                                                            <i class="fas fa-plus-circle"></i>
+                                                        </md-icon>
+                                                    </md-button>
+
+                                                    <md-list>
+                                                        <md-list-item v-for="(todo, key, index) in value_edit_checklist.todolist"
+                                                                      :key="key">
+                                                            <span class="w-100"
+                                                                  v-on:click="todo.check = !todo.check"
+                                                                  :style="todo.check ? 'text-decoration: line-through' : ''"
+                                                            >
+                                                            {{ todo.todo }}
+                                                            </span>
+
+                                                            <md-button class="md-icon-button md-list-action" @click="deleteTodo(key)">
+                                                                <md-icon class="md-accent" ><i class="fas fa-times-circle"></i></md-icon>
+                                                            </md-button>
+                                                        </md-list-item>
+                                                    </md-list>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label>Members</label>
+                                                <md-input name="members" v-model="value_edit_checklist.responsible_user" :disabled="processingChecklist" />
+                                            </md-field>
+
+                                            <md-field>
+                                                <label>Target Event</label>
+                                                <md-select name="event"  v-model="value_edit_checklist.target_event" md-dense :disabled="processingChecklist">
+
+                                                    <div v-if="group_events.length">
+                                                        <div v-for="group_event in group_events">
+                                                            <md-option :value="group_event.timeline.name">
+                                                                {{ group_event.timeline.name }}
+                                                            </md-option>
+                                                        </div>
+
+                                                    </div>
+                                                    <div v-else>
+                                                        <md-option  value="" disabled>
+                                                            Not any events
+                                                        </md-option>
+                                                    </div>
+                                                </md-select>
+                                            </md-field>
+                                        </div>
+                                    </div>
+
+                                    <div class="errors" v-if="errors">
+                                        <ul>
+                                            <li v-for="(fieldsError, fieldName) in errors" :key="fieldName">
+                                                {{ fieldsError.join('\n') }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </md-card-content>
+
+                                <md-progress-bar md-mode="indeterminate" v-if="processingChecklist" />
+                                <md-card-actions>
+                                    <md-button :disabled="processingChecklist" class="md-primary" @click="CancelEditingChecklist()">Close</md-button>
+                                    <md-button :disabled="processingChecklist"
+                                               type="submit"
+                                               class="md-accent md-raised"
+                                    >Update</md-button>
+                                </md-card-actions>
+                                <div class="errors" v-if="updateErrors">
+                                    <ul >
+                                    <li v-for="error in updateErrors">{{ error }}</li>
+                                    </ul>
+                                </div>
+
+                                <div class="errors" v-if="editErrors">
+                                    <ul>
+                                        <li v-for="(fieldsError, fieldName) in editErrors" :key="fieldName">
+                                            {{ fieldsError.join('\n') }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </md-card>
+
+
+
+                        </form>
+                    </div>
+
                     <transition name="boom">
                         <md-card-content v-if="comenntsVisable.indexOf(checklist.id) >= 0">
                             <form novalidate class="md-layout" @submit.prevent="">
@@ -268,12 +407,140 @@
             },
             errorsComment: null,
 
-            pandingResponseServer: false
+            pandingResponseServer: false,
+            deletingChecklist: false,
+            editingChecklist: false,
+            value_edit_checklist: {
+                title: null,
+                description: null,
+                todolist: {},
+                responsible_user: null,
+                target_event: null,
+                id: null
+            },
+            editingCheckList: null,
+            updateErrors: null,
+            editErrors:null,
+            deleteErrors: false,
+            // currentUser: null,
+            groupAuthorId: null,
+            flagDeleteCheckList: false,
+            deleteProcess: false,
+            processingChecklist: false,
+            updatedChecklist: false,
         }),
         mounted(){
             this.updateChecklist();
+            // this.currentUser = this.$store.getters.currentUser;
         },
         methods: {
+            onFormEditChecklist(checklist_title, checklits_description, checklist_todolist, checklist_responsible_user, checklist_target_event, checklist_id){
+                this.clearChecklistEditForm();
+
+                this.editingChecklist = this.htmlEntities(checklist_id);
+
+                this.errors = null;
+                this.errorsComment = null;
+                this.updateErrors = null;
+                this.editErrors = null;
+
+                this.value_edit_checklist.title = this.htmlEntities(checklist_title);
+                this.value_edit_checklist.description = this.htmlEntities(checklits_description);
+                this.value_edit_checklist.todolist = checklist_todolist;
+                this.value_edit_checklist.responsible_user = this.htmlEntities(checklist_responsible_user);
+                this.value_edit_checklist.target_event = this.htmlEntities(checklist_target_event);
+                this.value_edit_checklist.id = this.htmlEntities(checklist_id);
+
+                console.log(this.value_edit_checklist);
+            },
+
+            editChecklist(){
+
+                this.errors = null;
+                this.errorsComment = null;
+                this.updateErrors = null;
+                this.editErrors = null;
+
+                const constraints = this.getConstraints();
+                const errors = validate(this.$data.value_edit_checklist, constraints);
+                if (errors) {
+                    this.editErrors = errors;
+                    return ;
+                }
+
+                this.processingChecklist = true;
+
+                axios.put(config.apiUrl + '/group-checklists/' + this.$route.params.groupname, this.$data.value_edit_checklist, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.updateChecklist();
+                        this.updatedChecklist = true;
+                        this.CancelEditingChecklist();
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.updateErrors = data_errors;
+                        // console.log(this.updateErrors);
+                    })
+                    .finally(() => {
+                        this.processingChecklist = false;
+                    });
+            },
+
+            deleteChecklist(checklist_id){
+                this.deletingChecklist = checklist_id;
+                this.deleteProcess = true;
+                axios.delete(config.apiUrl + '/group-checklists/' + checklist_id, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.updateChecklist();
+                        this.flagDeleteCheckList = true;
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.deleteErrors = data_errors;
+                        console.log(this.deleteErrors);
+                    })
+                    .finally(() => {
+                        this.deleteProcess = false;
+                    });
+            },
+
+            CancelEditingChecklist(){
+                this.editingChecklist = null;
+                this.clearChecklistEditForm();
+            },
+
+            clearChecklistEditForm(){
+                this.value_edit_checklist.title = null;
+                this.value_edit_checklist.description = null;
+                this.value_edit_checklist.todolist = {};
+                this.value_edit_checklist.responsible_user = null;
+                this.value_edit_checklist.target_event = null;
+                this.value_edit_checklist.id = null;
+            },
+
+            checkAdmin(user_id){
+                return this.$store.getters.currentUser.id == user_id;
+                // return this.currentUser.id == user_id;
+            },
+
+            checkGroupAuthor() {
+                // console.log(this.$store.getters.currentUser);
+                // return this.groupAuthorId == this.currentUser.id;
+                return this.groupAuthorId == this.$store.getters.currentUser.id;
+            },
+
             AddTodo(newTodo){
                 if (!newTodo) return;
 
@@ -286,9 +553,11 @@
                 this.alrDateIterator++;
                 this.newTodo = null;
             },
+
             deleteTodo(key){
                 this.$delete(this.form.todolist,key);
             },
+
             updateChecklist(){
                 this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group-checklists/' + this.$route.params.groupname, {
@@ -297,10 +566,12 @@
                     }
                 })
                     .then((response) => {
+                        this.groupAuthorId = response.data.groupAuthorId;
                         this.pandingResponseServer = false;
                         if (response.data.group_checklist.length)
                             this.groupChecklist = response.data.group_checklist;
-                        this.group_events = response.data.group_events;
+                        else this.groupChecklist = null;
+                            this.group_events = response.data.group_events;
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
@@ -358,7 +629,6 @@
                     return ;
                 }
 
-
                 this.sendingComment = true;
                 this.formComment.checklist_id = +checklist_id;
                 // send to api this.form.post
@@ -380,7 +650,6 @@
                         this.sendingComment = false;
                     });
             },
-
 
             getConstraints(){
                 return {

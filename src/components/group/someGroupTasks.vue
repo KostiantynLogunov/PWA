@@ -167,13 +167,17 @@
                         <div v-if="checkAdmin(task.author_id) || checkGroupAuthor()">
                             <md-button :disabled="editingTask == task.id" @click="onFormEditTask(task.title, task.description, task.status, task.responsible_user, task.target_event, task.time_from, task.time_till, task.id)"><i class="far fa-edit"></i>
                                 Edit</md-button>
-                            <md-button class="md-accent" :disabled="deletingTask" @click="deleteTask(task.id)"><i class="far fa-trash-alt"></i>
-                                Delete</md-button>
+                            <md-button class="md-accent" :disabled="deleteProcess" @click="deleteTask(task.id)"><i class="far fa-trash-alt"></i>
+                            Delete</md-button>
+
                         </div>
 
                     </md-card-actions>
-                    <div class="errors" v-if="deleteErrors">
-                        <p v-for="error in deleteErrors">{{ error }}</p>
+                    <div v-if="deletingTask == task.id">
+                        <md-progress-bar class="md-accent"  md-mode="indeterminate" v-if="deleteProcess" />
+                        <div class="errors" v-if="deleteErrors">
+                            <p v-for="error in deleteErrors">{{ error }}</p>
+                        </div>
                     </div>
 
 
@@ -337,8 +341,6 @@
                             </div>
                         </md-card>
 
-
-
                     </form>
                 </div>
             </md-card>
@@ -416,7 +418,7 @@
             flagDeleteTask: false,
             deleteErrors: false,
             deletingTask: false,
-            editingTask: [],
+            editingTask: null,
             editErrors: false,
             updatedTask: false,
             processingTask: false,
@@ -432,6 +434,7 @@
                 end_date: null,
                 id: null,
             },
+            deleteProcess: false
         }),
         mounted(){
             this.updateTasks();
@@ -519,7 +522,8 @@
             },
 
             deleteTask(task_id){
-                this.deletingTask = true;
+                this.deletingTask = task_id;
+                this.deleteProcess = true;
                 axios.delete(config.apiUrl + '/group_tasks/' + task_id, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
@@ -537,8 +541,7 @@
                         console.log(this.deleteErrors);
                     })
                     .finally(() => {
-                        this.deletingTask = 0;
-                        this.deletingTask = false;
+                        this.deleteProcess = false;
                     });
             },
 
@@ -550,24 +553,24 @@
                     }
                 })
                     .then((response) => {
-                        // console.log(response.data.id_author_of_group);
                         this.id_author_of_group = response.data.id_author_of_group;
                         this.groupTasks = response.data.group_tasks;
                         this.group_events = response.data.group_events;
                         // console.log(response.data.group_tasks);
                     })
                     .catch((err) => {
-                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.errors = data_errors;
                         console.log(this.errors);
                     })
                     .finally(() => {
                         this.pandingResponseServer = false;
-                        // this.sending = false;
                     });
             },
 
             createTask() {
-
                 this.errors = null;
 
                 const constraints = this.getConstraints();
@@ -592,7 +595,10 @@
                         this.creatingForm = false;
                     })
                     .catch((err) => {
-                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.errors = data_errors;
                         console.log(this.errors);
                     })
                     .finally(() => {
@@ -660,7 +666,10 @@
                         this.updateTasks();
                     })
                     .catch((err) => {
-                        this.errorsComment = err.response.data.message || err.response.data ||  err.message || err.data;
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.errorsComment = data_errors;
                         console.log(this.errorsComment);
                     })
                     .finally(() => {

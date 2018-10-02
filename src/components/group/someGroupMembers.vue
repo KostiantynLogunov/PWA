@@ -25,19 +25,21 @@
             <md-tab id="tab-pages" md-label="Members">
                 <md-list class="md-triple-line">
                     <md-list-item v-for="member in members" :key="member.id">
-                        <md-avatar v-if="member.avatar">
-                            <img :src="member.avatar" alt="People">
-                        </md-avatar>
-                        <md-avatar v-else>
-                            <img :src="avatarDefaultUrl" alt="">
-                        </md-avatar>
+                        <div class="">
+                            <md-avatar v-if="member.avatar">
+                                <img :src="member.avatar" alt="People">
+                            </md-avatar>
+                            <md-avatar v-else>
+                                <img :src="avatarDefaultUrl" alt="">
+                            </md-avatar>
 
-                        <div class="md-list-item-text">
-                            <span>{{ member.name }}</span>
-                            <!--member.pivot.role_id-->
+                            <div class="md-list-item-text">
+                                <span>{{ member.name }}</span>
+                                <!--member.pivot.role_id-->
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="">
 
                             <form novalidate class="md-layout" @submit.prevent="assign(member.id, member.pivot.tag, member.pivot.role_id, member.pivot.group_id)">
                                 <div class="row">

@@ -64,7 +64,7 @@
                         <span class="md-primary">{{ event.created_at }}</span>
                         <!--</md-button>-->
                     </md-list-item>
-                    {{ updateRender()}}
+                    <!--{{ updateRender()}}-->
                 </md-list>
                 <md-list v-else>
                     <div class="alert alert-warning">No events added yet!</div>

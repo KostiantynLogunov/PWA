@@ -43,7 +43,6 @@
                                     <md-textarea name="description" id="description" autocomplete="description" v-model="form.description" :disabled="sending" />
                                 </md-field>
 
-
                                 <div class="text-center w-100">
                                     <div class="viewport">
                                         <h6>To Do List</h6>
@@ -170,7 +169,7 @@
 
                     <md-card-actions>
                         <div v-if="checkAdmin(checklist.author_id) || checkGroupAuthor()">
-                            <md-button :disabled="editingChecklist == checklist.id" @click="onFormEditChecklist(checklist.title, checklist.description, checklist.todolist, checklist.responsible_user, checklist.target_event, checklist.id)"><i class="far fa-edit"></i>
+                            <md-button :disabled="editingChecklist == checklist.id" @click=" onFormEditChecklist(checklist.title, checklist.description, checklist.todolist, checklist.responsible_user, checklist.target_event, checklist.id)"><i class="far fa-edit"></i>
                                 Edit</md-button>
                             <md-button class="md-accent" :disabled="deleteProcess" @click="deleteChecklist(checklist.id)"><i class="far fa-trash-alt"></i>
                                 Delete</md-button>
@@ -211,7 +210,7 @@
                                                 <div class="viewport">
                                                     <h6>To Do List</h6>
                                                     <input v-model="newTodo" :disabled="processingChecklist" />
-                                                    <md-button class="md-icon-button md-list-action" @click="AddTodo(newTodo)" >
+                                                    <md-button class="md-icon-button md-list-action" @click="AddTodoEdit(newTodo)" >
                                                         <md-icon class="md-primary" >
                                                             <i class="fas fa-plus-circle"></i>
                                                         </md-icon>
@@ -227,8 +226,8 @@
                                                             {{ todo.todo }}
                                                             </span>
 
-                                                            <md-button class="md-icon-button md-list-action" @click="deleteTodo(key)">
-                                                                <md-icon class="md-accent" ><i class="fas fa-times-circle"></i></md-icon>
+                                                            <md-button class="md-icon-button md-list-action" @click="deleteEditTodo(key, index)">
+                                                                <md-icon class="md-accent"><i class="fas fa-times-circle"></i></md-icon>
                                                             </md-button>
                                                         </md-list-item>
                                                     </md-list>
@@ -413,11 +412,12 @@
             value_edit_checklist: {
                 title: null,
                 description: null,
-                todolist: {},
+                todolist: null,
                 responsible_user: null,
                 target_event: null,
                 id: null
             },
+            EditIterator: 0,
             editingCheckList: null,
             updateErrors: null,
             editErrors:null,
@@ -444,12 +444,17 @@
                 this.updateErrors = null;
                 this.editErrors = null;
 
+
+
                 this.value_edit_checklist.title = this.htmlEntities(checklist_title);
                 this.value_edit_checklist.description = this.htmlEntities(checklits_description);
                 this.value_edit_checklist.todolist = checklist_todolist;
                 this.value_edit_checklist.responsible_user = this.htmlEntities(checklist_responsible_user);
                 this.value_edit_checklist.target_event = this.htmlEntities(checklist_target_event);
                 this.value_edit_checklist.id = this.htmlEntities(checklist_id);
+
+                if(this.value_edit_checklist.todolist.length > 0)
+                    this.EditIterator = this.value_edit_checklist.todolist.length;
 
                 console.log(this.value_edit_checklist);
             },
@@ -557,6 +562,32 @@
             deleteTodo(key){
                 this.$delete(this.form.todolist,key);
             },
+
+            deleteEditTodo(key){
+                console.log(key);
+                this.$delete(this.value_edit_checklist.todolist,key);
+                this.EditIterator--;
+                console.log(this.value_edit_checklist.todolist);
+            },
+            AddTodoEdit(newTodo){
+                // console.log(this.value_edit_checklist.todolist.length); return;
+                /*if(this.value_edit_checklist.todolist.length > 0)
+                    this.EditIterator = this.value_edit_checklist.todolist.length - 1;*/
+
+                if (!newTodo) return;
+
+                this.$set(this.value_edit_checklist.todolist,this.EditIterator, '');
+                let oneTodo = {
+                    todo: newTodo,
+                    check: 0
+                };
+                this.value_edit_checklist.todolist[this.EditIterator] = oneTodo;
+                console.log(this.value_edit_checklist.todolist);
+                this.EditIterator++;
+                this.newTodo = null;
+            },
+
+
 
             updateChecklist(){
                 this.pandingResponseServer = true;

@@ -140,7 +140,6 @@
                 duration: 4000,
 
                 eventSaved: false,
-
             };
         },
         methods: {

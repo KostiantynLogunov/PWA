@@ -220,13 +220,13 @@
                                                         <md-list-item v-for="(todo, key, index) in value_edit_checklist.todolist"
                                                                       :key="key">
                                                             <span class="w-100"
-                                                                  v-on:click="todo.check = !todo.check"
+                                                                  @click="chengeFieldCheck(key, todo.todo)"
                                                                   :style="todo.check ? 'text-decoration: line-through' : ''"
                                                             >
                                                             {{ todo.todo }}
                                                             </span>
 
-                                                            <md-button class="md-icon-button md-list-action" @click="deleteEditTodo(key, index)">
+                                                            <md-button class="md-icon-button md-list-action" @click="deleteEditTodo(key)">
                                                                 <md-icon class="md-accent"><i class="fas fa-times-circle"></i></md-icon>
                                                             </md-button>
                                                         </md-list-item>
@@ -282,7 +282,7 @@
                                 </md-card-actions>
                                 <div class="errors" v-if="updateErrors">
                                     <ul >
-                                    <li v-for="error in updateErrors">{{ error }}</li>
+                                        <li v-for="error in updateErrors">{{ error }}</li>
                                     </ul>
                                 </div>
 
@@ -433,6 +433,7 @@
             this.updateChecklist();
             // this.currentUser = this.$store.getters.currentUser;
         },
+
         methods: {
             onFormEditChecklist(checklist_title, checklits_description, checklist_todolist, checklist_responsible_user, checklist_target_event, checklist_id){
                 this.clearChecklistEditForm();
@@ -455,8 +456,6 @@
 
                 if(this.value_edit_checklist.todolist.length > 0)
                     this.EditIterator = this.value_edit_checklist.todolist.length;
-
-                console.log(this.value_edit_checklist);
             },
 
             editChecklist(){
@@ -564,15 +563,20 @@
             },
 
             deleteEditTodo(key){
-                console.log(key);
                 this.$delete(this.value_edit_checklist.todolist,key);
                 this.EditIterator--;
-                console.log(this.value_edit_checklist.todolist);
             },
+
+            chengeFieldCheck(key , todo) {
+                let newValue = {
+                    todo: todo,
+                    check: !this.$data.value_edit_checklist.todolist[key].check
+                };
+
+                this.$set(this.value_edit_checklist.todolist, key, newValue);
+            },
+
             AddTodoEdit(newTodo){
-                // console.log(this.value_edit_checklist.todolist.length); return;
-                /*if(this.value_edit_checklist.todolist.length > 0)
-                    this.EditIterator = this.value_edit_checklist.todolist.length - 1;*/
 
                 if (!newTodo) return;
 
@@ -602,7 +606,7 @@
                         if (response.data.group_checklist.length)
                             this.groupChecklist = response.data.group_checklist;
                         else this.groupChecklist = null;
-                            this.group_events = response.data.group_events;
+                        this.group_events = response.data.group_events;
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;

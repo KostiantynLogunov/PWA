@@ -1,9 +1,9 @@
 <template>
-    <div class="page-container md-layout-column">
+    <div class="">
         <div class="alert alert-warning text-center" v-if="!groupTasks">No Data yet....
             <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         </div>
-        <div class="md-layout" v-else>
+        <div class="" v-else>
             <full-calendar :events="events" :config="config"></full-calendar>
         </div>
     </div>
@@ -47,6 +47,7 @@
                 eventOverlap: false,
                 overlap: false,
                 selectOverlap: false,
+                height: 600
             },
 
             sending: false,

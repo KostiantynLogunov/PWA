@@ -10,14 +10,18 @@
             <span>You deleted a member!</span>
             <md-button class="md-accent" @click="deletedMember = false">Close</md-button>
         </md-snackbar>
-        <!--SNACKBAR-->
+
         <br>
+
         <md-tabs  md-alignment="centered">
+
             <md-tab id="tab-home" md-label="Add member">
-                <form novalidate class="md-layout md-size-50 md-small-size-100" @submit.prevent="addMember">
-                    <input type="text" class="form-control" v-model="form.name" :disabled="sending">
+                <form novalidate class="md-layout md-size-50 md-small-size-50" @submit.prevent="">
+                    <input type="text" class="form-control" v-model="form.searchname" @input="searchMember(form.searchname)">
                 </form>
+                <md-progress-bar md-mode="indeterminate" v-if="gettingUser" />
             </md-tab>
+
             <md-tab id="tab-pages" md-label="Members">
                 <md-list class="md-triple-line">
                     <md-list-item v-for="member in members" :key="member.id">
@@ -77,6 +81,38 @@
                 </md-list>
             </md-tab>
         </md-tabs>
+        <hr>
+        <md-list>
+
+            <md-list-item v-for="user in gotUsers" :key="user.id">
+
+                <md-avatar>
+                    <img :src="user.avatar" alt="People">
+                </md-avatar>
+
+                <div class="md-list-item-text">
+                    <span>{{ user.name }}</span>
+                    <md-progress-bar md-mode="indeterminate" class="md-accent" v-if="additingUser == user.id" />
+                </div>
+
+                <md-button class=" md-list-action md-primary" @click="addMember(user.id)" :disabled="additingUser == user.id">
+                    <i class="fas fa-plus-circle"></i>
+                    Join
+                </md-button>
+
+            </md-list-item>
+        </md-list>
+        <!--SNACKBAR-->
+        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="aboutAddMember" md-persistent>
+            <span>{{ msgAbotAddMember }}</span>
+            <md-button class="md-accent" @click="aboutAddMember = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
+        <div class="errors" v-if="memberErrors">
+            <ul >
+                <li v-for="error in memberErrors">{{ error }}</li>
+            </ul>
+        </div>
         <div class="errors" v-if="assignErrors">
             <p v-for="error in assignErrors">{{ error }}</p>
         </div>
@@ -92,8 +128,11 @@
         data() {
             return {
                 form: {
-                    name: ''
+                    searchname: ''
                 },
+                gotUsers: {},
+                gettingUser: false,
+
                 info_user: {
                     tag: '',
                     member_role: 2,
@@ -104,20 +143,59 @@
                 avatarUrl: config.avatarUrl,
                 avatarDefaultUrl: config.avatarDefaultUrl,
                 errors: false,
+                memberErrors: null,
                 member_role_optionsmembers: null,
                 assignErrors: null,
+                additingUser: false,
 
                 showSnackbarPost: false,
                 deletedMember: false,
                 position: 'left',
                 duration: 4000,
+                aboutAddMember: false,
+                msgAbotAddMember: false,
             }
         },
         mounted() {
             this.getMembers();
             this.getGroupAdmins();
         },
+        computed:{
+            updateRender(){
+                this.$forceUpdate;
+            }
+        },
         methods: {
+            addMember(member_id) {
+              // console.log(member_id);
+              let user_id = {
+                  user_id: member_id,
+              };
+                this.additingUser = member_id;
+                axios.post(config.apiUrl + '/group_members_add/' + this.$route.params.groupname, user_id, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.getMembers();
+                        if (response.data.message)
+                            this.msgAbotAddMember = response.data.message;
+                        else this.msgAbotAddMember = 'successfully accepted member';
+
+                        this.aboutAddMember = true;
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.memberErrors = data_errors;
+                        // console.log(this.updateErrors);
+                    })
+                    .finally(() => {
+                        this.additingUser = false;
+                    });
+            },
             assign(member_id, member_tag, member_role_id, group_id){
 
                 this.assignErrors = null;
@@ -138,6 +216,7 @@
                 })
                     .then((response) => {
                         this.getMembers();
+                        this.getGroupAdmins();
                         this.showSnackbarPost = true;
                     })
                     .catch((err) => {
@@ -152,6 +231,7 @@
                         this.sending = 0;
                     });
             },
+
             deleteMember(member_id, group_id){
 
                 this.assignErrors = null;
@@ -181,8 +261,45 @@
                         this.sending = 0;
                     });
             },
-            addMember() {
-                console.log('adding new members');
+
+            searchMember(searchname) {
+
+                if (searchname.length == 0 ) {
+                    this.gotUsers = {};
+                    return;
+                }
+                this.gettingUser = true;
+                axios.post(config.apiUrl + '/group_members/' + this.$route.params.groupname, this.form, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        let users = response.data.users;
+                        for (let i = 0; i < users.length; i++) {
+                            let user = users[i][0];
+
+                            let oneUser = {
+                                id: user.id,
+                                name: user.name,
+                                username: user.username,
+                                avatar: user.avatar,
+                            };
+
+                            this.$set(this.gotUsers, i, oneUser);
+                        }
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.memberErrors = data_errors;
+                        // console.log(this.updateErrors);
+                    })
+                    .finally(() => {
+                        this.gettingUser = false;
+                    });
+
             },
             getMembers(){
                 axios.get(config.apiUrl + '/group-members/' + this.$route.params.groupname, {
@@ -200,6 +317,7 @@
                         console.log(this.errors);
                     });
             },
+
             getGroupAdmins(){
                 axios.get(config.apiUrl + '/group-admins/' + this.$route.params.groupname, {
                     headers: {
@@ -225,7 +343,7 @@
         max-width: 100%;
         display: inline-block;
         vertical-align: top;
-        border: 1px solid rgba(#000, .12);
+        border: 1px solid grey;
     }
     .errors{
         /*background: lightcoral;*/
@@ -233,4 +351,12 @@
         border-radius: 5px;
         padding: 21px 0 2px 0;
     }
+
+    .md-list-item:hover{
+        background: #EFF3F6;
+        cursor: crosshair;
+        border-radius: 5px;
+    }
+
+
 </style>

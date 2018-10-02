@@ -586,7 +586,6 @@
                     check: 0
                 };
                 this.value_edit_checklist.todolist[this.EditIterator] = oneTodo;
-                console.log(this.value_edit_checklist.todolist);
                 this.EditIterator++;
                 this.newTodo = null;
             },

@@ -40,6 +40,12 @@ initialize(store, router);
 import FullCalendar from 'vue-full-calendar'
 Vue.use(FullCalendar)
 
+/*import InputTag from 'vue-input-tag'
+Vue.use(InputTag);
+Vue.component('input-tag', InputTag);*/
+import VoerroTagsInput from '@voerro/vue-tagsinput';
+Vue.component('tags-input', VoerroTagsInput);
+
 try {
     window.$ = window.jQuery = require('jquery');
 

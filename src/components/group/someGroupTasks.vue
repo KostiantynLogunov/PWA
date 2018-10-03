@@ -1,5 +1,6 @@
 <template>
     <div class="page-container md-layout-column">
+        <!--<div v-for="usr in allUsers">{{ usr }}</div>-->
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteTask" md-persistent>
             <span>You deleted a task!</span>
@@ -67,12 +68,26 @@
                                         </div>
                                     </div>
 
-
+                                <br>
                                 <div class="md-layout-item md-small-size-100">
-                                    <md-field :class="">
-                                        <label for="members">Members</label>
-                                        <md-input name="members" id="members" autocomplete="given-members" v-model="form.members" :disabled="sending" />
-                                    </md-field>
+                                        <!--<label>Members</label>-->
+                                        <!--<md-input name="members" id="members" autocomplete="given-members" v-model="form.members" :disabled="sending" />-->
+
+
+                                    <fieldset class="form-group" id="usersTag">
+                                        <label class="control-label">MEMBERS</label>
+                                        <tags-input element-id="tags"
+                                                    class="form-control"
+                                                    v-model="form.members"
+                                                    :existing-tags="allUsers"
+                                                    :typeahead="true"
+                                                    placeholder="Add a member"
+                                                    :only-existing-tags="true"
+                                                    name="members"
+                                        >
+                                        </tags-input>
+                                        <!--<button type="button" @click="ToConsoleSelectedTags">+</button>-->
+                                    </fieldset>
                                 </div>
 
                                 <div class="md-layout-item md-small-size-100">
@@ -126,12 +141,6 @@
                 <md-ripple>
                     <md-card-header>
                         <div class="md-title">
-                            <!--<span v-if="task.author.avatar_url[0]">
-                                    <img :src="avatarUrl + task.author.avatar_url[0].source" alt="avatar">
-                                </span>
-                            <span v-else>
-                                    <img :src="avatarDefaultUrl" alt="default">
-                            </span>-->
                             {{ task.title }}
                         </div>
                         <div class="md-subhead">Status: {{ task.status }}&nbsp;&nbsp;
@@ -143,7 +152,18 @@
                         <h6>{{ task.description }}</h6>
                         <br>
                         <div v-if="task.responsible_user">
-                            Responsible users: {{ task.responsible_user }}
+                            Responsible users:
+                            <span v-for="member in task.responsible_user" class="one_member_link">
+                                <!-- link = member.link-->
+                                <a class="mr-3">
+                                    <span v-if="member.avatar">
+                                        <img :src="member.avatar" alt="avatar">
+                                    </span>
+                                    <span v-else>
+                                        <img :src="avatarDefaultUrl" alt="">
+                                    </span>
+                                    {{ member.name }}</a>
+                            </span>
                         </div>
                         <div v-else>
                             <div class="alert alert-warning">No responsable user !</div>
@@ -283,8 +303,8 @@
                                         </div>
 
                                         <div class="md-layout-item md-small-size-100">
-                                            <md-field :class="">
-                                                <label for="members">Members</label>
+                                            <md-field>
+                                                <label>Members</label>
                                                 <md-input name="members" v-model="value_edit_task.members" :disabled="processingTask" />
                                             </md-field>
                                         </div>
@@ -357,17 +377,19 @@
 
     export default {
         name: "someGroupTasks",
-
         data: () => ({
+            selectedTags: [],
             form: {
                 title: '',
                 description: '',
                 status: '',
-                members: '',
+                members: [],
                 event: '',
                 start_date: null,
                 end_date: null,
             },
+            allUsers: null,
+
             options: {
                 format: 'YYYY/MM/DD HH:mm',
                 useCurrent: false,
@@ -439,8 +461,42 @@
         mounted(){
             this.updateTasks();
             this.currentUser = this.$store.getters.currentUser;
+            this.getAllUsers();
         },
+
         methods: {
+            getAllUsers(){
+                axios.get(config.apiUrl + '/search_users', {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        let AllUsers = response.data.data;
+                        let countUsers = AllUsers.length;
+                        // console.log(AllUsers);
+                        let objUsers = {};
+                        for (let i = 0; i < countUsers; i++)
+                            objUsers[AllUsers[i].id] = AllUsers[i].name;
+
+                        this.allUsers = objUsers;
+                        // console.log(this.allUsers);
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.errors = data_errors;
+                        console.log(data_errors);
+                    })
+                    .finally(() => {
+                        // this.pandingResponseServer = false;
+                    });
+            },
+            ToConsoleSelectedTags(){
+                console.log(this.selectedTags);
+            },
+
             CancelEditingTask(){
                 this.editingTask = null;
                 this.clearTaskEDitForm();
@@ -769,5 +825,21 @@
     @keyframes slideOut {
         from {transform: translateX(0px)}
         to {transform: translateX(-2000px)}
+    }
+
+</style>
+<style>
+    .badge-light {
+        color: white!important;
+        background: #448AFF!important;
+    }
+    .badge:hover {
+        color: white!important;
+        background: #448AFF!important;
+    }
+
+    #usersTag input:focus{
+        border: none;
+        outline: none;
     }
 </style>

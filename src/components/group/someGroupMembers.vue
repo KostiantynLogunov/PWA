@@ -198,6 +198,7 @@
                         this.additingUser = false;
                     });
             },
+
             assign(member_id, member_tag, member_role_id, group_id){
 
                 this.assignErrors = null;

@@ -145,7 +145,6 @@
         },
         data: () => ({
             events: [],
-
             config: {
                 defaultView: 'month',
                 editable: true,
@@ -153,8 +152,8 @@
                 navLinks: false,
                 allDay: true,
                 //if admin
-                selectable: true,
-                selectHelper: true,
+                selectable: false,
+                selectHelper: false,
 
                 eventOverlap: false,
                 overlap: false,
@@ -188,6 +187,7 @@
                 start_date: null,
                 end_date: null,
                 id: null,
+                author_id: null
             },
 
             editingTask: false,
@@ -208,27 +208,52 @@
             avatarDefaultUrl: config.avatarDefaultUrl,
 
             pandingResponseServer: false,
+            currentUser: null,
+            id_author_of_group: null,
         }),
         mounted(){
             this.updateDutyRoster();
+            this.currentUser = this.$store.getters.currentUser;
         },
         methods: {
-            eventSelected(event){
-                this.value_edit_task.title = event.original_title;
-                this.value_edit_task.description = event.description;
-                this.value_edit_task.status = event.status;
-                this.value_edit_task.members = event.responsible_user;
-                this.value_edit_task.event = event.target_event;
-                this.value_edit_task.start_date = event.time_from;
-                this.value_edit_task.end_date = event.time_till;
-                this.value_edit_task.id = event.id;
+            checkAdmin(user_id){
+                return this.currentUser.id == user_id;
+            },
 
+            checkGroupAuthor() {
+                return this.id_author_of_group == this.currentUser.id;
+            },
+
+            eventSelected(event)
+            {
                 this.errors = null;
                 this.errorsComment = null;
                 this.updateErrors = null;
                 this.editErrors = null;
 
-                this.editingTask = true;
+                if (this.checkGroupAuthor() || this.checkAdmin()){
+                    this.value_edit_task.title = event.original_title;
+                    this.value_edit_task.description = event.description;
+                    this.value_edit_task.status = event.status;
+                    this.value_edit_task.members = event.responsible_user;
+                    this.value_edit_task.event = event.target_event;
+                    this.value_edit_task.start_date = event.time_from;
+                    this.value_edit_task.end_date = event.time_till;
+                    this.value_edit_task.id = event.id;
+                    this.value_edit_task.author_id = event.author_id;
+
+                    this.errors = null;
+                    this.errorsComment = null;
+                    this.updateErrors = null;
+                    this.editErrors = null;
+
+                    this.editingTask = true;
+                    return;
+
+                } else {
+                    alert('Permision dinaided !');
+                    return;
+                }
             },
 
 
@@ -324,7 +349,7 @@
                     }
                 })
                     .then((response) => {
-
+                        this.id_author_of_group = response.data.id_author_of_group;
                         let index, i = 0;
                         let group_tasks = response.data.group_tasks;
 
@@ -336,6 +361,7 @@
 
                             let obje = {
                                 id : oneTask.id,
+                                author_id : oneTask.author_id,
                                 title  : oneTask.title + ' (' + oneTask.user.name + '/' + oneTask.status + ')',
                                 original_title  : oneTask.title,
                                 description  : oneTask.description,

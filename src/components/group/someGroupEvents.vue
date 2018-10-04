@@ -71,7 +71,7 @@
                 </md-list>
             </md-tab>
 
-            <md-tab id="tab-new" md-label="New">
+            <md-tab id="tab-new" md-label="New" v-if="checkGroupAdmins(currentUser_id)">
                 <div class="text-center">
                     <md-button type="button" class="md-raised md-primary" @click="CreateEvent">Create event</md-button>
                 </div>
@@ -96,13 +96,20 @@
                 sending: false,
                 avatarDefaultUrl: config.avatarDefaultUrl,
                 errors: false,
+
+                currentUser_id: null,
+                groupAdminsID: [],
             }
         },
         created() {
             this.getEvents();
-
+            this.currentUser_id = this.$store.getters.currentUser.id;
         },
         methods: {
+            checkGroupAdmins(user_id) {
+                return this.groupAdminsID.indexOf(user_id) >= 0;
+            },
+
             getEvents(){
                 axios.get(config.apiUrl + '/group-events/' + this.$route.params.groupname, {
                     headers: {
@@ -113,6 +120,7 @@
                         this.group_events = response.data.group_events;
                         this.ongoing_events = response.data.ongoing_events;
                         this.upcoming_events = response.data.upcoming_events;
+                        this.groupAdminsID = response.data.admins_id;
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;

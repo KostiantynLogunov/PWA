@@ -7,7 +7,7 @@
                 <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
             </md-snackbar>
             <!--SNACKBAR-->
-            <md-card class="md-layout-item md-size-50 md-small-size-100">
+            <md-card class="md-layout-item md-size-50 md-small-size-100" v-if="checkGroupAdmins(currentUser_id)">
                 <md-card-header>
                     <div class="md-title">What's going on ?</div>
                 </md-card-header>
@@ -121,7 +121,9 @@
 
                                         <md-card-actions>
                                             <md-button class="md-primary"><i class="far fa-thumbs-up"></i></md-button>
-                                            <md-button class="md-accent"><i class="fas fa-times"></i></md-button>
+                                            <span v-if="checkAuthor(comment.user_id) || checkGroupAdmins(currentUser_id)">
+                                                <md-button class="md-accent"><i class="fas fa-times"></i></md-button>
+                                            </span>
                                             <md-button><i class="far fa-share-square"></i></md-button>
                                         </md-card-actions>
                                     </md-ripple>
@@ -171,16 +173,29 @@
             },
             errorsComment: null,
 
-            pandingResponseServer: false
+            pandingResponseServer: false,
+
+            currentUser_id: null,
+            groupAdminsID: [],
         }),
         mounted(){
             this.updatePosts();
+            this.currentUser_id = this.$store.getters.currentUser.id;
         },
 
         methods: {
+            checkAuthor(user_id){
+                return this.currentUser_id == user_id;
+            },
+
+            checkGroupAdmins(user_id) {
+                return this.groupAdminsID.indexOf(user_id) >= 0;
+            },
+
             CreateEvent(){
                 this.$router.push({ name: 'newEvent'})
             },
+
             updatePosts(){
                 this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group-posts/' + this.$route.params.groupname, {
@@ -191,6 +206,7 @@
                     .then((response) => {
                         this.pandingResponseServer = false;
                         this.groupPosts = response.data.groupPosts;
+                        this.groupAdminsID = response.data.admins_id;
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
@@ -244,10 +260,6 @@
                 }
             },
 
-            createEvent(){
-                console.log('createEvent')
-            },
-
             convertDate(datetimeString) {
                 let utcTZ = this.$moment.tz(datetimeString, 'UTC').format();
                 let currentTZ = this.$moment(utcTZ.valueOf());
@@ -284,7 +296,6 @@
             },
 
             sendComment(post_id) {
-                console.log('sending comments...');
                 this.formComment.comment = this.htmlEntities(this.formComment.comment);
 
                 this.errorsComment = null;

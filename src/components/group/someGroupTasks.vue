@@ -1,6 +1,5 @@
 <template>
     <div class="page-container md-layout-column">
-        <!--<div v-for="usr in allUsers">{{ usr }}</div>-->
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteTask" md-persistent>
             <span>You deleted a task!</span>
@@ -18,7 +17,7 @@
         </md-snackbar>
         <!--SNACKBAR-->
         <div class="text-center" v-if="!creatingForm">
-            <div v-if="checkGroupAuthor()">
+            <div v-if="checkGroupAdmins(currentUser_id)">
                 <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true; editingTask = null" :disabled="sending">Create Task</md-button>
             </div>
         </div>
@@ -151,16 +150,16 @@
                     <md-card-content>
                         <h6>{{ task.description }}</h6>
                         <br>
-                        <div v-if="task.responsible_user">
+                        <div v-if="task.responsible_user.length">
                             Responsible users:
                             <span v-for="member in task.responsible_user" class="one_member_link">
                                 <!-- link = member.link-->
                                 <a class="mr-3">
                                     <span v-if="member.avatar">
-                                        <img :src="member.avatar" alt="avatar">
+                                        <img :src="member.avatar" alt="avatar" style="max-height: 30px">
                                     </span>
                                     <span v-else>
-                                        <img :src="avatarDefaultUrl" alt="">
+                                        <img :src="avatarDefaultUrl" alt="" style="max-height: 30px">
                                     </span>
                                     {{ member.name }}</a>
                             </span>
@@ -184,13 +183,12 @@
                     <md-card-actions>
                         <md-button @click="turnComment(task.id)"><i class="far fa-comments"></i>
                                 Comments</md-button>
-                        <div v-if="checkAdmin(task.author_id) || checkGroupAuthor()">
+                        <span v-if="checkAuthor(task.author_id) || checkGroupAdmins(currentUser_id)">
                             <md-button :disabled="editingTask == task.id" @click="onFormEditTask(task.title, task.description, task.status, task.responsible_user, task.target_event, task.time_from, task.time_till, task.id)"><i class="far fa-edit"></i>
                                 Edit</md-button>
                             <md-button class="md-accent" :disabled="deleteProcess" @click="deleteTask(task.id)"><i class="far fa-trash-alt"></i>
                             Delete</md-button>
-
-                        </div>
+                        </span>
 
                     </md-card-actions>
                     <div v-if="deletingTask == task.id">
@@ -248,10 +246,10 @@
                                         </md-card-content>
 
                                         <md-card-actions>
-                                            <md-button class="md-primary"><i class="far fa-thumbs-up"></i>
-                                                </md-button>
-                                            <md-button class="md-accent"><i class="fas fa-times"></i>
-                                                </md-button>
+                                            <md-button class="md-primary"><i class="far fa-thumbs-up"></i></md-button>
+                                            <span v-if="checkAuthor(remark.user_id) || checkGroupAdmins(currentUser_id)">
+                                                <md-button class="md-accent"><i class="fas fa-times"></i></md-button>
+                                            </span>
                                         </md-card-actions>
                                     </md-ripple>
                                 </md-card>
@@ -407,6 +405,7 @@
                     close: 'far fa-times-circle'
                 }
             },
+
             showSnackbar: false,
             position: 'center',
             duration: 4000,
@@ -435,8 +434,9 @@
             selectedDate_from: null,
             selectedDate_to: null,
 
-            currentUser: false,
-            id_author_of_group: null,
+            currentUser_id: null,
+            groupAdminsID: [],
+
             flagDeleteTask: false,
             deleteErrors: false,
             deletingTask: false,
@@ -460,7 +460,7 @@
         }),
         mounted(){
             this.updateTasks();
-            this.currentUser = this.$store.getters.currentUser;
+            this.currentUser_id = this.$store.getters.currentUser.id;
             this.getAllUsers();
         },
 
@@ -492,9 +492,6 @@
                     .finally(() => {
                         // this.pandingResponseServer = false;
                     });
-            },
-            ToConsoleSelectedTags(){
-                console.log(this.selectedTags);
             },
 
             CancelEditingTask(){
@@ -533,12 +530,12 @@
                 this.value_edit_task.id = this.htmlEntities(task_id);
             },
 
-            checkAdmin(user_id){
-                return this.currentUser.id == user_id;
+            checkAuthor(user_id){
+                return this.currentUser_id == user_id;
             },
 
-            checkGroupAuthor() {
-                return this.id_author_of_group == this.currentUser.id;
+            checkGroupAdmins(user_id) {
+                return this.groupAdminsID.indexOf(user_id) >= 0;
             },
 
             editTask(){
@@ -609,7 +606,7 @@
                     }
                 })
                     .then((response) => {
-                        this.id_author_of_group = response.data.id_author_of_group;
+                        this.groupAdminsID = response.data.admins_id;
                         this.groupTasks = response.data.group_tasks;
                         this.group_events = response.data.group_events;
                         // console.log(response.data.group_tasks);

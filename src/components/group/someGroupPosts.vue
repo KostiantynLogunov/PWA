@@ -16,6 +16,7 @@
             <md-button class="md-accent" @click="updatedPost = false">Close</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
+        <div v-if="checkGroupAdmins(currentUser_id)" >
         <form novalidate class="md-layout" @submit.prevent="createPost">
 
             <md-card class="md-layout-item md-size-50 md-small-size-100">
@@ -48,8 +49,8 @@
                     <md-button type="submit" class="md-primary md-raised" :disabled="sending">Post</md-button>
                 </md-card-actions>
             </md-card>
-
         </form>
+        </div>
         <br>
 
         <div class="alert alert-warning" v-if="groupPosts.length == 0">No posts were found...</div>
@@ -110,8 +111,7 @@
                                         </md-dialog-actions>
                                     </form>
                                 </md-dialog>
-
-                                <div v-show="checkAdmin(post.user_id)">
+                                <div v-if="checkAuthor(post.user_id) || checkGroupAdmins(currentUser_id)">
                                     <md-menu md-size="small" md-align-trigger>
                                         <md-button class="md-icon-button md-list-action" md-menu-trigger>
                                             <md-icon class="md-primary"><i class="fas fa-angle-down"></i></md-icon>
@@ -189,7 +189,10 @@
 
                                         <md-card-actions>
                                             <md-button class="md-primary"><i class="far fa-thumbs-up"></i></md-button>
-                                            <md-button class="md-accent"><i class="fas fa-times"></i></md-button>
+                                            <span v-if="checkAuthor(comment.user_id) || checkGroupAdmins(currentUser_id)">
+                                                <md-button class="md-accent"><i class="fas fa-times"></i></md-button>
+                                            </span>
+
                                             <md-button><i class="far fa-share-square"></i></md-button>
                                         </md-card-actions>
                                     </md-ripple>
@@ -242,7 +245,9 @@
 
             pandingResponseServer: false,
 
-            currentUser: false,
+            currentUser_id: null,
+            groupAdminsID: [],
+
             deletingPost: 0,
             flagDeletePost: false,
             editingPost: false,
@@ -257,7 +262,7 @@
         }),
         mounted(){
             this.updatePosts();
-            this.currentUser = this.$store.getters.currentUser;
+            this.currentUser_id = this.$store.getters.currentUser.id;
         },
 
         methods: {
@@ -265,11 +270,13 @@
                 this.editingPost = false;
                 this.value_edit_post.post = '';
             },
+
             onFormUpdatePost(id, description){
                 this.editingPost = true;
                 this.value_edit_post.id = id;
                 this.value_edit_post.post = description;
             },
+
             editPost(post_id){
                 this.editErrors = null;
                 const constraints = this.getConstraints();
@@ -304,6 +311,7 @@
                     });
 
             },
+
             deletePost(post_id){
                 this.deletingPost = post_id;
                 axios.delete(config.apiUrl + '/group-posts/' + post_id, {
@@ -326,12 +334,19 @@
                         this.deletingPost = 0;
                     });
             },
-            checkAdmin(user_id){
-               return this.currentUser.id == user_id;
+
+            checkAuthor(user_id){
+                return this.currentUser_id == user_id;
             },
+
+            checkGroupAdmins(user_id) {
+                return this.groupAdminsID.indexOf(user_id) >= 0;
+            },
+
             CreateEvent(){
                 this.$router.push({ name: 'newEvent'})
             },
+
             updatePosts(){
                 this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group-posts/' + this.$route.params.groupname, {
@@ -342,6 +357,7 @@
                     .then((response) => {
                         this.pandingResponseServer = false;
                         this.groupPosts = response.data.groupPosts;
+                        this.groupAdminsID = response.data.admins_id;
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
@@ -393,10 +409,6 @@
                         }
                     },
                 }
-            },
-
-            createEvent(){
-                console.log('createEvent')
             },
 
             convertDate(datetimeString) {

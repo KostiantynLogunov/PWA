@@ -251,7 +251,7 @@
                     return;
 
                 } else {
-                    alert('Permision dinaided !');
+                    alert('Permission denied !');
                     return;
                 }
             },

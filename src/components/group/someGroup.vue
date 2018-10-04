@@ -63,7 +63,7 @@
                     <span class="md-list-item-text">Notes</span>
                 </md-list-item>
 
-                <md-list-item  :to="{ name: 'someGroupSettings' }"  @click="closeSideMenu">
+                <md-list-item  :to="{ name: 'someGroupSettings' }"  @click="closeSideMenu"  v-if="checkGroupAdmins(currentUser_id)">
                     <md-icon><i class="fas fa-cogs"></i></md-icon>
                     <span class="md-list-item-text">Group settings</span>
                 </md-list-item>
@@ -104,10 +104,31 @@
                 showSidepanel: false,
                 showConfirm: false,
                 pandingResponseServer: false,
-                errors: false
+                errors: false,
+
+                currentUser_id: null,
+                groupAdminsID: [],
             }
         },
+        created(){
+            this.currentUser_id = this.$store.getters.currentUser.id;
+            this.getGroupAdminsId();
+        },
         methods: {
+            checkGroupAdmins(user_id) {
+                return this.groupAdminsID.indexOf(user_id) >= 0;
+            },
+
+            getGroupAdminsId(){
+                axios.get(config.apiUrl + '/group_admins_id/' + this.$route.params.groupname, {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        this.groupAdminsID = response.data.admins_id;
+                    });
+            },
             closeSideMenu() {
                 this.showSidepanel = false;
             },

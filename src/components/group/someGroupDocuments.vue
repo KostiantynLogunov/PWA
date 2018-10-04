@@ -18,7 +18,7 @@
                 <md-table-cell md-label="Date Created" md-sort-by="created_at">{{ item.created_at }}</md-table-cell>
                 <md-table-cell md-label="Date Update" md-sort-by="updated_at">{{ item.updated_at }}</md-table-cell>
                 <md-table-cell md-label="Mention Link" md-sort-by="token">{{ item.token }}</md-table-cell>
-                <md-table-cell md-label="Actions">
+                <md-table-cell md-label="Actions" v-if="checkAuthor(item.user_id) || checkGroupAdmins(currentUser_id)">
                     <button class="btn btn-warning"><i class="far fa-edit"></i></button>
                     <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                 </md-table-cell>
@@ -41,12 +41,23 @@
             groupDocuments: false,
             pandingResponseServer: false,
 
+            currentUser_id: null,
+            groupAdminsID: [],
         }),
         mounted(){
-            this.updateSharingServices();
+            this.updateDocuments();
+            this.currentUser_id = this.$store.getters.currentUser.id;
         },
         methods: {
-            updateSharingServices(){
+            checkAuthor(user_id){
+                return this.currentUser_id == user_id;
+            },
+
+            checkGroupAdmins(user_id) {
+                return this.groupAdminsID.indexOf(user_id) >= 0;
+            },
+
+            updateDocuments(){
                 this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group_documents/' + this.$route.params.groupname, {
                     headers: {
@@ -56,7 +67,7 @@
                     .then((response) => {
 
                         // console.log(response.data.documents);
-
+                        this.groupAdminsID = response.data.admins_id;
                         let index, i = 0;
                         let group_documents = response.data.documents;
 

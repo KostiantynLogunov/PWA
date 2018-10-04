@@ -18,7 +18,7 @@
         <!--SNACKBAR-->
 
         <div class="text-center" v-if="!creatingForm">
-            <div v-if="checkGroupAuthor()">
+            <div v-if="checkGroupAdmins(currentUser_id)">
                 <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create CheckList</md-button>
             </div>
         </div>
@@ -168,7 +168,7 @@
                     </md-card-content>
 
                     <md-card-actions>
-                        <div v-if="checkAdmin(checklist.author_id) || checkGroupAuthor()">
+                        <div v-if="checkAuthor(checklist.author_id) || checkGroupAdmins(currentUser_id)">
                             <md-button :disabled="editingChecklist == checklist.id" @click=" onFormEditChecklist(checklist.title, checklist.description, checklist.todolist, checklist.responsible_user, checklist.target_event, checklist.id)"><i class="far fa-edit"></i>
                                 Edit</md-button>
                             <md-button class="md-accent" :disabled="deleteProcess" @click="deleteChecklist(checklist.id)"><i class="far fa-trash-alt"></i>
@@ -346,10 +346,10 @@
                                         </md-card-content>
 
                                         <md-card-actions>
-                                            <md-button class="md-primary"><i class="far fa-thumbs-up"></i>
-                                            </md-button>
-                                            <md-button class="md-accent"><i class="fas fa-times"></i>
-                                            </md-button>
+                                            <md-button class="md-primary"><i class="far fa-thumbs-up"></i></md-button>
+                                            <span v-if="checkAuthor(remark.user_id) || checkGroupAdmins(currentUser_id)">
+                                                <md-button class="md-accent"><i class="fas fa-times"></i></md-button>
+                                            </span>
                                         </md-card-actions>
                                     </md-ripple>
                                 </md-card>
@@ -422,8 +422,10 @@
             updateErrors: null,
             editErrors:null,
             deleteErrors: false,
-            // currentUser: null,
-            groupAuthorId: null,
+
+            currentUser_id: null,
+            groupAdminsID: [],
+
             flagDeleteCheckList: false,
             deleteProcess: false,
             processingChecklist: false,
@@ -431,7 +433,7 @@
         }),
         mounted(){
             this.updateChecklist();
-            // this.currentUser = this.$store.getters.currentUser;
+            this.currentUser_id = this.$store.getters.currentUser.id;
         },
 
         methods: {
@@ -459,11 +461,6 @@
             },
 
             editChecklist(){
-
-                this.errors = null;
-                this.errorsComment = null;
-                this.updateErrors = null;
-                this.editErrors = null;
 
                 const constraints = this.getConstraints();
                 const errors = validate(this.$data.value_edit_checklist, constraints);
@@ -534,15 +531,13 @@
                 this.value_edit_checklist.id = null;
             },
 
-            checkAdmin(user_id){
-                return this.$store.getters.currentUser.id == user_id;
-                // return this.currentUser.id == user_id;
+            // checkAdmin(user_id){
+            checkAuthor(user_id){
+                return this.currentUser_id == user_id;
             },
 
-            checkGroupAuthor() {
-                // console.log(this.$store.getters.currentUser);
-                // return this.groupAuthorId == this.currentUser.id;
-                return this.groupAuthorId == this.$store.getters.currentUser.id;
+            checkGroupAdmins(user_id) {
+                return this.groupAdminsID.indexOf(user_id) >= 0;
             },
 
             AddTodo(newTodo){
@@ -600,7 +595,7 @@
                     }
                 })
                     .then((response) => {
-                        this.groupAuthorId = response.data.groupAuthorId;
+                        this.groupAdminsID = response.data.admins_id;
                         this.pandingResponseServer = false;
                         if (response.data.group_checklist.length)
                             this.groupChecklist = response.data.group_checklist;

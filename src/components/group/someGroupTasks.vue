@@ -466,39 +466,10 @@
         mounted(){
             this.updateTasks();
             this.currentUser_id = this.$store.getters.currentUser.id;
-            this.getAllUsers();
+            this.allUsers = this.$store.getters.getAllUsers;
         },
 
         methods: {
-            getAllUsers(){
-                axios.get(config.apiUrl + '/search_users', {
-                    headers: {
-                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
-                    }
-                })
-                    .then((response) => {
-                        let AllUsers = response.data.data;
-                        let countUsers = AllUsers.length;
-                        // console.log(AllUsers);
-                        let objUsers = {};
-                        for (let i = 0; i < countUsers; i++)
-                            objUsers[AllUsers[i].id] = AllUsers[i].name;
-
-                        this.allUsers = objUsers;
-                        // console.log(this.allUsers);
-                    })
-                    .catch((err) => {
-                        let data_errors = [];
-                        data_errors.push(err.message);
-                        data_errors.push(err.response.data.message);
-                        this.errors = data_errors;
-                        console.log(data_errors);
-                    })
-                    .finally(() => {
-                        // this.pandingResponseServer = false;
-                    });
-            },
-
             CancelEditingTask(){
                 this.editingTask = null;
                 this.clearTaskEDitForm();

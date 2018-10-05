@@ -70,7 +70,7 @@
         },
         computed: {
             currentUser() {
-                return this.$store.state.currentUser
+                return this.$store.getters.currentUser
             }
         },
         methods: {

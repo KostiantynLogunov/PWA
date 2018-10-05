@@ -5,7 +5,6 @@ Vue.use(Vuex);
 
 import { getLocalUser } from "../_helpers/auth";
 import axios from "axios/index";
-
 import {config} from '../_services/config'
 
 const user = getLocalUser();
@@ -18,9 +17,14 @@ export const store = new Vuex.Store({
         auth_error: null,
         groupsManage: [],
         groupsJoined: [],
-        groupPosts: []
+        groupPosts: [],
+
+        allUsers: null,
     },
     getters: {
+        getAllUsers(state){
+          return state.allUsers;
+        },
         isLoading(state){
             return state.loading;
         },
@@ -44,6 +48,15 @@ export const store = new Vuex.Store({
         }
     },
     mutations: {
+        setAllUsers(state, payload) {
+            let AllUsers = payload;
+            let countUsers = AllUsers.length;
+            let objUsers = {};
+            for (let i = 0; i < countUsers; i++)
+                objUsers[AllUsers[i].id] = AllUsers[i].name;
+
+            state.allUsers = objUsers;
+        },
         loginSuccess(state, payload) {
             state.auth_error = null;
             state.isLoggedIn = true;
@@ -77,6 +90,7 @@ export const store = new Vuex.Store({
         login(store) {
             store.commit('login');
         },
+
         getGroups(store) {
             axios.get(config.apiUrl + '/mygroups', {
                 headers: {
@@ -91,6 +105,7 @@ export const store = new Vuex.Store({
                     reject("errorr!!");
                 })*/
         },
+
         getGroupPosts(store) {
             axios.get(config.apiUrl + '/group-posts', {
                 headers: {
@@ -104,6 +119,17 @@ export const store = new Vuex.Store({
                 console.log(err);
                 reject("errorr!!");
             })*/
-        }
+        },
+
+        getAllUsers(store){
+            axios.get(config.apiUrl + '/search_users', {
+                headers: {
+                    "Authorization": `Bearer ${store.state.currentUser.token}`
+                }
+            })
+                .then((response) => {
+                    store.commit('setAllUsers', response.data.data);
+                })
+        },
     }
 });

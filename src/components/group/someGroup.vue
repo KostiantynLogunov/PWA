@@ -110,15 +110,18 @@
                 groupAdminsID: [],
             }
         },
-        created(){
-            this.currentUser_id = this.$store.getters.currentUser.id;
+        beforeCreate(){
+            this.$store.dispatch('getAllUsers');
+        },
+        created() {
             this.getGroupAdminsId();
         },
-        methods: {
-            checkGroupAdmins(user_id) {
-                return this.groupAdminsID.indexOf(user_id) >= 0;
-            },
 
+        mounted(){
+            this.currentUser_id = this.$store.getters.currentUser.id;
+        },
+
+        methods: {
             getGroupAdminsId(){
                 axios.get(config.apiUrl + '/group_admins_id/' + this.$route.params.groupname, {
                     headers: {
@@ -129,9 +132,15 @@
                         this.groupAdminsID = response.data.admins_id;
                     });
             },
+
+            checkGroupAdmins(user_id) {
+                return this.groupAdminsID.indexOf(user_id) >= 0;
+            },
+
             closeSideMenu() {
                 this.showSidepanel = false;
             },
+
             unjoin() {
                 this.showConfirm = false;
 
@@ -154,8 +163,7 @@
                         this.pandingResponseServer = false;
                     });
             }
-
-        }
+        },
     }
 </script>
 

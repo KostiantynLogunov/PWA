@@ -215,38 +215,9 @@
         mounted(){
             this.updateDutyRoster();
             this.currentUser = this.$store.getters.currentUser;
-            this.getAllUsers();
+            this.allUsers = this.$store.getters.getAllUsers;
         },
         methods: {
-            getAllUsers(){
-                axios.get(config.apiUrl + '/search_users', {
-                    headers: {
-                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
-                    }
-                })
-                    .then((response) => {
-                        let AllUsers = response.data.data;
-                        let countUsers = AllUsers.length;
-                        // console.log(AllUsers);
-                        let objUsers = {};
-                        for (let i = 0; i < countUsers; i++)
-                            objUsers[AllUsers[i].id] = AllUsers[i].name;
-
-                        this.allUsers = objUsers;
-                        // console.log(this.allUsers);
-                    })
-                    .catch((err) => {
-                        let data_errors = [];
-                        data_errors.push(err.message);
-                        data_errors.push(err.response.data.message);
-                        this.errors = data_errors;
-                        console.log(data_errors);
-                    })
-                    .finally(() => {
-                        // this.pandingResponseServer = false;
-                    });
-            },
-
             checkAdmin(user_id){
                 return this.currentUser.id == user_id;
             },

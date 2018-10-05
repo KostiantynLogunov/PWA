@@ -39,8 +39,7 @@
                             </div>
                         </div>
 
-                        <div class="">
-
+                        <div v-if="checkGroupAdmins(currentUser_id)">
                             <form novalidate class="md-layout" @submit.prevent="assign(member.id, member.pivot.tag, member.pivot.role_id, member.pivot.group_id)">
                                 <div class="row">
 
@@ -156,9 +155,13 @@
                 duration: 4000,
                 aboutAddMember: false,
                 msgAbotAddMember: false,
+
+                currentUser_id: false,
+                groupAdminsID: [],
             }
         },
         mounted() {
+            this.currentUser_id = this.$store.getters.currentUser.id;
             this.getMembers();
             this.getGroupAdmins();
         },
@@ -168,6 +171,10 @@
             }
         },
         methods: {
+            checkGroupAdmins(user_id) {
+                return this.groupAdminsID.indexOf(user_id) >= 0;
+            },
+
             addMember(member_id) {
               // console.log(member_id);
               let user_id = {
@@ -311,6 +318,7 @@
                     }
                 })
                     .then((response) => {
+                        this.groupAdminsID = response.data.admins_id;
                         this.members = response.data.group_members;
                         this.member_role_optionsmembers = response.data.member_role_options;
                         // console.log(this.member_role_optionsmembers);

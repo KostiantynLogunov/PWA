@@ -73,10 +73,24 @@
                             </div>
 
                             <div class="md-layout-item md-small-size-100">
-                                <md-field :class="">
+                                <fieldset class="form-group" id="usersTag">
+                                    <label class="control-label">MEMBERS</label>
+                                    <tags-input element-id="tags"
+                                                class="form-control"
+                                                v-model="form.responsible_user"
+                                                :existing-tags="allUsers"
+                                                :typeahead="true"
+                                                placeholder="Add a member"
+                                                :only-existing-tags="true"
+                                                name="members"
+                                                :disabled="sending"
+                                    >
+                                    </tags-input>
+                                </fieldset>
+                                <!--<md-field :class="">
                                     <label>Members</label>
                                     <md-input name="members" autocomplete="members" v-model="form.responsible_user" :disabled="sending" />
-                                </md-field>
+                                </md-field>-->
 
                                 <md-field :class="">
                                     <label>Target Event</label>
@@ -136,13 +150,27 @@
 
                     <md-card-content>
                         <h6>{{ checklist.description }}</h6>
-                        <div v-if="checklist.responsible_user">
-                            Responsible users: {{ checklist.responsible_user }}
+
+                        <div v-if="checklist.responsible_user.length">
+                            Responsible users:
+                            <span v-for="member in checklist.responsible_user" class="one_member_link">
+                                <!-- link = member.link-->
+                                <a class="mr-3">
+                                    <span v-if="member.avatar">
+                                        <img :src="member.avatar" alt="avatar" style="max-height: 30px">
+                                    </span>
+                                    <span v-else>
+                                        <img :src="avatarDefaultUrl" alt="" style="max-height: 30px">
+                                    </span>
+                                    {{ member.name }}</a>
+                            </span>
                         </div>
                         <div v-else>
                             <div class="alert alert-warning">No responsable user !</div>
                         </div>
-                        <div v-if="checklist.todolist">
+
+
+                        <div v-if="checklist.todolist.length">
                             <ul><b>Items:</b>
                                 <li v-for="todo in checklist.todolist">
                                     <input type="checkbox" :checked="todo.check" disabled>
@@ -236,10 +264,22 @@
                                         </div>
 
                                         <div class="md-layout-item md-small-size-100">
-                                            <md-field>
-                                                <label>Members</label>
-                                                <md-input name="members" v-model="value_edit_checklist.responsible_user" :disabled="processingChecklist" />
-                                            </md-field>
+                                            <fieldset id="membersTag">
+                                                <label class="control-label" style="color: grey">Members</label>
+                                                <tags-input element-id="tags"
+                                                            class="form-control"
+                                                            v-model="value_edit_checklist.responsible_user"
+                                                            :existing-tags="allUsers"
+                                                            :typeahead="true"
+                                                            placeholder="Add a responsable member"
+                                                            :only-existing-tags="true"
+                                                            name="members"
+                                                            :disabled="processingChecklist"
+                                                >
+                                                </tags-input>
+                                            </fieldset>
+                                            <br>
+
 
                                             <md-field>
                                                 <label>Target Event</label>
@@ -294,9 +334,6 @@
                                     </ul>
                                 </div>
                             </md-card>
-
-
-
                         </form>
                     </div>
 
@@ -430,13 +467,45 @@
             deleteProcess: false,
             processingChecklist: false,
             updatedChecklist: false,
+
+            allUsers: null,
         }),
         mounted(){
             this.updateChecklist();
             this.currentUser_id = this.$store.getters.currentUser.id;
+            this.getAllUsers();
         },
 
         methods: {
+            getAllUsers(){
+                axios.get(config.apiUrl + '/search_users', {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        let AllUsers = response.data.data;
+                        let countUsers = AllUsers.length;
+                        // console.log(AllUsers);
+                        let objUsers = {};
+                        for (let i = 0; i < countUsers; i++)
+                            objUsers[AllUsers[i].id] = AllUsers[i].name;
+
+                        this.allUsers = objUsers;
+                        // console.log(this.allUsers);
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.errors = data_errors;
+                        console.log(data_errors);
+                    })
+                    .finally(() => {
+                        // this.pandingResponseServer = false;
+                    });
+            },
+
             onFormEditChecklist(checklist_title, checklits_description, checklist_todolist, checklist_responsible_user, checklist_target_event, checklist_id){
                 this.clearChecklistEditForm();
 
@@ -452,7 +521,14 @@
                 this.value_edit_checklist.title = this.htmlEntities(checklist_title);
                 this.value_edit_checklist.description = this.htmlEntities(checklits_description);
                 this.value_edit_checklist.todolist = checklist_todolist;
-                this.value_edit_checklist.responsible_user = this.htmlEntities(checklist_responsible_user);
+                // this.value_edit_checklist.responsible_user = this.htmlEntities(checklist_responsible_user);
+                let objMembers = [];
+                checklist_responsible_user.forEach(function (member, i) {
+                    objMembers.push((member.id).toString());
+                });
+                // console.log(objMembers);
+                this.value_edit_checklist.responsible_user = objMembers;
+
                 this.value_edit_checklist.target_event = this.htmlEntities(checklist_target_event);
                 this.value_edit_checklist.id = this.htmlEntities(checklist_id);
 
@@ -800,5 +876,26 @@
         overflow: auto;
         border: 1px solid rgba(#000, .12);
     }
-
 </style>
+
+<style>
+    .badge-light {
+        color: white!important;
+        background: #448AFF!important;
+    }
+    .badge:hover {
+        color: white!important;
+        background: #448AFF!important;
+    }
+
+    #usersTag input:focus{
+        border: none;
+        outline: none;
+    }
+
+    #membersTag input:focus{
+        border: none;
+        outline: none;
+    }
+</style>
+

@@ -62,31 +62,31 @@
                                             <!--</div>-->
                                         <!--</div>-->
 
-                                        <div class="md-layout-item md-small-size-100">
-                                            <md-field>
-                                                <label>Members</label>
-                                                <md-input name="members" v-model="value_edit_task.members" :disabled="processingTask" />
-                                            </md-field>
+                                        <div class="md-layout-item md-small-size-100 text-left">
+                                            <fieldset id="membersTag">
+                                                <label class="control-label" style="color: grey">Members</label>
+                                                <tags-input element-id="tags"
+                                                            class="form-control"
+                                                            v-model="value_edit_task.members"
+                                                            :existing-tags="allUsers"
+                                                            :typeahead="true"
+                                                            placeholder="Add a responsable member"
+                                                            :only-existing-tags="true"
+                                                            name="members"
+                                                            :disabled="processingTask"
+                                                >
+                                                </tags-input>
+                                                <br>
+                                                <br>
+                                            </fieldset>
                                         </div>
 
                                         <div class="md-layout-item md-small-size-100 text-center">
-                                            <!--<md-field>-->
-                                                <!--<label>Target Event</label>-->
                                                 <select name="event" v-model="value_edit_task.event"  :disabled="processingTask">
-                                                    <!--<div v-if="group_events.length">-->
-                                                        <!--<div v-for="group_event in group_events">-->
                                                             <option v-for="group_event in group_events" :value="group_event.timeline.name">
                                                                 {{ group_event.timeline.name }}
                                                             </option>
-                                                        <!--</div>-->
-                                                    <!--</div>-->
-                                                    <!--<div v-else>-->
-                                                        <!--<md-option  value="" disabled>-->
-                                                            <!--Not any events-->
-                                                        <!--</md-option>-->
-                                                    <!--</div>-->
                                                 </select>
-                                            <!--</md-field>-->
                                         </div>
                                     </div>
                                 </div>
@@ -210,12 +210,43 @@
             pandingResponseServer: false,
             currentUser: null,
             id_author_of_group: null,
+            allUsers: null,
         }),
         mounted(){
             this.updateDutyRoster();
             this.currentUser = this.$store.getters.currentUser;
+            this.getAllUsers();
         },
         methods: {
+            getAllUsers(){
+                axios.get(config.apiUrl + '/search_users', {
+                    headers: {
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                    }
+                })
+                    .then((response) => {
+                        let AllUsers = response.data.data;
+                        let countUsers = AllUsers.length;
+                        // console.log(AllUsers);
+                        let objUsers = {};
+                        for (let i = 0; i < countUsers; i++)
+                            objUsers[AllUsers[i].id] = AllUsers[i].name;
+
+                        this.allUsers = objUsers;
+                        // console.log(this.allUsers);
+                    })
+                    .catch((err) => {
+                        let data_errors = [];
+                        data_errors.push(err.message);
+                        data_errors.push(err.response.data.message);
+                        this.errors = data_errors;
+                        console.log(data_errors);
+                    })
+                    .finally(() => {
+                        // this.pandingResponseServer = false;
+                    });
+            },
+
             checkAdmin(user_id){
                 return this.currentUser.id == user_id;
             },
@@ -235,7 +266,14 @@
                     this.value_edit_task.title = event.original_title;
                     this.value_edit_task.description = event.description;
                     this.value_edit_task.status = event.status;
-                    this.value_edit_task.members = event.responsible_user;
+                    let objMembers = [];
+                    event.responsible_user.forEach(function (member, i) {
+                        objMembers.push((member.id).toString());
+                    });
+                    // console.log(objMembers);
+                    this.value_edit_task.members = objMembers;
+
+
                     this.value_edit_task.event = event.target_event;
                     this.value_edit_task.start_date = event.time_from;
                     this.value_edit_task.end_date = event.time_till;
@@ -433,5 +471,25 @@
         color: orangered;
         border-radius: 5px;
         /*padding: 21px 0 2px 0;*/
+    }
+</style>
+<style>
+    .badge-light {
+        color: white!important;
+        background: #448AFF!important;
+    }
+    .badge:hover {
+        color: white!important;
+        background: #448AFF!important;
+    }
+
+    #usersTag input:focus{
+        border: none;
+        outline: none;
+    }
+
+    #membersTag input:focus{
+        border: none;
+        outline: none;
     }
 </style>

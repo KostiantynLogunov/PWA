@@ -69,10 +69,6 @@
 
                                 <br>
                                 <div class="md-layout-item md-small-size-100">
-                                        <!--<label>Members</label>-->
-                                        <!--<md-input name="members" id="members" autocomplete="given-members" v-model="form.members" :disabled="sending" />-->
-
-
                                     <fieldset class="form-group" id="usersTag">
                                         <label class="control-label">MEMBERS</label>
                                         <tags-input element-id="tags"
@@ -85,7 +81,6 @@
                                                     name="members"
                                         >
                                         </tags-input>
-                                        <!--<button type="button" @click="ToConsoleSelectedTags">+</button>-->
                                     </fieldset>
                                 </div>
 
@@ -299,14 +294,24 @@
                                                 <date-picker v-model="value_edit_task.end_date" :config="options"></date-picker>
                                             </div>
                                         </div>
-
+                                        <br>
                                         <div class="md-layout-item md-small-size-100">
-                                            <md-field>
-                                                <label>Members</label>
-                                                <md-input name="members" v-model="value_edit_task.members" :disabled="processingTask" />
-                                            </md-field>
+                                            <fieldset id="membersTag">
+                                                <label class="control-label" style="color: grey">Members</label>
+                                                <tags-input element-id="tags"
+                                                            class="form-control"
+                                                            v-model="value_edit_task.members"
+                                                            :existing-tags="allUsers"
+                                                            :typeahead="true"
+                                                            placeholder="Add a responsable member"
+                                                            :only-existing-tags="true"
+                                                            name="members"
+                                                            :disabled="processingTask"
+                                                >
+                                                </tags-input>
+                                            </fieldset>
                                         </div>
-
+                                        <br>
                                         <div class="md-layout-item md-small-size-100">
                                             <md-field :class="">
                                                 <label>Target Event</label>
@@ -346,7 +351,7 @@
                                     >Update</md-button>
                                 </md-dialog-actions>
                             </md-card-actions>
-                            <div class="deleteErrors" v-if="updateErrors">
+                            <div class="errors" v-if="updateErrors">
                                 <p v-for="error in updateErrors">{{ error }}</p>
                             </div>
 
@@ -510,7 +515,9 @@
                 this.value_edit_task.id = null;
             },
 
+
             onFormEditTask(task_title, task_description, task_status, task_members, task_event, task_start_date, task_end_date, task_id){
+
                 this.clearTaskEDitForm();
 
                 this.editingTask = this.htmlEntities(task_id);
@@ -523,7 +530,15 @@
                 this.value_edit_task.title = this.htmlEntities(task_title);
                 this.value_edit_task.description = this.htmlEntities(task_description);
                 this.value_edit_task.status = this.htmlEntities(task_status);
-                this.value_edit_task.members = this.htmlEntities(task_members);
+
+                let objMembers = [];
+                task_members.forEach(function (member, i) {
+                    objMembers.push((member.id).toString());
+                });
+                // console.log(objMembers);
+                this.value_edit_task.members = objMembers;
+
+
                 this.value_edit_task.event = this.htmlEntities(task_event);
                 this.value_edit_task.start_date = this.htmlEntities(task_start_date);
                 this.value_edit_task.end_date = this.htmlEntities(task_end_date);
@@ -836,6 +851,11 @@
     }
 
     #usersTag input:focus{
+         border: none;
+         outline: none;
+    }
+
+    #membersTag input:focus{
         border: none;
         outline: none;
     }

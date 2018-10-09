@@ -27,3 +27,13 @@ export function getLocalUser() {
 
     return JSON.parse(userStr);
 }
+
+export function getAllUsers() {
+    const allUserStr = localStorage.getItem("allUsers");
+
+    if (!allUserStr) {
+        return null;
+    }
+
+    return JSON.parse(allUserStr);
+}

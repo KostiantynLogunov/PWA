@@ -3,13 +3,15 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex);
 
-import { getLocalUser } from "../_helpers/auth";
+import { getLocalUser, getAllUsers } from "../_helpers/auth";
 import axios from "axios/index";
 import {config} from '../_services/config'
 
 const user = getLocalUser();
+const allUser = getAllUsers();
 
 export const store = new Vuex.Store({
+
     state: {
         currentUser: user,
         isLoggedIn: !!user,
@@ -19,8 +21,9 @@ export const store = new Vuex.Store({
         groupsJoined: [],
         groupPosts: [],
 
-        allUsers: null,
+        allUsers: allUser,
     },
+
     getters: {
         getAllUsers(state){
           return state.allUsers;
@@ -47,6 +50,7 @@ export const store = new Vuex.Store({
             return state.groupPosts;
         }
     },
+
     mutations: {
         setAllUsers(state, payload) {
             let AllUsers = payload;
@@ -56,6 +60,8 @@ export const store = new Vuex.Store({
                 objUsers[AllUsers[i].id] = AllUsers[i].name;
 
             state.allUsers = objUsers;
+
+            localStorage.setItem("allUsers", JSON.stringify(objUsers));
         },
         loginSuccess(state, payload) {
             state.auth_error = null;
@@ -86,6 +92,7 @@ export const store = new Vuex.Store({
             state.groupPosts = data.groupPosts;
         }
     },
+
     actions: {
         login(store) {
             store.commit('login');
@@ -131,5 +138,7 @@ export const store = new Vuex.Store({
                     store.commit('setAllUsers', response.data.data);
                 })
         },
-    }
+    },
+
+    // strict: process.env.NODE_ENV !== 'production'
 });

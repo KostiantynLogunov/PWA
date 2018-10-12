@@ -10,4 +10,7 @@ export var config = {
     avatarUrl: 'http://social.loc/user/avatar/',
     avatarDefaultUrl: 'http://social.loc/user/avatar/default-none-avatar.png',
     imgDefaultGroup: 'http://social.loc/group/avatar/default-group-avatar.png',
+
+    apiGoogleKey: 'AIzaSyAq683PqAoQIv_rBb3OVKoSBDHKt-xCE8M',
+    clientIdGoogle: '1056296070886-rso9sr332d4gtscpqmjj29eej47a808l',
 };

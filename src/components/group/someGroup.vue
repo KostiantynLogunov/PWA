@@ -104,7 +104,6 @@
                 showSidepanel: false,
                 showConfirm: false,
                 pandingResponseServer: false,
-                errors: false,
 
                 currentUser_id: null,
                 groupAdminsID: [],
@@ -156,8 +155,7 @@
                         this.$router.push({name: 'myGroupsList'})
                     })
                     .catch((err) => {
-                        this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
-                        console.log(this.errors);
+                        console.log(err.response.data.message || err.response.data ||  err.message || err.data);
                     })
                     .finally(() => {
                         this.pandingResponseServer = false;

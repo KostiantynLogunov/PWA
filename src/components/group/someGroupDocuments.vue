@@ -1,10 +1,30 @@
 <template>
     <div>
-        <md-button type="buttom" class="md-primary" v-if="!showUploadForm" @click="showUploadForm = !showUploadForm">Upload document</md-button>
+        <!--SNACKBAR-->
+        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteDocument" md-persistent>
+            <span>You deleted a document!</span>
+            <md-button class="md-accent" @click="flagDeleteDocument = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
+        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="docUploaded" md-persistent>
+            <span>You downloaded a new document!</span>
+            <md-button class="md-accent" @click="docUploaded = false">Close</md-button>
+        </md-snackbar>
+        <!--SNACKBAR-->
 
-        <file-picker-button :config="gConfig" @picked="showDetails">
-            Open Google Drive Dialog
-        </file-picker-button>
+        <div class="btn-getFiles text-center">
+            <md-button type="buttom" class="md-primary" v-if="!showUploadForm" @click="showUploadForm = !showUploadForm">Upload document</md-button>
+
+            <md-button type="buttom" >
+                <file-picker-button :config="gConfig" @picked="showDetails">
+                    Open Google Drive Dialog
+                </file-picker-button>
+            </md-button>
+
+            <md-button type="buttom" class="md-primary"><div id="dropbox-container" ref="dropboxContainer"></div></md-button>
+            <br>
+            <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="downloadingFile"></md-progress-spinner>
+        </div>
 
         <md-dialog :md-active.sync="showUploadForm">
             <md-dialog-title>New Document</md-dialog-title>
@@ -58,31 +78,19 @@
                 </form>
             </div>
         </md-dialog>
+
         <div class="alert alert-warning text-center" v-if="!groupDocuments.length">No any Documents yet....
             <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         </div>
 
         <div class="md-layout" v-else>
-            <!--SNACKBAR-->
-            <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteDocument" md-persistent>
-                <span>You deleted a document!</span>
-                <md-button class="md-accent" @click="flagDeleteDocument = false">Close</md-button>
-            </md-snackbar>
-            <!--SNACKBAR-->
-            <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="docUploaded" md-persistent>
-                <span>You uploaded a new document!</span>
-                <md-button class="md-accent" @click="docUploaded = false">Close</md-button>
-            </md-snackbar>
-            <!--SNACKBAR-->
-
-
             <md-table v-model="documents" md-sort="name" md-sort-order="asc" md-card >
                 <md-progress-bar md-mode="indeterminate" class="md-accent" v-if="deleteProcess" />
                 <md-table-toolbar>
                     <h1 class="md-title">Documents</h1>
                 </md-table-toolbar>
 
-                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                <md-table-row slot="md-table-row" slot-scope="{ item }" v-if="groupDocuments.length">
 
                     <md-table-cell md-label="Sharing" md-sort-by="shared">
                         <input type="checkbox" :checked="item.shared== '1'" disabled>
@@ -106,7 +114,7 @@
 </template>
 
 <script>
-
+    // import Vue from 'vue';
     import InputTag from 'vue-input-tag'
     import FilePickerButton from 'vue-google-picker'
 
@@ -155,7 +163,8 @@
                 uploading: false,
                 uploadsErrors: false,
 
-                gConfig: null
+                gConfig: null,
+                downloadingFile: false
             }
         },
         created() {
@@ -176,8 +185,49 @@
         mounted(){
             this.updateDocuments();
             this.currentUser_id = this.$store.getters.currentUser.id;
+
+            let that = this;
+
+            let options = {
+
+                success(files) {
+                    files.forEach((file) => {
+                        let fileData = {
+                            downloadUrl: file.link,
+                            filename: file.name
+                        };
+
+                        that.downloadingFile = true;
+
+                        axios.post(config.apiUrl + '/download_file_dropbox/' + that.$route.params.groupname, fileData, {
+                            headers: {
+                                "Authorization": `Bearer ${that.$store.getters.currentUser.token}`
+                            }
+                        })
+                            .then((response) => {
+                                that.updateDocuments();
+                                that.docUploaded = true;
+                                that.downloadingFile = false;
+                            })
+
+                        });
+
+                },
+                cancel: function() {
+                    //optional
+                },
+                linkType: "direct", // "preview" or "direct"
+                multiselect: false, // true or false
+                // extensions: ['.png', '.jpg'],
+            };
+
+            var button = Dropbox.createChooseButton(options);
+            // document.getElementById("dropbox-container").appendChild(button);
+            this.$refs.dropboxContainer.appendChild(button);
         },
         methods: {
+
+
 
             showDetails (data) {
                 if(data.picked === 'picked') {
@@ -234,34 +284,31 @@
             },
 
             deleteDocument(doc_id, index){
-                console.log(index);
-                // console.log(this.documents);
-                // return;
-
-                if (confirm('Are you sure you want to delete this document ?')) {
-
-                  this.deleteProcess = true;
-                  axios.delete(config.apiUrl + '/group_documents/' + doc_id, {
-                      headers: {
-                          "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
-                      }
-                  })
-                      .then((response) => {
-                          // this.$delete(this.documents, index);
-                          this.updateDocuments();
-                          this.flagDeleteDocument = true;
-                      })
-                      .catch((err) => {
-                          let data_errors = [];
-                          data_errors.push(err.message);
-                          data_errors.push(err.response.data.message);
-                          this.deleteErrors = data_errors;
-                          console.log(this.deleteErrors);
-                      })
-                      .finally(() => {
-                          this.deleteProcess = false;
-                      });
-              }
+                // console.log(index);
+                if (confirm('Are you sure you want to delete this document ?'))
+                {
+                    this.deleteProcess = true;
+                    axios.delete(config.apiUrl + '/group_documents/' + doc_id, {
+                        headers: {
+                            "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                        }
+                    })
+                        .then((response) => {
+                            // this.$delete(this.documents, index);
+                            this.updateDocuments();
+                            this.flagDeleteDocument = true;
+                        })
+                        .catch((err) => {
+                            let data_errors = [];
+                            data_errors.push(err.message);
+                            data_errors.push(err.response.data.message);
+                            this.deleteErrors = data_errors;
+                            console.log(this.deleteErrors);
+                        })
+                        .finally(() => {
+                            this.deleteProcess = false;
+                        });
+                }
             },
 
             checkAuthor(user_id){
@@ -307,7 +354,7 @@
                             i++;
                         }
                         this.groupDocuments = group_documents;
-                        // console.log(this.groupDocuments);
+                        console.log(this.documents);
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
@@ -337,5 +384,21 @@
         border-radius: 5px;
         /*padding: 21px 0 2px 0;*/
     }
+/*
+    h1 {
+        font-family: 'open-sans';
+    }
+    #img_list {
+        background-color: #ccc;
+        min-width: 100%;
+        min-height: 50px;
+    }
+    #img_list li {
+        list-style-type: none;
+        display: inline;
+    }
+    #img_list img {
+        max-width: 200px;
+    }*/
 
 </style>

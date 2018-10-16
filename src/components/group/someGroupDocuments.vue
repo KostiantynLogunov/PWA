@@ -225,12 +225,12 @@
             // document.getElementById("dropbox-container").appendChild(button);
             this.$refs.dropboxContainer.appendChild(button);
         },
+
         methods: {
-
-
-
             showDetails (data) {
                 if(data.picked === 'picked') {
+
+                    console.log('lalala')
                     console.log(data.docs)
                 }
             },
@@ -354,7 +354,7 @@
                             i++;
                         }
                         this.groupDocuments = group_documents;
-                        console.log(this.documents);
+                        // console.log(this.documents);
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
@@ -384,21 +384,4 @@
         border-radius: 5px;
         /*padding: 21px 0 2px 0;*/
     }
-/*
-    h1 {
-        font-family: 'open-sans';
-    }
-    #img_list {
-        background-color: #ccc;
-        min-width: 100%;
-        min-height: 50px;
-    }
-    #img_list li {
-        list-style-type: none;
-        display: inline;
-    }
-    #img_list img {
-        max-width: 200px;
-    }*/
-
 </style>

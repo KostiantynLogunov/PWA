@@ -55,7 +55,7 @@ try {
 
 } catch (e) {}
 
-
+window.io = require('socket.io-client');
 
 new Vue({
     el: '#app',

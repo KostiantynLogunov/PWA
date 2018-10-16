@@ -22,6 +22,7 @@ import newGroupEvent from '../components/group/newGroupEvent'
 import myGroups from '../components/group/myGroups'
 import myGroupsList from '../components/group/myGroupsList'
 import User from '../components/user/User'
+import ChatApp from '../components/messanger/ChatApp'
 
 Vue.use(VueRouter);
 
@@ -136,6 +137,16 @@ const routes = [
         path: '/activity',
         component: Activity
     },
+
+    {
+        name: 'messenger',
+        path: '/messenger',
+        component: ChatApp,
+        meta: {
+            requiresAuth: true
+        },
+    },
+
     {
         name: 'user',
         path: ':username',

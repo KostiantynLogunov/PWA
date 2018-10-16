@@ -32,6 +32,12 @@
                     </md-list-item>
 
 
+                    <md-list-item @click.prevent="goMessenger">
+                        <md-icon><i class="far fa-comments"></i></md-icon>
+                        <span class="md-list-item-text">Messenger</span>
+                    </md-list-item>
+
+
                     <md-list-item to="/activity">
                         <md-icon>send</md-icon>
                         <span class="md-list-item-text">Activity</span>
@@ -74,6 +80,11 @@
             }
         },
         methods: {
+            goMessenger(){
+                this.menuVisible = false;
+                this.$router.push('/messenger');
+            },
+
             logout() {
                 this.$store.commit('logout');
                 this.$router.push('/login');

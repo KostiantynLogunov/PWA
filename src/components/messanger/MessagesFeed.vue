@@ -4,9 +4,7 @@
             <li v-for="message in messages" :key="message.id"
                 :class="`message${message.to == contact.id ? ' sent' : ' received' }`"
             >
-                <div class="text">
-                    {{ message.text }}
-                </div>
+                <div class="text" v-html="lookForLink(message.text)"></div>
             </li>
         </ul>
     </div>
@@ -24,7 +22,17 @@
                 required: true
             }
         },
+
         methods: {
+            lookForLink(value)
+            {
+                let re = /([^\"=]{2}|^)((https?|ftp):\/\/\S+[^\s.,> )\];'\"!?])/;
+                let subst = '$1<a href="$2" target="_blank">$2</a>';
+                let withlink = value.replace(re, subst);
+
+                return withlink;
+            },
+
             scrollToBottom(){
                 setTimeout(() => {
                     this.$refs.feed.scrollTop = this.$refs.feed.scrollHeight - this.$refs.feed.clientHeight;

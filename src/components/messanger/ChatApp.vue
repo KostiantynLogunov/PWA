@@ -24,8 +24,6 @@
     import Conversation from './Conversation';
     import ContactsList from './ContactsList';
 
-
-
     export default {
 
         data() {
@@ -36,10 +34,6 @@
                 user: false,
                 newSmsFromId: null,
             }
-        },
-
-        created() {
-
         },
 
         mounted() {
@@ -64,9 +58,14 @@
             var socket = io.connect('http://localhost:3000');
 
             socket.on("news-action." + this.user.id + ":App\\Events\\PrivateMessage", function (data) {
-                console.log(data);
-                this.messages.push(data.message);
+
+                // console.log(data.message.text);
+
                 this.newSmsFromId = +data.message.from;
+
+                if (this.selectedContact && data.message.from == this.selectedContact.id)
+                    this.messages.push(data.message);
+
             }.bind(this));
         },
         methods: {
@@ -117,11 +116,9 @@
                     }
                 })
                     .then((response) => {
-                        // this.dataMessage.push(this.user.email + ':' + this.message);
                         // console.log(response);
                         this.messages.push(data);
                         // console.log(data);
-                        // this.message = "";
                     });
             }
         },

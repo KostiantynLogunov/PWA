@@ -26,11 +26,14 @@
             }
         },
         methods: {
-            sendMessage(text) {
+            sendMessage(text)
+            {
+                if (!this.contact){
+                    alert('Please Select user');
+                    return;
+                }
 
                 this.$emit('checkNewMsg', { contact_id: this.contact.id });
-
-                if (!this.contact) return;
 
                 let data = {
                     contact_id: this.contact.id,

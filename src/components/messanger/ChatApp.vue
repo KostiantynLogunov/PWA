@@ -55,7 +55,7 @@
 
             var io = require('socket.io-client');
             // var socket = io(':6001');
-            var socket = io.connect('http://localhost:3000');
+            var socket = io.connect('http://192.168.10.10:3000');
 
             socket.on("news-action." + this.user.id + ":App\\Events\\PrivateMessage", function (data) {
 

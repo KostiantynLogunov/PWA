@@ -37,6 +37,16 @@
                         <span class="md-list-item-text">Messenger</span>
                     </md-list-item>
 
+                    <md-list-item @click.prevent="goMyServices">
+                        <md-icon><i class="fas fa-thumbtack"></i></md-icon>
+                        <span class="md-list-item-text">My services</span>
+                    </md-list-item>
+
+                    <md-list-item @click.prevent="goMyItems">
+                        <md-icon><i class="fas fa-thumbtack"></i></md-icon>
+                        <span class="md-list-item-text">My items</span>
+                    </md-list-item>
+
 
                     <md-list-item to="/activity">
                         <md-icon>send</md-icon>
@@ -80,6 +90,16 @@
             }
         },
         methods: {
+            goMyItems(){
+                this.menuVisible = false;
+                this.$router.push('/my-items');
+            },
+
+            goMyServices(){
+                this.menuVisible = false;
+                this.$router.push('/my-services');
+            },
+
             goMessenger(){
                 this.menuVisible = false;
                 this.$router.push('/messenger');

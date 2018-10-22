@@ -23,6 +23,8 @@ import myGroups from '../components/group/myGroups'
 import myGroupsList from '../components/group/myGroupsList'
 import User from '../components/user/User'
 import ChatApp from '../components/messanger/ChatApp'
+import MyServices from '../components/my-services/MyServices'
+import MyItems from '../components/my-items/MyItems'
 
 Vue.use(VueRouter);
 
@@ -129,14 +131,6 @@ const routes = [
             },
         ]
     },
-    {
-        path: '/login',
-        component: Login
-    },
-    {
-        path: '/activity',
-        component: Activity
-    },
 
     {
         name: 'messenger',
@@ -146,6 +140,35 @@ const routes = [
             requiresAuth: true
         },
     },
+
+    {
+        name: 'services',
+        path: '/my-services',
+        component: MyServices,
+        meta: {
+            requiresAuth: true
+        },
+    },
+
+    {
+        name: 'items',
+        path: '/my-items',
+        component: MyItems,
+        meta: {
+            requiresAuth: true
+        },
+    },
+
+    {
+        path: '/login',
+        component: Login
+    },
+    {
+        path: '/activity',
+        component: Activity
+    },
+
+
 
     {
         name: 'user',

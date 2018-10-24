@@ -50,16 +50,10 @@
             this.getActivity()
         },
 
-        computed: {
-            currentUser() {
-                return this.$store.getters.currentUser;
-            }
-        },
-
         methods: {
             getActivity() {
                 this.pandingResponseServer = true;
-                axios.get(config.apiUrl + '/groups_activity/', {
+                axios.get(config.apiUrl + '/groups_activity', {
                     headers: {
                         "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
                     }

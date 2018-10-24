@@ -25,11 +25,13 @@ import User from '../components/user/User'
 import ChatApp from '../components/messanger/ChatApp'
 import MyServices from '../components/my-services/MyServices'
 import MyItems from '../components/my-items/MyItems'
+import MyBookingItem from '../components/my-booking-item/MyBookingItem'
 
 Vue.use(VueRouter);
 
 const routes = [
     {
+        name: 'home',
         path: '/',
         component: Home,
         meta: {
@@ -143,7 +145,7 @@ const routes = [
 
     {
         name: 'services',
-        path: '/my-services',
+        path: '/my_services',
         component: MyServices,
         meta: {
             requiresAuth: true
@@ -152,8 +154,16 @@ const routes = [
 
     {
         name: 'items',
-        path: '/my-items',
+        path: '/my_items',
         component: MyItems,
+        meta: {
+            requiresAuth: true
+        },
+    },
+    {
+        name: 'booking-items',
+        path: '/booking-item/:item_id',
+        component: MyBookingItem,
         meta: {
             requiresAuth: true
         },

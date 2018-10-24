@@ -85,7 +85,7 @@
                                 </div>
 
                                 <div class="md-layout-item md-small-size-100">
-                                    <md-field :class="">
+                                    <md-field>
                                         <label>Target Event</label>
                                         <md-select name="event" id="event" v-model="form.event" md-dense :disabled="sending">
 
@@ -98,7 +98,7 @@
 
                                             </div>
                                             <div v-else>
-                                                <md-option  value="" disabled>
+                                                <md-option  disabled>
                                                     Not any events
                                                 </md-option>
                                             </div>
@@ -313,7 +313,7 @@
                                         </div>
                                         <br>
                                         <div class="md-layout-item md-small-size-100">
-                                            <md-field :class="">
+                                            <md-field>
                                                 <label>Target Event</label>
                                                 <md-select name="event" v-model="value_edit_task.event" md-dense :disabled="processingTask">
                                                     <div v-if="group_events.length">

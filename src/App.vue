@@ -92,12 +92,12 @@
         methods: {
             goMyItems(){
                 this.menuVisible = false;
-                this.$router.push('/my-items');
+                this.$router.push('/my_items');
             },
 
             goMyServices(){
                 this.menuVisible = false;
-                this.$router.push('/my-services');
+                this.$router.push('/my_services');
             },
 
             goMessenger(){

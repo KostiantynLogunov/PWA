@@ -161,8 +161,8 @@ const routes = [
         },
     },
     {
-        name: 'booking-items',
-        path: '/booking-item/:item_id',
+        name: 'book-items',
+        path: '/book-item/:item_id',
         component: MyBookingItem,
         meta: {
             requiresAuth: true

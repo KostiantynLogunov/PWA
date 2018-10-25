@@ -220,8 +220,8 @@
                 </form>
             </div>
         </md-dialog>
-    </div>
 
+    </div>
 </template>
 
 <script>
@@ -556,6 +556,7 @@
                             i++;
                             // console.log(oneTask);
                         }
+                        // console.log(this.events);
                         this.groupTasks = response.data.group_tasks;
                         this.group_events = response.data.group_events;
                         // console.log(response.data.group_tasks);

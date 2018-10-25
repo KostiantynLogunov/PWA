@@ -17,15 +17,12 @@
         </md-snackbar>
         <!--SNACKBAR-->
 
-        <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
 
-        <div class="alert alert-warning text-center" v-if="!my_services.length && pandingResponseServer==false">No any
-            Helping Services yet....
-        </div>
-        <div class="md-layout" v-else>
+        <div class="md-layout">
             <md-table v-model="my_services" md-sort="name" md-sort-order="asc" md-card >
                 <md-table-toolbar>
                     <h1 class="md-title">My Helping Services</h1>
+                    <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
                     <button class="btn btn-success btn-sm" @click="onCreateFormService">Add New Service</button>
                 </md-table-toolbar>
 
@@ -50,6 +47,9 @@
                         <md-progress-bar md-mode="indeterminate" v-if="deletingService == item.id" />
                     </md-table-cell>
                 </md-table-row>
+                <div class="alert alert-warning text-center" v-if="!my_services.length && pandingResponseServer==false">No any
+                    Helping Services yet....
+                </div>
             </md-table>
         </div>
 
@@ -197,7 +197,7 @@
                                 <md-radio v-model="form_edit_service.type" value="provide">
                                     Provide service
                                 </md-radio>
-                                <md-radio v-model="form_create_service.type" value="request" class="md-primary">Request service</md-radio>
+                                <md-radio v-model="form_edit_service.type" value="request" class="md-primary">Request service</md-radio>
 
                                 <md-field>
                                     <label>Name</label>

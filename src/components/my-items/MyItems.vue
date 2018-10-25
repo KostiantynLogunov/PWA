@@ -41,98 +41,18 @@
                         <button class="btn btn-warning btn-sm" @click="onEditFormItem(item)"><i class="fas fa-edit">
                         </i></button>
                         <button class="btn btn-danger btn-sm" @click="deleteItem(item.id)"><i class="fas fa-trash-alt"></i></button>
-                        <button class="btn btn-primary" @click="">Booking</button>
+                        <button class="btn btn-primary" @click="BookItem(item.id)">
+                            <!--<router-link class="btn btn-primary" :to="{ name: 'book-items', params:  { item_id: item.id} }">-->
+                                Booking
+                            <!--</router-link>-->
+                        </button>
                         <md-progress-bar md-mode="indeterminate" v-if="deletingItem == item.id" />
                     </md-table-cell>
                 </md-table-row>
-                <div class="alert alert-warning text-center" v-if="!myItems.length">No any Services Items yet....
+                <div class="alert alert-warning text-center" v-if="!myItems.length && pandingResponseServer==false">No any Services Items yet....
                 </div>
             </md-table>
         </div>
-
-        <md-dialog :md-active.sync="editingItem">
-            <md-dialog-title>Edit Item</md-dialog-title>
-            <div md-dynamic-height>
-                <form md-dynamic-height novalidate class="md-layout" @submit.prevent="editItem()">
-                    <md-card class="md-layout-item md-size-100 md-small-size-100">
-
-                        <md-card-content>
-                            <div class="md-layout md-gutter">
-                                <div class="md-layout-item md-small-size-100">
-                                    <md-field>
-                                        <label>Name</label>
-                                        <md-input name="title" v-model="form_edit_item.name"
-                                                  :disabled="processingItem" />
-                                    </md-field>
-
-                                    <md-field>
-                                        <md-checkbox v-model="form_edit_item.is_active"
-                                                     :disabled="processingItem">Availabel for sharing</md-checkbox>
-                                    </md-field>
-
-                                    <md-field>
-                                        <label>Description</label>
-                                        <md-textarea name="description" v-model="form_edit_item.description" :disabled="processingItem" />
-                                    </md-field>
-
-                                    <div class="md-layout-item md-small-size-100">
-                                        <md-field>
-                                            <label>Target Group</label>
-                                            <md-select name="event" v-model="form_edit_item.group.id" md-dense
-                                                       :placeholder="form_edit_item.group.name"
-                                                       :disabled="processingItem">
-                                                <div v-if="my_groups.length">
-                                                    <div v-for="group in my_groups">
-                                                        <md-option :value="group.id">
-                                                            {{ group.name }}
-                                                        </md-option>
-                                                    </div>
-                                                </div>
-                                                <div v-else>
-                                                    <md-option  disabled>
-                                                        Not any groups
-                                                    </md-option>
-                                                </div>
-                                            </md-select>
-                                        </md-field>
-                                    </div>
-
-
-                                    <br>
-                                </div>
-                                <br>
-                            </div>
-
-                        </md-card-content>
-
-                        <md-progress-bar md-mode="indeterminate" v-if="processingItem" />
-
-                        <md-card-actions>
-                            <md-dialog-actions>
-                                <md-button :disabled="processingItem" class="md-primary" @click="CancelEditingItem">
-                                    Close</md-button>
-                                <md-button :disabled="processingItem"
-                                           type="submit"
-                                           class="md-accent md-raised"
-                                >Update</md-button>
-                            </md-dialog-actions>
-                        </md-card-actions>
-
-                        <div class="deleteErrors" v-if="updateErrors">
-                            <p v-for="error in updateErrors">{{ error }}</p>
-                        </div>
-
-                        <div class="errors" v-if="editErrors">
-                            <ul>
-                                <li v-for="(fieldsError, fieldName) in editErrors" :key="fieldName">
-                                    {{ fieldsError.join('\n') }}
-                                </li>
-                            </ul>
-                        </div>
-                    </md-card>
-                </form>
-            </div>
-        </md-dialog>
 
         <md-dialog :md-active.sync="editingItem">
             <md-dialog-title>Edit Item</md-dialog-title>
@@ -325,6 +245,7 @@
                 creatingItem: false,
                 processingItem: false,
 
+
                 form_edit_item:{
                     item_id: '',
                     is_active: false,
@@ -357,6 +278,9 @@
         },
 
         methods: {
+            BookItem(item_id){
+                this.$router.push({ name: 'book-items', params: { item_id: item_id }})
+            },
             CreateItem(){
                 this.createErrors = null;
 

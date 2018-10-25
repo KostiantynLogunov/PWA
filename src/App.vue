@@ -48,10 +48,10 @@
                     </md-list-item>
 
 
-                    <md-list-item to="/activity">
+                    <!--<md-list-item to="/activity">
                         <md-icon>send</md-icon>
                         <span class="md-list-item-text">Activity</span>
-                    </md-list-item>
+                    </md-list-item>-->
 
 
                     <md-list-item v-if="currentUser" @click.prevent="logout">

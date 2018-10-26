@@ -132,10 +132,14 @@
         max-width: calc(100vw - 125px);
     }
     md-content {
-        /*padding: 16px;*/
+        padding: 0;
+    }
+    .md-content {
+        padding: 0;
     }
     .md-app{
         min-height: 100vh;
     }
+
 </style>
 

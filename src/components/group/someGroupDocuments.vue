@@ -384,4 +384,12 @@
         border-radius: 5px;
         /*padding: 21px 0 2px 0;*/
     }
+    .md-card{
+        margin: 0;
+    }
+
+    .md-layout {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 </style>

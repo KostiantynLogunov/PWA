@@ -1,11 +1,9 @@
 <template>
-    <div class="alert alert-warning text-center" v-if="!groupItems">No any Services Items yet....
-        <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
-    </div>
-    <div class="md-layout" v-else>
-        <md-table v-model="items" md-sort="name" md-sort-order="asc" md-card >
+    <div class="md-layout w-100">
+        <md-table v-model="items" md-sort="name" md-sort-order="asc" md-card class="w-100">
             <md-table-toolbar>
                 <h1 class="md-title">Shared Items</h1>
+                <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
             </md-table-toolbar>
 
             <md-table-row slot="md-table-row" slot-scope="{ item }">
@@ -20,6 +18,8 @@
                     <button class="btn btn-primary">Booking</button>
                 </md-table-cell>
             </md-table-row>
+            <div class="alert alert-warning text-center" v-if="!items.length && pandingResponseServer==false">No any Services Items yet....
+            </div>
         </md-table>
     </div>
 </template>
@@ -96,10 +96,17 @@
 </script>
 
 <style scoped>
+    .md-card{
+        margin: 0;
+    }
     .md-field {
         max-width: 300px;
     }
     .md-table{
         overflow: auto;
+    }
+    .md-layout {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 </style>

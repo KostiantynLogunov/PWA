@@ -93,7 +93,8 @@
     }
 
     .contacts-list {
-        flex: 2;
+        flex: 5;
+        max-width: 150px;
         max-height: 600px;
         overflow: scroll;
         border-left: 1px solid #a6a6a6;

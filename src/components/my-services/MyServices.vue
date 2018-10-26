@@ -19,7 +19,7 @@
 
 
         <div class="md-layout">
-            <md-table v-model="my_services" md-sort="name" md-sort-order="asc" md-card >
+            <md-table v-model="my_services" md-sort="name" md-sort-order="asc" md-card class=" w-100">
                 <md-table-toolbar>
                     <h1 class="md-title">My Helping Services</h1>
                     <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
@@ -698,9 +698,9 @@
 </script>
 
 <style scoped>
-    .md-table{
+   /* .md-table{
         overflow: auto;
-    }
+    }*/
     .errors{
         /*background: lightcoral;*/
         color: orangered;
@@ -708,17 +708,22 @@
         padding: 21px 0 2px 0;
     }
 
+    .md-layout {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    div[md-dynamic-height] {  /*form hight for creating service in my service*/
+        overflow-x: auto;
+    }
+
+    .md-card{
+        margin: 0;
+    }
 </style>
+
 <style>
     .md-menu-content {
         z-index: 10;
-    }
-    div[md-dynamic-height] {
-        overflow: auto;
-    }
-    .bootstrap-datetimepicker-widget {
-
-        /*width: 100px;*/
-        /*background: red;*/
     }
 </style>

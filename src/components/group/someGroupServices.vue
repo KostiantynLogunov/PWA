@@ -95,4 +95,13 @@
         overflow: auto;
     }
 
+    .md-layout {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .md-card{
+        margin: 0;
+    }
+
 </style>

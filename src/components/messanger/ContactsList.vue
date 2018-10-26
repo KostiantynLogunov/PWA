@@ -1,5 +1,6 @@
 <template>
-    <div class="contacts-list">
+    <transition name="boom">
+    <div class="contacts-list" v-if="showOtherUsers">
         <ul>
             <li v-for="(contact, index) in contacts" :key="contact.id"
                 @click="selectContact(index, contact)"
@@ -11,13 +12,32 @@
                 <div class="contact">
                     <p class="name">{{ contact.name }}
                         <i class="fas fa-envelope fa-2x fa-pulse text-danger" v-if="newMsgFromId == contact.id"></i>
-                        </p>
-                    <!--<p class="email">{{ contact.email }}</p>-->
-
+                    </p>
                 </div>
             </li>
         </ul>
     </div>
+    </transition>
+    <!--<md-drawer class="md-right" :md-active.sync="showOtherUsers">
+        <md-toolbar class="md-transparent" md-elevation="0">
+            <span class="md-title">Other Users</span>
+        </md-toolbar>
+        <md-list class="contacts-list">
+            <md-list-item v-for="(contact, index) in contacts" :key="contact.id"
+                          @click="selectContact(index, contact)"
+                          :class="{ 'selected': index == selected }"
+            >
+                <div class="avatar">
+                    <img :src="contact.avatar" :alt="contact.name">
+                </div>
+                <div class="contact">
+                    <p class="name">{{ contact.name }}
+                        <i class="fas fa-envelope fa-2x fa-pulse text-danger" v-if="newMsgFromId == contact.id"></i>
+                    </p>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-drawer>-->
 </template>
 
 <script>
@@ -30,11 +50,15 @@
             },
             newMsgFromId: {
                 type: Number,
+            },
+            showOtherUsers: {
+                type: Boolean
             }
         },
         data(){
             return {
-                selected: 0
+                selected: 0,
+                // showOtherUsers: true,
             }
         },
         methods: {
@@ -51,6 +75,23 @@
 </script>
 
 <style lang="scss" scoped>
+    .boom-enter-active{
+        animation: slideIn 0.5s;
+    }
+
+    .boom-leave-active{
+        animation: slideOut 0.5s;
+    }
+
+    @keyframes slideIn {
+        from {transform: translateX(1000px)}
+        to {transform: translateX(0px)}
+    }
+    @keyframes slideOut {
+        from {transform: translateX(0px)}
+        to {transform: translateX(2000px)}
+    }
+
     .contacts-list {
         flex: 2;
         max-height: 600px;

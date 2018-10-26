@@ -53,6 +53,7 @@
 
 <style lang="scss" scoped>
     .feed {
+        min-height: 477px;
         background: #f0f0f0;
         height: 100%;
         max-height: 470px;

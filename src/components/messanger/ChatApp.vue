@@ -2,12 +2,19 @@
     <div class="row justify-content-center">
         <div class="col-sm-12">
             <div class="card">
-                <div class="card-header">My 1st MESSANGER</div>
+                <div class="card-header">
+                    <h6 >{{ user.name }}</h6>
+                    <md-button class="md-icon-button md-raised" @click="showOtherUsers = !showOtherUsers"><i class="fas fa-users"></i></md-button>
+                </div>
 
+
+                <!--</div>-->
                 <div class="card-body">
                     <div class="chat-app">
                         <Conversation :contact="selectedContact" :messages="messages" @new="saveNewMessage" @checkNewMsg="checkNewSms"/>
-                        <ContactsList :contacts="contacts" :newMsgFromId="newSmsFromId" @selected="startConversationWith"  @checkNewMsg="checkNewSms"/>
+
+                        <ContactsList :showOtherUsers="showOtherUsers" :contacts="contacts" :newMsgFromId="newSmsFromId"
+                                      @selected="startConversationWith"  @checkNewMsg="checkNewSms"/>
                     </div>
                 </div>
             </div>
@@ -33,6 +40,7 @@
                 contacts: [],
                 user: false,
                 newSmsFromId: null,
+                showOtherUsers: false
             }
         },
 
@@ -129,5 +137,12 @@
 <style lang="scss" scoped>
     .chat-app {
         display: flex;
+        transition-duration: 1s;
     }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
 </style>

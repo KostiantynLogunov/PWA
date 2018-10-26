@@ -84,12 +84,12 @@
     }
 
     @keyframes slideIn {
-        from {transform: translateX(1000px)}
-        to {transform: translateX(0px)}
+        from {transform: translateY(-1000px)}
+        to {transform: translateY(0px)}
     }
     @keyframes slideOut {
-        from {transform: translateX(0px)}
-        to {transform: translateX(2000px)}
+        from {transform: translateY(0px)}
+        to {transform: translateY(2000px)}
     }
 
     .contacts-list {

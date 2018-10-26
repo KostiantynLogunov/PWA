@@ -137,7 +137,7 @@
 <style lang="scss" scoped>
     .chat-app {
         display: flex;
-        transition-duration: 1s;
+        transition-duration: 0.1s;
     }
 
     .card-header {

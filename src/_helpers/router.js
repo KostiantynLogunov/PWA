@@ -26,6 +26,9 @@ import ChatApp from '../components/messanger/ChatApp'
 import MyServices from '../components/my-services/MyServices'
 import MyItems from '../components/my-items/MyItems'
 import MyBookingItem from '../components/my-booking-item/MyBookingItem'
+import MyServiceBooking from '../components/my-service-booking/MyServiceBooking'
+import BookItemInGroup from '../components/group/BookItemInGroup'
+import BookServiceInGroup from '../components/group/BookServiceInGroup'
 
 Vue.use(VueRouter);
 
@@ -110,16 +113,41 @@ const routes = [
                 name: 'someGroupSharing',
                 path: 'sharing',
                 component: someGroupSharing,
+                meta: {
+                    requiresAuth: true
+                },
+            },
+            {
+                name: 'bookItemInGroup',
+                path: 'sharing/book-item/:item_id',
+                component: BookItemInGroup,
+                meta: {
+                    requiresAuth: true
+                },
             },
             {
                 name: 'someGroupDocuments',
                 path: 'documents',
                 component: someGroupDocuments,
+                meta: {
+                    requiresAuth: true
+                },
             },
             {
                 name: 'someGroupServices',
                 path: 'services',
                 component: someGroupServices,
+                meta: {
+                    requiresAuth: true
+                },
+            },
+            {
+                name: 'bookServiceInGroup',
+                path: 'services/book-service/:service_id',
+                component: BookServiceInGroup,
+                meta: {
+                    requiresAuth: true
+                },
             },
             {
                 name: 'someGroupNotes',
@@ -151,6 +179,14 @@ const routes = [
             requiresAuth: true
         },
     },
+    {
+        name: 'book-service',
+        path: '/book-services/:service_id',
+        component: MyServiceBooking,
+        meta: {
+            requiresAuth: true
+        },
+    },
 
     {
         name: 'items',
@@ -173,11 +209,6 @@ const routes = [
         path: '/login',
         component: Login
     },
-    {
-        path: '/activity',
-        component: Activity
-    },
-
 
 
     {

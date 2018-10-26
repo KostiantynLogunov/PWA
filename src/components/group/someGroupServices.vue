@@ -19,7 +19,7 @@
                 <md-table-cell md-label="Confirmed" md-sort-by="confirmed">{{ item.confirmed }}</md-table-cell>
                 <md-table-cell md-label="Finished" md-sort-by="finished">{{ item.finished }}</md-table-cell>
                 <md-table-cell md-label="Actions">
-                    <button class="btn btn-primary btn-sm">Booking</button>
+                    <button class="btn btn-primary btn-sm" @click="goBookItemInGroup(item.id)">Booking</button>
                 </md-table-cell>
             </md-table-row>
         </md-table>
@@ -43,6 +43,11 @@
             this.updateHelpingServices();
         },
         methods: {
+            goBookItemInGroup(item_id){
+                console.log(item_id);
+                this.$router.push({ name: 'bookServiceInGroup', params: { service_id: item_id }})
+            },
+
             updateHelpingServices() {
                 this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group_helpingservices/' + this.$route.params.groupname, {
@@ -62,6 +67,7 @@
                             let oneService = group_serices[index];
 
                             let obje = {
+                                id: oneService.id,
                                 type: oneService.type,
                                 service: oneService.name,
                                 user: oneService.user.name,
@@ -91,12 +97,20 @@
 
 <style scoped>
 
-    .md-table{
+    /*.md-table{
         overflow: auto;
-    }
+    }*/
 
+    md-layout {
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
     .md-layout {
-        overflow-x: auto;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+    .module {
+        overflow-x: scroll; /* has to be scroll, not auto */
         -webkit-overflow-scrolling: touch;
     }
 

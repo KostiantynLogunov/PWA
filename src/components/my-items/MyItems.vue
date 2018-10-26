@@ -21,7 +21,7 @@
         <!--SNACKBAR-->
 
         <div class="md-layout" >
-            <md-table v-model="myItems" md-sort="name" md-sort-order="asc" md-card class="w-100">
+            <md-table v-model="myItems" md-sort="name" md-sort-order="asc" md-card>
                 <md-table-toolbar>
                     <h1 class="md-title">My Shared Items</h1>
                     <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
@@ -555,25 +555,67 @@
 <style scoped>
     .md-card{
         margin: 0;
+        padding: 0;
     }
-
-    /*vkl prokrutky ridny tab*/
-    /*.md-table{
-        overflow: auto;
-    }*/
+    div[md-dynamic-height] {  /*form hight for creating service in my service*/
+        overflow-y: auto;
+    }
+    md-card{
+        margin: 0;
+        padding: 0;
+    }
     .errors{
         /*background: lightcoral;*/
         color: orangered;
         border-radius: 5px;
         padding: 21px 0 2px 0;
     }
-    .md-layout {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    md-content {
+        padding: 0;
+        margin: 0;
+    }
+    .md-content {
+        padding: 0;
+        margin: 0;
     }
 
+    md-layout {
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+    .md-layout {
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+    .module {
+        overflow-y: scroll; /* has to be scroll, not auto */
+        -webkit-overflow-scrolling: touch;
+    }
 </style>
 <style>
+
+
+    .md-menu-content {
+        z-index: 10;
+    }
+    .md-card{
+        margin: 0;
+        padding: 0;
+    }
+
+    md-card{
+        margin: 0;
+        padding: 0;
+    }
+    md-content {
+        padding: 0;
+        margin: 0;
+    }
+    .md-content {
+        padding: 0;
+        margin: 0;
+    }
+
     .md-menu-content {
         z-index: 10;
     }

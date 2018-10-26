@@ -19,7 +19,7 @@
 
 
         <div class="md-layout">
-            <md-table v-model="my_services" md-sort="name" md-sort-order="asc" md-card class=" w-100">
+            <md-table v-model="my_services" md-sort="name" md-sort-order="asc" md-card>
                 <md-table-toolbar>
                     <h1 class="md-title">My Helping Services</h1>
                     <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
@@ -43,7 +43,7 @@
                                 @click="onEditFormService(item)"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-danger btn-sm"
                                 @click="deleteItem(item.id)"><i class="fas fa-trash-alt"></i></button>
-                        <button class="btn btn-primary btn-sm">Booking</button>
+                        <button class="btn btn-primary btn-sm" @click="goServiceBook(item.id)">Booking</button>
                         <md-progress-bar md-mode="indeterminate" v-if="deletingService == item.id" />
                     </md-table-cell>
                 </md-table-row>
@@ -396,6 +396,11 @@
         },
 
         methods: {
+            goServiceBook(service_id){
+                console.log(service_id);
+                this.$router.push({ name: 'book-service', params: { service_id: service_id }})
+            },
+
             removeBusiness(index){
                 this.$delete(this.form_create_service.business_hours, index);
             },
@@ -698,9 +703,7 @@
 </script>
 
 <style scoped>
-   /* .md-table{
-        overflow: auto;
-    }*/
+
     .errors{
         /*background: lightcoral;*/
         color: orangered;
@@ -708,18 +711,27 @@
         padding: 21px 0 2px 0;
     }
 
-    .md-layout {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
     div[md-dynamic-height] {  /*form hight for creating service in my service*/
-        overflow-x: auto;
+        overflow-y: auto;
     }
 
     .md-card{
         margin: 0;
     }
+
+    md-layout {
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+    .md-layout {
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+    .module {
+        overflow-x: scroll; /* has to be scroll, not auto */
+        -webkit-overflow-scrolling: touch;
+    }
+
 </style>
 
 <style>

@@ -3,13 +3,6 @@
         <div class="snacks-bar">
             <!--SNACKBAR-->
             <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration"
-                         :md-active.sync="flagCreateBook" md-persistent>
-                <span>You created booking successfully!</span>
-                <md-button class="md-accent" @click="flagCreateBook = false">Close</md-button>
-            </md-snackbar>
-            <!--SNACKBAR-->
-            <!--SNACKBAR-->
-            <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration"
                          :md-active.sync="flagDeleteBook" md-persistent>
                 <span>You deleted booking successfully!</span>
                 <md-button class="md-accent" @click="flagDeleteBook = false">Close</md-button>
@@ -22,16 +15,23 @@
             </md-snackbar>
             <!--SNACKBAR-->
         </div>
-        <div class="text-center">
-            <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
 
-                <full-calendar :events="bookingsOfItem"
-                               :config="config"
-                               @event-created="eventCreated"
+        <div class="text-center">
+            <div v-if="pandingResponseServer && service == null">
+                <div class="alert alert-warning">
+                    Loading....<md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate"></md-progress-spinner>
+                </div>
+            </div>
+            <div v-else>
+                <full-calendar :events="bookingsOfService"
+                               :config="calendarConfig"
                                @event-selected="eventSelected"
                 >
                 </full-calendar>
+            </div>
         </div>
+
+
         <md-dialog :md-active.sync="editBook">
             <md-dialog-title>Edit Booking</md-dialog-title>
             <div md-dynamic-height>
@@ -44,18 +44,18 @@
                                     <md-field class="text-center">
                                         <div class="md-layout-item md-small-size-50">
                                             <label>START TIME</label>
-                                            <md-input :value="value_edit_book.start_time" disabled></md-input>
+                                            <md-input :value="value_edit_book.start" disabled></md-input>
                                         </div>
                                     </md-field>
                                     <md-field>
                                         <div class="md-layout-item md-small-size-50">
                                             <label>END TIME</label>
-                                            <md-input :value="value_edit_book.end_time" disabled></md-input>
+                                            <md-input :value="value_edit_book.end" disabled></md-input>
                                         </div>
                                     </md-field>
 
                                     <md-field>
-                                        <label>Name</label>
+                                        <label>User</label>
                                         <md-input :value="value_edit_book.user_name"
                                                   disabled />
                                     </md-field>
@@ -66,20 +66,13 @@
                                             <md-select name="event" v-model="value_edit_book.status" md-dense
                                                        :disabled="processingBook"
                                             >
-                                                    <md-option value="new request">New request</md-option>
-                                                    <md-option value="approved">Approved</md-option>
-                                                    <md-option value="rejected">Rejected</md-option>
-                                                    <md-option value="received">Received</md-option>
-                                                    <md-option value="returned">Returned</md-option>
+                                                <md-option value="pending">Pending</md-option>
+                                                <md-option value="confirmed">Confirmed</md-option>
+                                                <md-option value="rejected">Rejected</md-option>
+                                                <md-option value="finished">Finished</md-option>
                                             </md-select>
                                         </md-field>
                                     </div>
-
-                                    <md-field>
-                                        <label>Comment</label>
-                                        <md-textarea name="description" v-model="value_edit_book.comment"
-                                                     :disabled="processingBook" />
-                                    </md-field>
 
                                     <br>
                                 </div>
@@ -123,56 +116,21 @@
 </template>
 
 <script>
-    import validate from 'validate.js'
     import axios from 'axios'
     import {config} from '../../_services/config'
 
     import { FullCalendar } from 'vue-full-calendar'
 
     export default {
-        name: "MyBookingItem",
+        name: "MyServiceBooking",
         components: {
             FullCalendar,
         },
 
         data(){
             return{
-                bookingsOfItem: [],
-
-                config: {
-                    defaultView: 'agendaWeek',
-                    editable: false,
-                    eventLimit: false, // allow "more" link when too many events
-                    navLinks: false,
-                    allDay: true,
-                    //if admin
-                    selectable: true,
-                    selectHelper: false,
-
-                    eventOverlap: false,
-                    overlap: false,
-                    selectOverlap: false,
-
-                    height: 600,
-                },
-
-                options: {
-                    format: 'YYYY/MM/DD HH:mm',
-                    useCurrent: false,
-                    showClear: true,
-                    showClose: true,
-                    icons: {
-                        time: 'far fa-clock',
-                        date: 'far fa-calendar',
-                        up: 'fas fa-arrow-up',
-                        down: 'fas fa-arrow-down',
-                        previous: 'fas fa-chevron-left',
-                        next: 'fas fa-chevron-right',
-                        today: 'fas fa-calendar-check',
-                        clear: 'far fa-trash-alt',
-                        close: 'far fa-times-circle'
-                    }
-                },
+                bookingsOfService: [],
+                service: null,
 
                 position: 'left',
                 duration: 4000,
@@ -185,21 +143,99 @@
                 editErrors: null,
                 processingBook: false,
                 value_edit_book: {
-                    comment: null,
+                    book_id: '',
                     status: null,
-                    user_name: null,
-                    start_time: null,
-                    end_time: null,
-                    book_id: null,
-                    user_id: null
+                    user_name : '',
+                    start: '',
+                    end: '',
                 },
                 flagUpdateBook: false,
-                flagCreateBook: false,
             }
         },
 
         created(){
-          this.getItemBookings();
+            this.getServiceBookings();
+        },
+
+        computed: {
+            calendarConfig(){
+                let myConfig = {};
+
+                if (this.service.business_hours != null)
+                {
+                    // console.log(this.service.business_hours);
+
+                    let business_hours = this.service.business_hours;
+
+                    function bishours(business_hours){
+                        let result = [];
+                        business_hours = JSON.parse(business_hours);
+                        // console.log(business_hours);
+
+                        for (let one_bisiness in business_hours)
+                        {
+                            one_bisiness = business_hours[one_bisiness];
+
+                            // console.log(one_bisiness);
+                            let oneBiss = {
+                                dow: null,
+                                start: '',
+                                end: ''
+                            };
+
+                            if( one_bisiness.days.length == 0 )
+                                oneBiss.dow = [0, 1, 2, 3, 4, 5, 6];
+                            else
+                                oneBiss.dow = one_bisiness.days;
+
+                            if( one_bisiness.time.start_time != "" && one_bisiness.time.end_time != "") {
+                                oneBiss.start = one_bisiness.time.start_time;
+                                oneBiss.end = one_bisiness.time.end_time;
+                            }
+                            else {
+                                oneBiss.start = '00:00';
+                                oneBiss.end = '23:59';
+                            }
+                            result.push(oneBiss);
+                        };
+
+                        return result;
+                    };
+
+                    myConfig = {
+                        defaultView: 'agendaWeek',
+                        editable: false,
+                        eventLimit: false, // allow "more" link when too many events
+                        navLinks: false,
+                        allDay: true,
+                        selectable: true,
+                        selectHelper: false,
+                        eventOverlap: false,
+                        overlap: false,
+                        selectOverlap: false,
+                        height: 600,
+
+                        selectConstraint : 'businessHours',
+                        businessHours: bishours(business_hours)
+                    }
+                }
+                else
+                    myConfig = {
+                        defaultView: 'agendaWeek',
+                        editable: false,
+                        eventLimit: false, // allow "more" link when too many events
+                        navLinks: false,
+                        allDay: true,
+                        selectable: true,
+                        selectHelper: false,
+                        eventOverlap: false,
+                        overlap: false,
+                        selectOverlap: false,
+                        height: 600,
+                    };
+
+                return myConfig;
+            }
         },
 
         methods: {
@@ -218,14 +254,14 @@
 
                 this.processingBook = true;
 
-                axios.delete(config.apiUrl + '/my_book_item/' + book_id, {
+                axios.delete(config.apiUrl + '/my_service_book/' + book_id, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
                     }
                 })
                     .then((response) => {
-                        let index = this.findWithAttr(this.bookingsOfItem, 'id', book_id);
-                        this.$delete(this.bookingsOfItem, index);
+                        let index = this.findWithAttr(this.bookingsOfService, 'id', book_id);
+                        this.$delete(this.bookingsOfService, index);
                         this.flagDeleteBook = true;
                         this.CancelUpdateBook();
                     })
@@ -243,13 +279,11 @@
             },
 
             clearFormUpdateBook(){
-                this.value_edit_book.comment = null;
+                this.value_edit_book.book_id = null;
                 this.value_edit_book.status = null;
                 this.value_edit_book.user_name = null;
-                this.value_edit_book.start_time = null;
-                this.value_edit_book.end_time = null;
-                this.value_edit_book.user_id = null;
-                this.value_edit_book.book_id = null;
+                this.value_edit_book.start = null;
+                this.value_edit_book.end = null;
             },
 
             updateBook(){
@@ -258,17 +292,16 @@
                 let data = {
                     book_id: this.htmlEntities(this.value_edit_book.book_id),
                     status: this.htmlEntities(this.value_edit_book.status),
-                    comments: this.htmlEntities(this.value_edit_book.comment),
-                    item_id: this.$route.params.item_id,
+                    service_id: this.$route.params.service_id,
                 };
 
-                axios.put(config.apiUrl + '/my_book_item', data, {
+                axios.put(config.apiUrl + '/my_service_book', data, {
                     headers: {
                         "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
                     }
                 })
                     .then((response) => {
-                        this.getItemBookings();
+                        this.getServiceBookings();
                         this.flagUpdateBook = true;
                         this.CancelUpdateBook();
                     })
@@ -290,34 +323,33 @@
                 this.updateErrors = null;
                 this.editErrors = null;
 
-                this.value_edit_book.comment = event.comments;
+                this.value_edit_book.book_id = event.id;
                 this.value_edit_book.status = event.status;
                 this.value_edit_book.user_name = event.user_name;
-                this.value_edit_book.start_time = event.start._i;
-                this.value_edit_book.end_time = event.end._i;
-                this.value_edit_book.user_id = event.user_id;
-                this.value_edit_book.book_id = event.id;
+                this.value_edit_book.start = event.start._i;
+                this.value_edit_book.end = event.end._i;
 
                 this.editBook = true;
-                // console.log(this.value_edit_book);
             },
 
-            getItemBookings(){
+            getServiceBookings(){
                 this.pandingResponseServer = true;
-                axios.get(config.apiUrl + '/my_book_item/' + this.$route.params.item_id, {
+                axios.get(config.apiUrl + '/my_service_book/' + this.$route.params.service_id, {
                     headers: {
-                        "Authorization": `Bearer ${this.$store.state.currentUser.token}`
+                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
                     }
                 })
                     .then((response) => {
-                        // console.log(response.data.AllBookingOfItem);
-                        // this.bookingsOfItem = response.data.AllBookingOfItem;
+                        // console.log(response.data.AllBookingsOfService);
+                        // this.bookingsOfService = response.data.AllBookingsOfService;
+                        this.service = response.data.service;
+
                         let i = 0;
-                        let bookings = response.data.AllBookingOfItem;
+                        let bookings = response.data.AllBookingsOfService;
 
                         for (let index = 0; index < bookings.length; index++)
                         {
-                            this.$set(this.bookingsOfItem, i, '');
+                            this.$set(this.bookingsOfService, i, '');
 
                             let oneBook = bookings[index];
 
@@ -325,22 +357,18 @@
                                 id : oneBook.id,
                                 user_id : oneBook.user_id,
                                 user_name : oneBook.user_name,
-                                original_title: oneBook.comments,
-                                title  : oneBook.user_name + ': ' + oneBook.comments + '\n' +' (' + oneBook.status +
-                                    ')',
-                                comments : oneBook.comments,
-                                description  : oneBook.description,
-                                status  : oneBook.status,
-                                start : oneBook.time_from,
-                                end : oneBook.time_till,
+                                start: oneBook.time_from,
+                                end: oneBook.time_till,
+                                status: oneBook.status,
+                                comment: oneBook.message,
+                                title: 'Service: ' + this.service.name + '\n' + oneBook.user_name + '\n' + 'Status: '
+                                    + oneBook.status + '\n' + 'Comment: ' + oneBook.message + '\n',/* + 'Providing by: ' + '{{ App\User::getUserName($book->provider_user_id) }}',*/
                                 textColor: 'black',
                                 // url: 'la-lal-la'
                             };
-                            this.bookingsOfItem[i] = obje;
+                            this.bookingsOfService[i] = obje;
                             i++;
-                            // console.log(oneBook);
                         }
-                        // console.log(this.bookingsOfItem);
                     })
                     .catch((err) => {
                         /*let data_errors = [];
@@ -354,42 +382,6 @@
                     });
             },
 
-            eventCreated(event){
-                let comment = prompt('Write your comment : ');
-                if (comment)
-                {
-                    let data = {
-                        item_id: this.$route.params.item_id,
-                        startBook: this.$moment.utc(event.start._d).valueOf(),
-                        endBook: this.$moment.utc(event.end._d).valueOf(),
-                        commetnBook: comment,
-                    };
-
-                    axios.post(config.apiUrl + '/my_book_item', data, {
-                        headers: {
-                            "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
-                        }
-                    })
-                        .then((response) => {
-                            this.getItemBookings();
-                            this.flagCreateBook = true;
-                            // console.log(response);
-                        })
-                        .catch((err) => {
-                            /*let data_errors = [];
-                            data_errors.push(err.message);
-                            data_errors.push(err.response.data.message);
-                            this.errors = data_errors;
-                            console.log(this.errors);*/
-                            console.log(err);
-                        })
-                        .finally(() => {
-                            // this.processingItem = false;
-                        });
-                }
-
-            },
-
             convertDate(datetimeString) {
                 let utcTZ = this.$moment.tz(datetimeString, 'UTC').format();
                 let currentTZ = this.$moment(utcTZ.valueOf());
@@ -400,6 +392,7 @@
                 return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g,'&apos');
             },
         }
+
     }
 </script>
 

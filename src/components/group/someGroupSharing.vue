@@ -1,6 +1,6 @@
 <template>
-    <div class="md-layout w-100">
-        <md-table v-model="items" md-sort="name" md-sort-order="asc" md-card class="w-100">
+    <div class="md-layout">
+        <md-table v-model="items" md-sort="name" md-sort-order="asc" md-card>
             <md-table-toolbar>
                 <h1 class="md-title">Shared Items</h1>
                 <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
@@ -15,7 +15,7 @@
                 <md-table-cell md-label="Status" md-sort-by="status">{{ item.status }}</md-table-cell>
                 <md-table-cell md-label="Current Lent" md-sort-by="lent">{{ item.lent }}</md-table-cell>
                 <md-table-cell md-label="Actions">
-                    <button class="btn btn-primary">Booking</button>
+                    <button class="btn btn-primary" @click="goBookItemInGroup(item.id)">Booking</button>
                 </md-table-cell>
             </md-table-row>
             <div class="alert alert-warning text-center" v-if="!items.length && pandingResponseServer==false">No any Services Items yet....
@@ -49,6 +49,11 @@
             this.updateSharingItems();
         },
         methods: {
+            goBookItemInGroup(item_id){
+                console.log(item_id);
+                this.$router.push({ name: 'bookItemInGroup', params: { item_id: item_id }})
+            },
+
             updateSharingItems(){
                 this.pandingResponseServer = true;
                 axios.get(config.apiUrl + '/group-sharingitems/' + this.$route.params.groupname, {
@@ -68,6 +73,7 @@
                             let oneService= group_serices[index];
 
                             let obje = {
+                                id: oneService.id,
                                 is_active: oneService.is_active ? oneService.is_active : '0',
                                 name: oneService.name,
                                 group_name: oneService.group.name,
@@ -102,11 +108,19 @@
     .md-field {
         max-width: 300px;
     }
-    .md-table{
+  /*  .md-table{
         overflow: auto;
+    }*/
+    md-layout {
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
     }
     .md-layout {
-        overflow-x: auto;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+    .module {
+        overflow-x: scroll; /* has to be scroll, not auto */
         -webkit-overflow-scrolling: touch;
     }
 </style>

@@ -4,7 +4,12 @@
             <div class="card">
                 <div class="card-header">
                     <h6 >{{ user.name }}</h6>
-                    <md-button class="md-icon-button md-raised" @click="showOtherUsers = !showOtherUsers"><i class="fas fa-users"></i></md-button>
+                    <md-button class="md-icon-button md-raised" @click="showOtherUsers = !showOtherUsers">
+                        <i class="fas fa-users">
+                            <i v-if="newSmsFromId != null"
+                               class="fas fa-envelope fa-pulse text-danger"></i>
+                        </i>
+                    </md-button>
                 </div>
 
 

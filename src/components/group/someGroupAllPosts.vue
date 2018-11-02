@@ -1,175 +1,175 @@
 <template>
-  <div class="page-container md-layout-column">
-    <!--SNACKBAR-->
-    <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
-      <span>You created new post!</span>
-      <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
-    </md-snackbar>
-    <!--SNACKBAR-->
+	<div class="page-container md-layout-column">
+		<!--SNACKBAR-->
+		<md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
+			<span>You created new post!</span>
+			<md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+		</md-snackbar>
+		<!--SNACKBAR-->
 
-    <!--SNACKBAR-->
-    <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteComment" md-persistent>
-      <span>You deleted a comment!</span>
-      <md-button class="md-accent" @click="flagDeleteComment = false">Close</md-button>
-    </md-snackbar>
-    <!--SNACKBAR-->
+		<!--SNACKBAR-->
+		<md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteComment" md-persistent>
+			<span>You deleted a comment!</span>
+			<md-button class="md-accent" @click="flagDeleteComment = false">Close</md-button>
+		</md-snackbar>
+		<!--SNACKBAR-->
 
-    <form novalidate class="md-layout" @submit.prevent="createPost">
+		<form novalidate class="md-layout" @submit.prevent="createPost">
 
-      <md-card class="md-layout-item md-size-50 md-small-size-100" v-if="checkGroupAdmins(currentUser_id)">
-        <md-card-header>
-          <div class="md-title">What's going on ?</div>
-        </md-card-header>
+			<md-card class="md-layout-item md-size-50 md-small-size-100" v-if="checkGroupAdmins(currentUser_id)">
+				<md-card-header>
+					<div class="md-title">What's going on ?</div>
+				</md-card-header>
 
-        <md-card-content>
-          <div class="md-layout md-gutter">
-            <div class="md-layout-item md-small-size-100">
-              <md-field>
-                <md-textarea name="post" id="post" autocomplete="given-post" v-model="form.post" :disabled="sending"/>
-              </md-field>
-            </div>
-          </div>
+				<md-card-content>
+					<div class="md-layout md-gutter">
+						<div class="md-layout-item md-small-size-100">
+							<md-field>
+								<md-textarea name="post" id="post" autocomplete="given-post" v-model="form.post" :disabled="sending"/>
+							</md-field>
+						</div>
+					</div>
 
-          <div class="errors" v-if="errors">
-            <ul>
-              <li v-for="(fieldsError, fieldName) in errors" :key="fieldName">
-                {{ fieldsError.join('\n') }}
-              </li>
-            </ul>
-          </div>
-        </md-card-content>
+					<div class="errors" v-if="errors">
+						<ul>
+							<li v-for="(fieldsError, fieldName) in errors" :key="fieldName">
+								{{ fieldsError.join('\n') }}
+							</li>
+						</ul>
+					</div>
+				</md-card-content>
 
-        <md-progress-bar md-mode="indeterminate" v-if="sending"/>
+				<md-progress-bar md-mode="indeterminate" v-if="sending"/>
 
-        <md-card-actions>
-          <md-button type="button" class="md-primary" @click="CreateEvent">Create event</md-button>
-          <md-button type="submit" class="md-primary md-raised" :disabled="sending">Post</md-button>
-        </md-card-actions>
-      </md-card>
+				<md-card-actions>
+					<md-button type="button" class="md-primary" @click="CreateEvent">Create event</md-button>
+					<md-button type="submit" class="md-primary md-raised" :disabled="sending">Post</md-button>
+				</md-card-actions>
+			</md-card>
 
-      <md-snackbar :md-active.sync="postSaved">The post was saved with success!</md-snackbar>
-    </form>
-    <br>
-    <div class="alert alert-warning" v-if="allActivity.length == 0">No posts were found...</div>
-    <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate"
-                         v-if="pandingResponseServer"></md-progress-spinner>
-    <div v-for="post in allActivity" :key="post.id">
-      <div v-if="post.type == 'event'">
-        <one-event :event="post"></one-event>
-      </div>
-      <div v-if="post.type == 'task'">
-        <one-task :task="post"></one-task>
-      </div>
-      <div v-if="post.type == 'checklist'">
-        <one-checklist :checklist="post"></one-checklist>
-      </div>
-      <div v-if="post.type == 'service'">
-        <one-services-request :service="post"></one-services-request>
-      </div>
-      <div v-if="post.type == null">
-        <!--<one-post :post="activity"></one-post>-->
-        <div>
-          <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
-            <md-ripple>
+			<md-snackbar :md-active.sync="postSaved">The post was saved with success!</md-snackbar>
+		</form>
+		<br>
+		<div class="alert alert-warning" v-if="allActivity.length == 0">No posts were found...</div>
+		<md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate"
+		                     v-if="pandingResponseServer"></md-progress-spinner>
+		<div v-for="post in allActivity" :key="post.id">
+			<div v-if="post.type == 'event'">
+				<one-event :event="post"></one-event>
+			</div>
+			<div v-if="post.type == 'task'">
+				<one-task :task="post"></one-task>
+			</div>
+			<div v-if="post.type == 'checklist'">
+				<one-checklist :checklist="post"></one-checklist>
+			</div>
+			<div v-if="post.type == 'service'">
+				<one-services-request :service="post"></one-services-request>
+			</div>
+			<div v-if="post.type == null">
+				<!--<one-post :post="activity"></one-post>-->
+				<div>
+					<md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
+						<md-ripple>
 
-              <md-card-header>
-                <div class="md-title">
+							<md-card-header>
+								<div class="md-title">
 
                 <span v-if="post.user">
                     <img :src="post.user.avatar" alt="avatar">
                 </span>
-                  <span v-else>
+									<span v-else>
                   <img :src="avatarDefaultUrl" alt="default">
               </span>
-                  {{ post.user.name }}
-                </div>
-                <div class="md-subhead">
-                  {{ convertDate(post.created_at) | moment("from") }}
-                </div>
-              </md-card-header>
+									{{ post.user.name }}
+								</div>
+								<div class="md-subhead">
+									{{ convertDate(post.created_at) | moment("from") }}
+								</div>
+							</md-card-header>
 
-              <md-card-content>
-                {{ post.description }}
-              </md-card-content>
+							<md-card-content>
+								{{ post.description }}
+							</md-card-content>
 
-              <md-card-actions>
-                <md-button class="md-primary" @click="likePost(post.id)" :disabled="liking"><i class="far fa-thumbs-up"></i>
-                  Like
-                </md-button>
-                <md-button @click="turnComment(post.id)"><i class="far fa-comment"></i>
-                  Comment
-                </md-button>
-              </md-card-actions>
-              <transition name="boom">
-                <md-card-content v-if="comenntsVisable.indexOf(post.id) >= 0">
-                  <form novalidate class="md-layout" @submit.prevent="">
-                    <md-card class="md-layout-item md-size-50 md-small-size-100">
-                      <md-card-content>
-                        <div class="md-layout md-gutter">
-                          <div class="md-layout-item md-small-size-100">
-                            <md-field :class="">
-                              <label for="comment">Comment</label>
-                              <md-input @keyup.enter="sendComment(post.id)" name="comment" id="comment"
-                                        autocomplete="given-comment" v-model="formComment.comment"
-                                        :disabled="sendingComment"/>
-                            </md-field>
-                          </div>
-                        </div>
-                        <div class="errors" v-if="errorsComment">
-                          <ul>
-                            <li v-for="(fieldsError, fieldName) in errorsComment" :key="fieldName">
-                              {{ fieldsError.join('\n') }}
-                            </li>
-                          </ul>
-                        </div>
-                      </md-card-content>
-                    </md-card>
-                  </form>
+							<md-card-actions>
+								<md-button class="md-primary" @click="likePost(post.id)" :disabled="liking"><i class="far fa-thumbs-up"></i>
+									Like
+								</md-button>
+								<md-button @click="turnComment(post.id)"><i class="far fa-comment"></i>
+									Comment
+								</md-button>
+							</md-card-actions>
+							<transition name="boom">
+								<md-card-content v-if="comenntsVisable.indexOf(post.id) >= 0">
+									<form novalidate class="md-layout" @submit.prevent="">
+										<md-card class="md-layout-item md-size-50 md-small-size-100">
+											<md-card-content>
+												<div class="md-layout md-gutter">
+													<div class="md-layout-item md-small-size-100">
+														<md-field :class="">
+															<label for="comment">Comment</label>
+															<md-input @keyup.enter="sendComment(post.id)" name="comment" id="comment"
+															          autocomplete="given-comment" v-model="formComment.comment"
+															          :disabled="sendingComment"/>
+														</md-field>
+													</div>
+												</div>
+												<div class="errors" v-if="errorsComment">
+													<ul>
+														<li v-for="(fieldsError, fieldName) in errorsComment" :key="fieldName">
+															{{ fieldsError.join('\n') }}
+														</li>
+													</ul>
+												</div>
+											</md-card-content>
+										</md-card>
+									</form>
 
-                  <br>
-                  <div v-for="comment in post.comments">
-                    <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
-                      <md-ripple>
-                        <md-card-header>
-                          <div class="md-title">
+									<br>
+									<div v-for="comment in post.comments">
+										<md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
+											<md-ripple>
+												<md-card-header>
+													<div class="md-title">
                             <span v-if="comment.user.avatar">
                                 <img :src="comment.user.avatar" alt="avatar">
                             </span>
-                            <span v-else>
+														<span v-else>
                                 <img :src="avatarDefaultUrl" alt="">
                             </span>
-                            {{ comment.user.name }}
-                          </div>
-                          <div class="md-subhead">{{ convertDate(comment.created_at) | moment("from") }}</div>
-                        </md-card-header>
+														{{ comment.user.name }}
+													</div>
+													<div class="md-subhead">{{ convertDate(comment.created_at) | moment("from") }}</div>
+												</md-card-header>
 
-                        <md-card-content class="comment-description">
-                          <h6>{{ comment.description }}</h6>
-                        </md-card-content>
+												<md-card-content class="comment-description">
+													<h6>{{ comment.description }}</h6>
+												</md-card-content>
 
-                        <md-card-actions>
-                          <md-button class="md-primary"><i class="far fa-thumbs-up"></i></md-button>
-                          <span v-if="checkAuthor(comment.user_id) || checkGroupAdmins(currentUser_id)">
+												<md-card-actions>
+													<md-button class="md-primary"><i class="far fa-thumbs-up"></i></md-button>
+													<span v-if="checkAuthor(comment.user_id) || checkGroupAdmins(currentUser_id)">
                               <md-button class="md-accent" @click="deleteComment(comment.id)"><i class="fas fa-times"></i></md-button>
                           </span>
-                          <md-button><i class="far fa-share-square"></i></md-button>
-                        </md-card-actions>
-                      </md-ripple>
-                    </md-card>
-                    <br>
-                  </div>
-                </md-card-content>
-              </transition>
-            </md-ripple>
-          </md-card>
-          <br>
-        </div>
-      </div>
-      <br>
-    </div>
+													<md-button><i class="far fa-share-square"></i></md-button>
+												</md-card-actions>
+											</md-ripple>
+										</md-card>
+										<br>
+									</div>
+								</md-card-content>
+							</transition>
+						</md-ripple>
+					</md-card>
+					<br>
+				</div>
+			</div>
+			<br>
+		</div>
 
 
-  </div>
+	</div>
 </template>
 
 <script>
@@ -421,58 +421,58 @@
 </script>
 
 <style scoped>
-  md-progress-bar {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-  }
+	md-progress-bar {
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+	}
 
-  .errors {
-    /*background: lightcoral;*/
-    color: orangered;
-    border-radius: 5px;
-    padding: 21px 0 2px 0;
-  }
+	.errors {
+		/*background: lightcoral;*/
+		color: orangered;
+		border-radius: 5px;
+		padding: 21px 0 2px 0;
+	}
 
-  li {
-    list-style: none;
-  }
+	li {
+		list-style: none;
+	}
 
-  md-card {
-    /*margin: 20px;*/
-    /*padding: 20px;*/
-  }
+	md-card {
+		/*margin: 20px;*/
+		/*padding: 20px;*/
+	}
 
-  img {
-    height: 40px;
-    padding-right: 10px;
-  }
+	img {
+		height: 40px;
+		padding-right: 10px;
+	}
 
-  .boom-enter-active {
-    animation: slideIn 0.5s;
-  }
+	.boom-enter-active {
+		animation: slideIn 0.5s;
+	}
 
-  .boom-leave-active {
-    animation: slideOut 0.5s;
-  }
+	.boom-leave-active {
+		animation: slideOut 0.5s;
+	}
 
-  @keyframes slideIn {
-    from {
-      transform: translateX(-1000px)
-    }
-    to {
-      transform: translateX(0px)
-    }
-  }
+	@keyframes slideIn {
+		from {
+			transform: translateX(-1000px)
+		}
+		to {
+			transform: translateX(0px)
+		}
+	}
 
-  @keyframes slideOut {
-    from {
-      transform: translateX(0px)
-    }
-    to {
-      transform: translateX(-2000px)
-    }
-  }
+	@keyframes slideOut {
+		from {
+			transform: translateX(0px)
+		}
+		to {
+			transform: translateX(-2000px)
+		}
+	}
 
 </style>

@@ -1,7 +1,13 @@
-import { userService } from '../_services';
-import { router } from '../_helpers';
+import { userService } from '../../_services/index';
+import { router } from '../../_helpers/index';
+
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex);
 
 const user = JSON.parse(localStorage.getItem('user'));
+
 const initialState = user
     ? { status: { loggedIn: true }, user }
     : { status: {}, user: null };
@@ -9,6 +15,14 @@ const initialState = user
 export const authentication = {
     namespaced: true,
     state: initialState,
+    getters: {
+        getUser(state){
+            return state.user;
+        },
+        getStatus(state){
+            return state.status;
+        },
+    },
     actions: {
         login({ dispatch, commit }, { username, password }) {
             commit('loginRequest', { username });

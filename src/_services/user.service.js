@@ -1,9 +1,10 @@
-import { config } from '../_services'; 
+// import { config } from '../_services';
 import { authHeader } from '../_helpers';
- 
-console.log(config)
 
-var apiUrl = 'http://localhost:8080'
+import Vue from 'vue'
+
+ let apiUrl = 'http://social.loc/api';
+// let apiUrl = 'http://social.mybest.com.ua/api';
 
 export const userService = {
     login,
@@ -11,24 +12,34 @@ export const userService = {
     getAll
 };
 
-function login(username, password) {
+async function login(email, password) {
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*' },
+        body: JSON.stringify({ email, password })
     };
 
-    return fetch(`${apiUrl}/users/authenticate`, requestOptions)
-        .then(handleResponse)
-        .then(user => {
-            // login successful if there's a jwt token in the response
-            if (user.token) {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('user', JSON.stringify(user));
-            }
+    let promise = new Promise((resolve, reject) => {
 
-            return user;
-        });
+        Vue.http.post('auth/login', JSON.stringify({ email, password }))
+            .catch((error) => {
+                console.log(error);
+
+                reject(error.data && error.data.msg ? error.data && error.data.msg : 'Something went wrong.');
+            })
+            .then(response => {
+
+                let user = response.body;
+
+                if (user.token) {
+                    // store user details and jwt token in local storage to keep user logged in between page refreshes
+                    localStorage.setItem('user', JSON.stringify(user));
+                }
+                 resolve (user);
+            });
+    });
+
+    return promise;
 }
 
 function logout() {
@@ -36,29 +47,4 @@ function logout() {
     localStorage.removeItem('user');
 }
 
-function getAll() {
-    const requestOptions = {
-        method: 'GET',
-        headers: authHeader()
-    };
 
-    return fetch(`${apiUrl}/users`, requestOptions).then(handleResponse);
-}
-
-function handleResponse(response) {
-    return response.text().then(text => {
-        const data = text && JSON.parse(text);
-        if (!response.ok) {
-            if (response.status === 401) {
-                // auto logout if 401 response returned from api
-                logout();
-                location.reload(true);
-            }
-
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
-        }
-
-        return data;
-    });
-}

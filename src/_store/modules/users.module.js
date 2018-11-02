@@ -1,4 +1,4 @@
-import { userService } from '../_services';
+import { userService } from '../../_services/index';
 
 export const users = {
     namespaced: true,

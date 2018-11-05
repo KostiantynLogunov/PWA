@@ -42,10 +42,10 @@
                         <span class="md-list-item-text">My services</span>
                     </md-list-item>
 
-                    <md-list-item @click.prevent="goMyItems">
+                    <!--<md-list-item @click.prevent="goMyItems">
                         <md-icon><i class="fas fa-thumbtack"></i></md-icon>
                         <span class="md-list-item-text">My items</span>
-                    </md-list-item>
+                    </md-list-item>-->
 
 
                     <!--<md-list-item to="/activity">

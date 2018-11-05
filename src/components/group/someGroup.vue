@@ -43,10 +43,10 @@
                     <span class="md-list-item-text">Duty roster</span>
                 </md-list-item>
 
-                <md-list-item  :to="{ name: 'someGroupSharing' }"  @click="closeSideMenu">
+                <!--<md-list-item  :to="{ name: 'someGroupSharing' }"  @click="closeSideMenu">
                     <md-icon><i class="far fa-share-square"></i></md-icon>
                     <span class="md-list-item-text">Sharing</span>
-                </md-list-item>
+                </md-list-item>-->
 
                 <md-list-item  :to="{ name: 'someGroupDocuments' }"  @click="closeSideMenu">
                     <md-icon><i class="far fa-file-alt"></i></md-icon>
@@ -55,7 +55,7 @@
 
                 <md-list-item  :to="{ name: 'someGroupServices' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-file-signature"></i></md-icon>
-                    <span class="md-list-item-text">Helping services</span>
+                    <span class="md-list-item-text">Sharing services</span>
                 </md-list-item>
 
                 <md-list-item  :to="{ name: 'someGroupNotes' }"  @click="closeSideMenu">

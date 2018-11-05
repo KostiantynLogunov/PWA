@@ -23,13 +23,14 @@
                 <md-table-toolbar>
                     <h1 class="md-title">My Helping Services</h1>
                     <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
-                    <button class="btn btn-success btn-sm" @click="onCreateFormService">Add New Service</button>
+                    <button class="btn btn-success btn-sm" @click="onCreateFormService">Add New</button>
                 </md-table-toolbar>
 
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Active" md-sort-by="active">
                         <input type="checkbox" :checked="item.active == 'on'" disabled>
                     </md-table-cell>
+                    <md-table-cell md-label="Kind" md-sort-by="type">{{ item.kind }}</md-table-cell>
                     <md-table-cell md-label="Type" md-sort-by="type">{{ item.type }}</md-table-cell>
                     <md-table-cell md-label="Sevice" md-sort-by="service">{{ item.name }}</md-table-cell>
                     <md-table-cell md-label="Description">{{ item.description }}</md-table-cell>
@@ -65,12 +66,19 @@
                                     <md-checkbox v-model="form_create_service.active" value="on"
                                                  :disabled="processingService">Active</md-checkbox>
 
+	                                <br>
+	                                <md-radio v-model="form_create_service.kind" value="service">
+		                                Service
+		                                <small>(Default)</small>
+	                                </md-radio>
+	                                <md-radio v-model="form_create_service.kind" value="item" class="md-primary">Item</md-radio>
+
                                     <br>
                                     <md-radio v-model="form_create_service.type" value="provide">
-                                        Provide service
+                                        Provide
                                         <small>(Default)</small>
                                     </md-radio>
-                                    <md-radio v-model="form_create_service.type" value="request" class="md-primary">Request service</md-radio>
+                                    <md-radio v-model="form_create_service.type" value="request" class="md-primary">Request </md-radio>
 
                                     <md-field>
                                         <label>Name</label>
@@ -113,13 +121,13 @@
                                     <div id="business_hours text-center" v-if="form_create_service.type == 'provide'"
                                          v-for="(business, index) in form_create_service.business_hours">
                                         <div class="row">
-                                            <md-checkbox v-model="business.days" value="1">mo</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="2">tu</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="3">we</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="4">th</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="5">fr</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="6">sa</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="7">su</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="0">mo</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="1">tu</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="2">we</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="3">th</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="4">fr</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="5">sa</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="6">su</md-checkbox>
                                         </div>
                                             <div class="md-layout-item md-small-size-100 text-center ">
                                                 <label class="align-center">START DATE
@@ -144,7 +152,10 @@
                                         <br>
                                     </div>
 
-                                    <md-button class="md-icon-button md-raised md-primary" @click="addMorebusiness">
+                                    <md-button class="md-icon-button md-raised md-primary"
+                                               @click="addMorebusiness"
+                                               v-if="form_create_service.type == 'provide'"
+                                    >
                                         <md-icon>add</md-icon>
                                     </md-button>
                                 </div>
@@ -193,11 +204,18 @@
                                 <md-checkbox v-model="form_edit_service.active" value="on"
                                              :disabled="processingService">Active</md-checkbox>
 
+	                            <br>
+	                            <md-radio v-model="form_edit_service.kind" value="service">
+		                            Service
+		                            <!--<small>(Default)</small>-->
+	                            </md-radio>
+	                            <md-radio v-model="form_edit_service.kind" value="item" class="md-primary">Item</md-radio>
+
                                 <br>
                                 <md-radio v-model="form_edit_service.type" value="provide">
-                                    Provide service
+                                    Provide
                                 </md-radio>
-                                <md-radio v-model="form_edit_service.type" value="request" class="md-primary">Request service</md-radio>
+                                <md-radio v-model="form_edit_service.type" value="request" class="md-primary">Request </md-radio>
 
                                 <md-field>
                                     <label>Name</label>
@@ -240,13 +258,13 @@
                                 <div class="text-center" v-if="form_edit_service.type == 'provide'"
                                      v-for="(business, index) in form_edit_service.business_hours">
                                     <div class="row text-center">
-                                        <md-checkbox v-model="business.days" value="1">mo</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="2">tu</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="3">we</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="4">th</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="5">fr</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="6">sa</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="7">su</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="0">mo</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="1">tu</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="2">we</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="3">th</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="4">fr</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="5">sa</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="6">su</md-checkbox>
                                     </div>
                                     <div class="md-layout-item md-small-size-100 text-center ">
                                         <label class="align-center">START DATE
@@ -272,7 +290,9 @@
                                 </div>
 
                                 <md-button class="md-icon-button md-raised md-primary"
-                                           @click="addMorebusinessToEditForm">
+                                           @click="addMorebusinessToEditForm"
+                                           v-if="form_edit_service.type == 'provide'"
+                                >
                                     <md-icon>add</md-icon>
                                 </md-button>
                             </div>
@@ -337,6 +357,7 @@
                 createErrors: [],
                 form_create_service: {
                     active: null,
+                    kind: 'service',
                     type: 'provide',
                     name: '',
                     description: '',
@@ -361,6 +382,7 @@
                 form_edit_service: {
                     service_id: null,
                     active: null,
+                    kind: null,
                     type: 'provide',
                     name: '',
                     description: '',
@@ -436,7 +458,15 @@
             getCreateConstraints(){
                 return {
 
-                    type: {
+                    kind: {
+                        presence: true,
+                        length: {
+                            minimum: 4,
+                            maximum: 7,
+                            message: 'Must be item or service'
+                        }
+                    },
+	                type: {
                         presence: true,
                         length: {
                             minimum: 7,
@@ -529,6 +559,7 @@
 
             clearCreateFormService(){
                 this.form_create_service.active = false;
+                this.form_create_service.kind = 'service';
                 this.form_create_service.type = 'provide';
                 this.form_create_service.name = '';
                 this.form_create_service.description = '';
@@ -550,6 +581,7 @@
                 this.editErrors = null;
                 this.form_edit_service.service_id = null;
                 this.form_edit_service.active = false;
+                this.form_edit_service.kind = null;
                 this.form_edit_service.type = 'provide';
                 this.form_edit_service.name = '';
                 this.form_edit_service.description = '';
@@ -563,6 +595,7 @@
 
                 this.form_edit_service.service_id = service.id;
                 this.form_edit_service.active = service.active;
+                this.form_edit_service.kind = service.kind;
                 this.form_edit_service.type = service.type;
                 this.form_edit_service.name = service.name;
                 this.form_edit_service.description = service.description;
@@ -577,11 +610,10 @@
                   this.form_edit_service.business_hours = arr;
                 }
 
-                console.log(this.form_edit_service);
+                // console.log(this.form_edit_service);
             },
 
             editService(){
-                console.log('storing service...');
                 this.editErrors = null;
 
                 const constraints = this.getCreateConstraints();
@@ -676,6 +708,7 @@
                             let obje = {
                                 id: oneService.id,
                                 active: oneService.active,
+                                kind: oneService.kind,
                                 type: oneService.type,
                                 name: oneService.name,
                                 // user: oneService.user.name,

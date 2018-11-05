@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 
 import Home from '../components/home/Home'
 import Login from '../components/auth/Login'
-import Activity from '../components/Activity'
+// import Activity from '../components/Activity'
 import someGroup from '../components/group/someGroup'
 import someGroupAllPosts from '../components/group/someGroupAllPosts'
 import someGroupPosts from '../components/group/someGroupPosts'
@@ -12,7 +12,7 @@ import someGroupEvents from '../components/group/someGroupEvents'
 import someGroupTasks from '../components/group/someGroupTasks'
 import someGroupChecklists from '../components/group/someGroupChecklists'
 import someGroupDutyRoster from '../components/group/someGroupDutyRoster'
-import someGroupSharing from '../components/group/someGroupSharing'
+// import someGroupSharing from '../components/group/someGroupSharing'
 import someGroupDocuments from '../components/group/someGroupDocuments'
 import someGroupServices from '../components/group/someGroupServices'
 import someGroupNotes from '../components/group/someGroupNotes'
@@ -24,10 +24,10 @@ import myGroupsList from '../components/group/myGroupsList'
 import User from '../components/user/User'
 import ChatApp from '../components/messanger/ChatApp'
 import MyServices from '../components/my-services/MyServices'
-import MyItems from '../components/my-items/MyItems'
+// import MyItems from '../components/my-items/MyItems'
 import MyBookingItem from '../components/my-booking-item/MyBookingItem'
 import MyServiceBooking from '../components/my-service-booking/MyServiceBooking'
-import BookItemInGroup from '../components/group/BookItemInGroup'
+// import BookItemInGroup from '../components/group/BookItemInGroup'
 import BookServiceInGroup from '../components/group/BookServiceInGroup'
 
 Vue.use(VueRouter);
@@ -109,7 +109,7 @@ const routes = [
                 path: 'duty-roster',
                 component: someGroupDutyRoster,
             },
-            {
+            /*{
                 name: 'someGroupSharing',
                 path: 'sharing',
                 component: someGroupSharing,
@@ -124,7 +124,7 @@ const routes = [
                 meta: {
                     requiresAuth: true
                 },
-            },
+            },*/
             {
                 name: 'someGroupDocuments',
                 path: 'documents',
@@ -188,14 +188,14 @@ const routes = [
         },
     },
 
-    {
+    /*{
         name: 'items',
         path: '/my_items',
         component: MyItems,
         meta: {
             requiresAuth: true
         },
-    },
+    },*/
     {
         name: 'book-items',
         path: '/book-item/:item_id',

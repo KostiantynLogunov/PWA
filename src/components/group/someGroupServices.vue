@@ -5,10 +5,11 @@
     <div class="md-layout" v-else>
         <md-table v-model="services" md-sort="name" md-sort-order="asc" md-card >
             <md-table-toolbar>
-                <h1 class="md-title">Shared Helping Services</h1>
+                <h1 class="md-title">Shared Services</h1>
             </md-table-toolbar>
 
             <md-table-row slot="md-table-row" slot-scope="{ item }">
+                <md-table-cell md-label="Kind" md-sort-by="type">{{ item.kind }}</md-table-cell>
                 <md-table-cell md-label="Type" md-sort-by="type">{{ item.type }}</md-table-cell>
                 <md-table-cell md-label="Sevice" md-sort-by="service">{{ item.service }}</md-table-cell>
                 <md-table-cell md-label="User" md-sort-by="user">{{ item.user }}</md-table-cell>
@@ -68,6 +69,7 @@
 
                             let obje = {
                                 id: oneService.id,
+                                kind: oneService.kind,
                                 type: oneService.type,
                                 service: oneService.name,
                                 user: oneService.user.name,

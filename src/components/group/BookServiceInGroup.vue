@@ -24,6 +24,62 @@
                 </full-calendar>
             </div>
         </div>
+
+	    <md-dialog :md-active.sync="doBooking">
+		    <md-dialog-title>Booking</md-dialog-title>
+		    <div md-dynamic-height>
+			    <form md-dynamic-height novalidate class="md-layout" @submit.prevent="sendNewBooking">
+				    <md-card class="md-layout-item md-size-100 md-small-size-100">
+
+					    <md-card-content>
+						    <div class=" md-small-size-100">
+							    <md-field>
+								    <div class="md-layout-item md-small-size-50">
+									    <label>START </label>
+									    <md-input  disabled :value="data.startBook | moment('subtract', '2 hours', 'MM-DD-YYYY HH:mm')"></md-input>
+								    </div>
+							    </md-field>
+							    <md-field>
+								    <div class="md-layout-item md-small-size-50">
+									    <label>END </label>
+									    <md-input :value="data.endBook | moment('subtract', '2 hours', 'MM-DD-YYYY HH:mm')" disabled></md-input>
+								    </div>
+							    </md-field>
+								    <br>
+								    <div class="md-layout-item md-small-size-100">
+									    <md-field>
+										    <label>Message</label>
+										    <md-input v-model="data.message" :disabled="processCreateBook" required/>
+									    </md-field>
+								    </div>
+						    </div>
+					    </md-card-content>
+					    <md-card-actions>
+						    <md-dialog-actions>
+							    <md-button :disabled="processCreateBook" class="md-primary" @click="cancelFormCreatedBook">Close</md-button>
+							    <md-button :disabled="processCreateBook"
+							               type="submit"
+							               class="md-accent md-raised"
+							    >Book</md-button>
+						    </md-dialog-actions>
+					    </md-card-actions>
+					    <!--<div class="errors" v-if="serverErrors">
+						    <p v-for="error in serverErrors">{{ error }}</p>
+					    </div>
+
+					    <div class="errors" v-if="editErrors">
+						    <ul>
+							    <li v-for="(fieldsError, fieldName) in validateErrors" :key="fieldName">
+								    {{ fieldsError.join('\n') }}
+							    </li>
+						    </ul>
+					    </div>-->
+				    </md-card>
+			    </form>
+		    </div>
+		    <md-progress-bar md-mode="indeterminate" v-if="processCreateBook" />
+	    </md-dialog>
+
     </div>
 </template>
 
@@ -52,6 +108,16 @@
                 processingBook: false,
 
                 flagCreateBook: false,
+
+	            doBooking: false,
+	            data: {
+		            service_id: null,
+		            IdUserWantBook: null,
+		            startBook: null,
+		            endBook: null,
+		            message: null,
+	            },
+	            processCreateBook: false,
             }
         },
 
@@ -200,42 +266,54 @@
                     });
             },
 
-            eventCreated(event){
-                let comment = prompt('Write your comment : ');
-                if (comment)
-                {
-                    let data = {
-                        service_id: this.$route.params.service_id,
-                        IdUserWantBook: this.$store.getters.currentUser.id,
-                        startBook: this.$moment.utc(event.start._d).valueOf(),
-                        endBook: this.$moment.utc(event.end._d).valueOf(),
-                        message: comment,
-                    };
+	        clearData(){
+		        this.data.service_id = null;
+		        this.data.IdUserWantBook = null;
+		        this.data.startBook = null;
+		        this.data.endBook = null;
+		        this.data.message = null;
+	        },
 
-                    axios.post(config.apiUrl + '/my_service_book', data, {
-                        headers: {
-                            "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
-                        }
-                    })
-                        .then((response) => {
-                            this.getServiceBookings();
-                            this.flagCreateBook = true;
-                            // console.log(response);
-                        })
-                        .catch((err) => {
-                            /*let data_errors = [];
-                            data_errors.push(err.message);
-                            data_errors.push(err.response.data.message);
-                            this.errors = data_errors;
-                            console.log(this.errors);*/
-                            console.log(err);
-                        })
-                        .finally(() => {
-                            // this.processingItem = false;
-                        });
-                }
+	        cancelFormCreatedBook(){
+            	this.doBooking = false;
+            	this.clearData();
+	        },
 
+            eventCreated(event)
+            {
+	            this.data.service_id = this.$route.params.service_id;
+	            this.data.IdUserWantBook = this.$store.getters.currentUser.id;
+	            this.data.startBook = this.$moment.utc(event.start._d).valueOf();
+	            this.data.endBook = this.$moment.utc(event.end._d).valueOf();
+
+	            this.doBooking = true;
             },
+
+	        sendNewBooking(){
+            	this.processCreateBook = true;
+		        axios.post(config.apiUrl + '/my_service_book', this.data, {
+			        headers: {
+				        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+			        }
+		        })
+			        .then((response) => {
+				        this.getServiceBookings();
+				        this.flagCreateBook = true;
+				        this.cancelFormCreatedBook();
+				        // console.log(response);
+			        })
+			        .catch((err) => {
+				        /*let data_errors = [];
+				        data_errors.push(err.message);
+				        data_errors.push(err.response.data.message);
+				        this.errors = data_errors;
+				        console.log(this.errors);*/
+				        console.log(err);
+			        })
+			        .finally(() => {
+				        this.processCreateBook = false;
+			        });
+	        },
 
             convertDate(datetimeString) {
                 let utcTZ = this.$moment.tz(datetimeString, 'UTC').format();

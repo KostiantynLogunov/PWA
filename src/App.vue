@@ -38,8 +38,8 @@
                     </md-list-item>
 
                     <md-list-item @click.prevent="goMyServices">
-                        <md-icon><i class="fas fa-thumbtack"></i></md-icon>
-                        <span class="md-list-item-text">My services</span>
+                        <md-icon><i class="fas fa-share-square"></i></md-icon>
+                        <span class="md-list-item-text">Sharing</span>
                     </md-list-item>
 
                     <!--<md-list-item @click.prevent="goMyItems">

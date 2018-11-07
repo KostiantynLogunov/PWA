@@ -50,12 +50,14 @@ Vue.component('tags-input', VoerroTagsInput);
 // import VeeValidate from 'vee-validate';
 // Vue.use(VeeValidate);
 
-try {
+/*try {
     window.$ = window.jQuery = require('jquery');
 
-} catch (e) {}
+} catch (e) {}*/
 
 window.io = require('socket.io-client');
+
+// Vue.prototype.$eventHub = new Vue();
 
 new Vue({
     el: '#app',

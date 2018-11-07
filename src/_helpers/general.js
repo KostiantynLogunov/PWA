@@ -9,6 +9,8 @@ export function initialize(store, router) {
             next('/login');
         } else if (to.path == '/login' && currentUser) {
             next('/');
+        } else if (to.path == '/register' && currentUser) {
+	        next('/');
         } else {
             next();
         }

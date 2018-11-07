@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 
 import Home from '../components/home/Home'
 import Login from '../components/auth/Login'
+import Registration from '../components/auth/Registration'
 // import Activity from '../components/Activity'
 import someGroup from '../components/group/someGroup'
 import someGroupAllPosts from '../components/group/someGroupAllPosts'
@@ -33,6 +34,19 @@ import BookServiceInGroup from '../components/group/BookServiceInGroup'
 Vue.use(VueRouter);
 
 const routes = [
+	{
+		name: 'login',
+		path: '/login',
+		component: Login,
+	},
+	{
+		name: 'register',
+		path: '/register',
+		component: Registration,
+		meta: {
+			requiresAuth: false
+		},
+	},
     {
         name: 'home',
         path: '/',
@@ -61,6 +75,7 @@ const routes = [
             },
         ]
     },
+
     {
         // name: 'someGroup',
         path: '/groups/:groupname',
@@ -195,7 +210,7 @@ const routes = [
         meta: {
             requiresAuth: true
         },
-    },*/
+    },
     {
         name: 'book-items',
         path: '/book-item/:item_id',
@@ -203,12 +218,7 @@ const routes = [
         meta: {
             requiresAuth: true
         },
-    },
-
-    {
-        path: '/login',
-        component: Login
-    },
+    },*/
 
 
     {

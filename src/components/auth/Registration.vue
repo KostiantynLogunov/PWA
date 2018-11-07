@@ -1,13 +1,234 @@
 <template>
-    
+	<div>
+		<form  class="md-layout" @submit.prevent="registration">
+			<md-card class="md-layout-item md-size-50 md-small-size-100">
+				<md-card-header>
+					<div class="md-title">Create an Account</div>
+				</md-card-header>
+
+				<md-card-content>
+
+					<div class="md-layout md-gutter">
+						<div class="md-layout-item md-size-50 md-small-size-50 ">
+							<md-field>
+								<label for="affiliate">Affiliate Code <small>(optional)</small></label>
+								<md-input type="affiliate" name="affiliate" id="affiliate" v-model="form.affiliate" :disabled="sending" />
+							</md-field>
+						</div>
+
+						<div class="md-layout-item md-size-50 md-small-size-50">
+							<md-field>
+								<label for="email">Email</label>
+								<md-input type="email" name="email" id="email" autocomplete="email" v-model="form.email" :disabled="sending" required/>
+							</md-field>
+						</div>
+
+						<div class="md-layout-item md-size-50 md-small-size-50 ">
+							<md-field >
+								<label for="name">Name</label>
+								<md-input name="name" id="name" autocomplete="name" v-model="form.name" :disabled="sending" required/>
+							</md-field>
+						</div>
+
+						<div class="md-layout-item md-size-50 md-small-size-50">
+							<md-field>
+								<label>Gender</label>
+								<md-select name="gender" id="gender" v-model="form.gender" md-dense :disabled="sending" required>
+									<!--<md-option disabled>Select gander</md-option>-->
+									<md-option value="male">Male</md-option>
+									<md-option value="female">Famale</md-option>
+									<md-option value="other">None</md-option>
+								</md-select>
+							</md-field>
+						</div>
+
+						<div class="md-layout-item md-size-50 md-small-size-50">
+							<md-field>
+								<label for="username">Username</label>
+								<md-input name="username" id="username" autocomplete="username" v-model="form.username" :disabled="sending" required/>
+							</md-field>
+						</div>
+
+						<div class="md-layout-item md-size-50 md-small-size-50">
+							<md-field>
+								<label for="password">Password</label>
+								<md-input type="password" name="password" id="password" autocomplete="password" v-model="form.password" :disabled="sending" required/>
+							</md-field>
+						</div>
+
+						<div class="md-layout-item md-size-50 md-small-size-50">
+							<md-field>
+								<label for="phone">Phone</label>
+								<md-input type="tel" name="phone" id="phone" autocomplete="phone" v-model="form.phone" :disabled="sending" required/>
+							</md-field>
+						</div>
+					</div>
+				</md-card-content>
+
+				<div class="errors" v-if="createErrors">
+					<ul>
+						<li v-for="(fieldsError, fieldName) in createErrors" :key="fieldName">
+							{{ fieldsError.join('\n') }}
+						</li>
+					</ul>
+				</div>
+
+				<md-progress-bar md-mode="indeterminate" v-if="sending" />
+
+				<md-card-actions>
+					<md-button type="submit" class="md-primary" :disabled="sending">Sign Up & Login</md-button>
+				</md-card-actions>
+			</md-card>
+		</form>
+	</div>
 </template>
 
 <script>
+	import validate from 'validate.js'
+	import axios from 'axios'
+	import {config} from '../../_services/config'
+
+
     export default {
-        name: "Registration"
+        name: "Registration",
+
+	    data() {
+        	return {
+		        form: {
+			        affiliate: '',
+			        name: null,
+			        username: null,
+			        gender: null,
+			        email: null,
+			        password: null,
+			        phone: null
+		        },
+		        sending: false,
+		        createErrors: null,
+
+		        newAccountCreated: false,
+
+	        }
+	    },
+
+	    /*watch: {
+		    // whenever question changes, this function will run
+		    value: function() {
+
+			    this.$eventHub.$emit('sign-up');
+			    // this.$eventHub.$emit(this.options.eventName, newVal)
+		    }
+	    },*/
+
+	     methods: {
+		     registration()
+		     {
+			     this.createErrors = null;
+
+			     const constraints = this.getConstraints();
+
+			     const errors = validate(this.form, constraints);
+
+			     if (errors) {
+				     this.createErrors = errors;
+				     return ;
+			     }
+			     this.sending = true;
+			     // send to api this.form.post
+			     axios.post(config.apiUrl + '/auth/register-new-account/', this.form, {
+				     headers: {
+					     "Accept": "application/json",
+					     "Content-Type": "application/json"
+				     }
+			     })
+				     .then((response) => {
+					     this.$store.dispatch('login');
+					     this.$store.commit("loginSuccess", response.data);
+					     this.clearForm();
+					     this.$router.push({path: '/'});
+					     // this.newAccountCreated = true;
+
+					     // this.$router.push({ name: 'login'});
+				     })
+				     .catch((err) => {
+					     /*let data_errors = [];
+					     data_errors.push(err.message);
+					     data_errors.push(err.response.data.message);
+					     this.errors = data_errors;
+					     console.log(this.errors);*/
+					     console.log(err);
+				     })
+				     .finally(() => {
+					     this.sending = false;
+				     });
+		     },
+
+		     getConstraints(){
+			     return {
+				     name: {
+					     presence: true,
+					     length: {
+						     minimum: 3,
+						     message: 'Must be at least 3 characters long'
+					     }
+				     },
+				     username: {
+					     presence: true,
+					     length: {
+						     minimum: 5,
+						     maximum: 25,
+						     message: 'Must be at least 5 characters long and maximum 25 characters'
+					     }
+				     },
+				     gender: {
+					     presence: true,
+					     length: {
+						     minimum: 4,
+						     maximum: 6,
+						     message: 'Must be male or female or none'
+					     }
+				     },
+				     email: {
+					     presence: true,
+					     email: true
+				     },
+				     password: {
+					     presence: true,
+					     length: {
+						     minimum: 6,
+						     message: 'Must be at least 6 characters long'
+					     }
+				     },
+				     phone: {
+					     presence: true,
+					     length: {
+						     minimum: 6,
+						     message: 'Must be at least 6 characters long'
+					     }
+				     },
+			     }
+		     },
+
+		     htmlEntities(str) {
+			     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g,'&apos');
+		     },
+
+		     clearForm(){
+			     this.form.affiliate = '';
+			     this.form.name = null;
+			     this.form.username = null;
+			     this.form.gender = null;
+			     this.form.email = null;
+			     this.form.password = null;
+			     this.form.phone = null;
+		     }
+	     }
     }
 </script>
 
 <style scoped>
-
+	.errors{
+		color: orangered;
+		padding: 21px 0 2px 0;
+	}
 </style>

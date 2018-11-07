@@ -21,7 +21,21 @@
                 <md-toolbar class="md-transparent" md-elevation="0">Main Menu:</md-toolbar>
 
                 <md-list>
-                    <md-list-item @click.prevent="goHome">
+	                <md-list-item @click.prevent="goRegister" v-if="!currentUser">
+		                <md-icon><i class="fas fa-user-plus"></i></md-icon>
+		                <span class="md-list-item-text">Sign Up</span>
+	                </md-list-item>
+
+	                <md-list-item @click.prevent="goLogin" v-if="!currentUser">
+		                <md-icon><i class="fas fa-sign-in-alt"></i></md-icon>
+		                <span class="md-list-item-text">Login</span>
+	                </md-list-item>
+
+
+
+
+
+                    <md-list-item @click.prevent="goHome" v-if="currentUser">
                         <md-icon>move_to_inbox</md-icon>
                         <span class="md-list-item-text">Home page</span>
                     </md-list-item>
@@ -32,12 +46,12 @@
                     </md-list-item>
 
 
-                    <md-list-item @click.prevent="goMessenger">
+                    <md-list-item @click.prevent="goMessenger" v-if="currentUser">
                         <md-icon><i class="far fa-comments"></i></md-icon>
                         <span class="md-list-item-text">Messenger</span>
                     </md-list-item>
 
-                    <md-list-item @click.prevent="goMyServices">
+                    <md-list-item @click.prevent="goMyServices" v-if="currentUser">
                         <md-icon><i class="fas fa-share-square"></i></md-icon>
                         <span class="md-list-item-text">Sharing</span>
                     </md-list-item>
@@ -47,17 +61,26 @@
                         <span class="md-list-item-text">My items</span>
                     </md-list-item>-->
 
-
-                    <!--<md-list-item to="/activity">
-                        <md-icon>send</md-icon>
-                        <span class="md-list-item-text">Activity</span>
-                    </md-list-item>-->
-
-
                     <md-list-item v-if="currentUser" @click.prevent="logout">
                         <md-icon><i class="fas fa-sign-out-alt"></i></md-icon>
                         <span class="md-list-item-text" >Logout</span>
                     </md-list-item>
+
+
+	                <md-list-item @click.prevent="">
+		                <md-icon><i class="fas fa-info-circle"></i></md-icon>
+		                <span class="md-list-item-text">About</span>
+	                </md-list-item>
+
+	                <md-list-item @click.prevent="">
+		                <md-icon><i class="fas fa-user-secret"></i></md-icon>
+		                <span class="md-list-item-text">Privacy</span>
+	                </md-list-item>
+
+	                <md-list-item @click.prevent="">
+		                <md-icon><i class="fas fa-at"></i></md-icon>
+		                <span class="md-list-item-text">Contact</span>
+	                </md-list-item>
 
                 </md-list>
             </md-app-drawer>
@@ -78,17 +101,20 @@
     /* eslint-disable */
     export default {
         name: 'app',
+
         data: function () {
             return {
                 menuVisible: false,
                 // showSidepanel: false
             }
         },
+
         computed: {
             currentUser() {
                 return this.$store.getters.currentUser
             }
         },
+
         methods: {
             goMyItems(){
                 this.menuVisible = false;
@@ -118,7 +144,18 @@
             goHome() {
                 this.menuVisible = false;
                 this.$router.push('/');
-            }
+            },
+
+	        goRegister() {
+		        this.menuVisible = false;
+		        this.$router.push({ name: 'register' });
+	        },
+
+	        goLogin() {
+		        this.menuVisible = false;
+		        this.$router.push({ name: 'login' });
+	        }
+
         }
     }
 </script>

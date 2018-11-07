@@ -1,5 +1,12 @@
 <template>
     <div>
+	    <!--SNACKBAR-->
+	    <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="newAccountCreated">
+		    <span>The new account was created with success!</span>
+		    <md-button class="md-accent" @click="newAccountCreated = false">Close</md-button>
+	    </md-snackbar>
+	    <!--SNACKBAR-->
+
         <form novalidate class="md-layout" @submit.prevent="authenticate">
             <md-card class="md-layout-item md-size-50 md-small-size-100">
                 <md-card-header>
@@ -24,6 +31,7 @@
                 <md-progress-bar md-mode="indeterminate" v-if="sending" />
 
                 <md-card-actions>
+	                <md-button type="button" class="md-primary" @click="$router.push({ name: 'register' })" :disabled="sending">Sign Up</md-button>
                     <md-button type="submit" class="md-primary" :disabled="sending">Login</md-button>
                 </md-card-actions>
                 <div class="errors" v-if="authError">
@@ -64,9 +72,16 @@
                 sending: false,
                 userLogged: false,
 
+	            position: 'center',
+	            duration: 4000,
+
+	            newAccountCreated: false
             };
         },
+
+
         methods: {
+
             authenticate(){
 
                 this.sending = true;
@@ -129,7 +144,6 @@
 
 <style scoped>
     .errors{
-        /*background: lightcoral;*/
         color: orangered;
         padding: 21px 0 2px 0;
     }

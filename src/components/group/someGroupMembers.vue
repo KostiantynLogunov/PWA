@@ -12,7 +12,6 @@
         </md-snackbar>
 
         <br>
-
         <md-tabs  md-alignment="centered">
 
             <md-tab id="tab-home" md-label="Add member">

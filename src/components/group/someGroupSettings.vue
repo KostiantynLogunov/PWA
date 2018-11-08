@@ -169,7 +169,8 @@
                     .then((response) => {
 
                         if (response.data.allow) {
-                            this.url_invite = config.apiUrl + '/groupinvite/' + response.data.token;
+	                        let my_domain = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+                            this.url_invite = my_domain + '/groupinvite/' + response.data.token;
                             this.invite = true;
                         } else {
                             this.url_invite = false;
@@ -205,7 +206,8 @@
                         this.form.event_privacy = response.data.group.event_privacy;
 
                         if (response.data.group.invation_token) {
-                            this.url_invite = config.apiUrl + '/groupinvite/' +response.data.group.invation_token;
+	                        let my_domain = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+                            this.url_invite = my_domain + '/groupinvite/' +response.data.group.invation_token;
                             this.invite = true;
                         } else {
                             this.url_invite = false;

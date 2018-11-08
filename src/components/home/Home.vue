@@ -1,5 +1,12 @@
 <template>
     <div class="page-container md-layout-column">
+	    <!--SNACKBAR-->
+	    <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagAboutInvite">
+		    <span>{{ messageAboutInvite }}</span>
+		    <md-button class="md-accent" @click="flagAboutInvite = false">Close</md-button>
+	    </md-snackbar>
+	    <!--SNACKBAR-->
+
         <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate"
                              v-if="pandingResponseServer"></md-progress-spinner>
         <div class="alert alert-warning" v-if="allActivity.length == 0">No posts were found...</div>
@@ -40,12 +47,24 @@
         data() {
             return {
                 pandingResponseServer: false,
-                allActivity: []
+                allActivity: [],
+
+	            position: 'center',
+	            duration: 4000,
+
+	            messageAboutInvite: null,
+	            flagAboutInvite: false
             }
         },
 
         mounted() {
-            this.getActivity()
+            this.getActivity();
+	        /*this.messageAboutInvite = localStorage.getItem("AboutInvate");
+			console.log('localStorage on login = ' + this.messageAboutInvite);
+			if (this.messageAboutInvite ) {
+				localStorage.removeItem('AboutInvate');
+				this.flagAboutInvite = true;
+			}*/
         },
 
         methods: {

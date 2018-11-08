@@ -101,7 +101,8 @@
 			        gender: null,
 			        email: null,
 			        password: null,
-			        phone: null
+			        phone: null,
+			        inviteToken: null
 		        },
 		        sending: false,
 		        createErrors: null,
@@ -111,14 +112,11 @@
 	        }
 	    },
 
-	    /*watch: {
-		    // whenever question changes, this function will run
-		    value: function() {
-
-			    this.$eventHub.$emit('sign-up');
-			    // this.$eventHub.$emit(this.options.eventName, newVal)
+	    created(){
+		    if (localStorage.getItem("inviteToken")){
+			    this.form.inviteToken = localStorage.getItem("inviteToken");
 		    }
-	    },*/
+	    },
 
 	     methods: {
 		     registration()
@@ -134,21 +132,30 @@
 				     return ;
 			     }
 			     this.sending = true;
+
+
 			     // send to api this.form.post
-			     axios.post(config.apiUrl + '/auth/register-new-account/', this.form, {
-				     headers: {
-					     "Accept": "application/json",
-					     "Content-Type": "application/json"
-				     }
-			     })
+			     axios.post(config.apiUrl + '/auth/register_new_account', this.form)
 				     .then((response) => {
 					     this.$store.dispatch('login');
 					     this.$store.commit("loginSuccess", response.data);
 					     this.clearForm();
-					     this.$router.push({path: '/'});
-					     // this.newAccountCreated = true;
+					     if (localStorage.getItem("inviteToken"))
+						     localStorage.removeItem('inviteToken');
 
-					     // this.$router.push({ name: 'login'});
+					     let res = response.data;
+					     if (res.aboutInvite.status == 'go group')
+					     {
+						     console.log(res.aboutInvite.message);
+						     this.$router.push({ name: 'someGroupAllPosts', params: { 'groupname': res.aboutInvite.group_alias }});
+					     }
+				         else if(res.aboutInvite.status == 'fail')
+					     {
+						     console.log(res.aboutInvite.message);
+						     this.$router.push({path: '/'});
+					     }
+					     else
+				             this.$router.push({path: '/'});
 				     })
 				     .catch((err) => {
 					     /*let data_errors = [];
@@ -221,6 +228,7 @@
 			     this.form.email = null;
 			     this.form.password = null;
 			     this.form.phone = null;
+			     this.form.inviteToken = null;
 		     }
 	     }
     }

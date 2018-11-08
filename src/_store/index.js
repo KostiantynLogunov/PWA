@@ -6,6 +6,7 @@ Vue.use(Vuex);
 import { getLocalUser, getAllUsers } from "../_helpers/auth";
 import axios from "axios/index";
 import {config} from '../_services/config'
+import { router } from '../_helpers';
 
 const user = getLocalUser();
 const allUser = getAllUsers();
@@ -22,9 +23,14 @@ export const store = new Vuex.Store({
         groupPosts: [],
 
         allUsers: allUser,
+
+	    // aboutInvite: null
     },
 
     getters: {
+    	/*getAboutInfo(state){
+		    return state.aboutInvite;
+	    },*/
         getAllUsers(state){
           return state.allUsers;
         },
@@ -52,6 +58,12 @@ export const store = new Vuex.Store({
     },
 
     mutations: {
+    	/*setAboutInvate(state, message){
+    		state.aboutInvite = message;
+	    },
+	    clearAboutInvate(state){
+		    state.aboutInvite = null;
+	    },*/
         setAllUsers(state, payload) {
             let AllUsers = payload;
             let countUsers = AllUsers.length;
@@ -138,6 +150,38 @@ export const store = new Vuex.Store({
                     store.commit('setAllUsers', response.data.data);
                 })
         },
+
+	    workWithInviteToken(store, inviteToken)
+	    {
+			console.log(inviteToken);
+			let user_id = null;
+			if (store.state.currentUser)
+				user_id = store.getters.currentUser.id;
+
+			let data = {
+				inviteToken: inviteToken,
+				user_id: user_id,
+			};
+
+		    axios.post(config.apiUrl + '/groupinvite', data)
+			    .then((response) => {
+			    	// console.log(response.data.message);
+				    // localStorage.setItem("AboutInvate", response.data.message);
+			    	if (response.data.status == 'go group'){
+					    router.push({ name: 'someGroupAllPosts', params: { groupname: response.data.group_alias }});
+				    }
+				    else if (response.data.status == 'fail'){
+					    router.push({ name: 'home'});
+				    } else if (response.data.status == 'go login'){
+					    console.log('go login');
+					    localStorage.setItem("inviteToken", inviteToken);
+					    router.push({ name: 'login'});
+				    }
+			    })
+			    .catch((err) => {
+				    // console.log(err);
+			    })
+	    }
     },
 
     // strict: process.env.NODE_ENV !== 'production'

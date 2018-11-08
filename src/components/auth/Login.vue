@@ -6,6 +6,12 @@
 		    <md-button class="md-accent" @click="newAccountCreated = false">Close</md-button>
 	    </md-snackbar>
 	    <!--SNACKBAR-->
+	    <!--SNACKBAR-->
+	    <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagAboutInvite">
+		    <span>{{ messageAboutInvite }}</span>
+		    <md-button class="md-accent" @click="flagAboutInvite = false">Close</md-button>
+	    </md-snackbar>
+	    <!--SNACKBAR-->
 
         <form novalidate class="md-layout" @submit.prevent="authenticate">
             <md-card class="md-layout-item md-size-50 md-small-size-100">
@@ -66,7 +72,8 @@
             return {
                 form: {
                     email: '',
-                    password: ''
+                    password: '',
+	                inviteToken: null
                 },
                 errors: null,
                 sending: false,
@@ -75,10 +82,23 @@
 	            position: 'center',
 	            duration: 4000,
 
-	            newAccountCreated: false
+	            newAccountCreated: false,
+	            messageAboutInvite: null,
+	            flagAboutInvite: false
             };
         },
 
+	    mounted(){
+		    if (localStorage.getItem("inviteToken")){
+			    this.form.inviteToken = localStorage.getItem("inviteToken");
+		    }
+		    /*this.messageAboutInvite = localStorage.getItem("AboutInvate");
+		    console.log('localStorage on login = ' + this.messageAboutInvite);
+		    if (this.messageAboutInvite ) {
+			    localStorage.removeItem('AboutInvate');
+			    this.flagAboutInvite = true;
+		    }*/
+	    },
 
         methods: {
 
@@ -99,12 +119,27 @@
 
                 login(this.$data.form)
                     .then((res) => {
+	                    if (localStorage.getItem("inviteToken"))
+		                    localStorage.removeItem('inviteToken');
+
                         this.userLogged = true;
                         this.$store.commit("loginSuccess", res);
                         this.clearForm();
                         this.sending = false;
 
-                        this.$router.push({path: '/'});
+
+	                    if (res.aboutInvite.status == 'go group')
+	                    {
+	                    	console.log(res.aboutInvite.group_alias);
+		                    this.$router.push({ name: 'someGroupAllPosts', params: { 'groupname': res.aboutInvite.group_alias }});
+	                    }
+	                    else if(res.aboutInvite.status == 'fail')
+	                    {
+		                    console.log(res.aboutInvite.message);
+		                    this.$router.push({path: '/'});
+	                    }
+	                    else this.$router.push({path: '/'});
+
                     })
                     .catch((error) => {
                         this.sending = false;
@@ -115,6 +150,7 @@
             clearForm () {
                 this.form.password= null
                 this.form.email = null
+                this.form.inviteToken = null
             },
 
             getConstraints(){
@@ -136,7 +172,7 @@
         computed: {
             authError() {
                 return this.$store.getters.auth_error;
-            }
+            },
         },
 
     }

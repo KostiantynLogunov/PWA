@@ -26,12 +26,14 @@ import User from '../components/user/User'
 import ChatApp from '../components/messanger/ChatApp'
 import MyServices from '../components/my-services/MyServices'
 // import MyItems from '../components/my-items/MyItems'
-import MyBookingItem from '../components/my-booking-item/MyBookingItem'
+// import MyBookingItem from '../components/my-booking-item/MyBookingItem'
 import MyServiceBooking from '../components/my-service-booking/MyServiceBooking'
 // import BookItemInGroup from '../components/group/BookItemInGroup'
 import BookServiceInGroup from '../components/group/BookServiceInGroup'
+import GroupInvite from '../components/group/GroupInvite'
 
 Vue.use(VueRouter);
+import { store } from '../_store'
 
 const routes = [
 	{
@@ -201,6 +203,15 @@ const routes = [
         meta: {
             requiresAuth: true
         },
+    },
+	{
+        name: 'groupinvite',
+        path: '/groupinvite/:token',
+        component: GroupInvite,
+        beforeEnter(from, to, next){
+			store.dispatch('workWithInviteToken', from.params.token)
+        	// next();
+        }
     },
 
     /*{

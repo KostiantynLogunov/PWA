@@ -4,14 +4,14 @@
             <!--SNACKBAR-->
             <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration"
                          :md-active.sync="flagDeleteBook" md-persistent>
-                <span>You deleted booking successfully!</span>
-                <md-button class="md-accent" @click="flagDeleteBook = false">Close</md-button>
+                <span>{{$lang.messages.booking_deleted_successfully}}</span>
+                <md-button class="md-accent" @click="flagDeleteBook = false">{{$lang.buttons.close}}</md-button>
             </md-snackbar>
             <!--SNACKBAR-->
             <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration"
                          :md-active.sync="flagUpdateBook" md-persistent>
-                <span>You updated booking successfully!</span>
-                <md-button class="md-accent" @click="flagUpdateBook = false">Close</md-button>
+                <span>{{$lang.messages.booking_updated_successfully}}</span>
+                <md-button class="md-accent" @click="flagUpdateBook = false">{{$lang.buttons.close}}</md-button>
             </md-snackbar>
             <!--SNACKBAR-->
         </div>
@@ -19,7 +19,7 @@
         <div class="text-center">
             <div v-if="pandingResponseServer && service == null">
                 <div class="alert alert-warning">
-                    Loading....<md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate"></md-progress-spinner>
+	                {{$lang.messages.loading}}<md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate"></md-progress-spinner>
                 </div>
             </div>
             <div v-else>
@@ -33,7 +33,7 @@
 
 
         <md-dialog :md-active.sync="editBook">
-            <md-dialog-title>Edit Booking</md-dialog-title>
+            <md-dialog-title>{{$lang.services.edit_booking}}</md-dialog-title>
             <div md-dynamic-height>
                 <form md-dynamic-height novalidate class="md-layout" @submit.prevent="updateBook">
                     <md-card class="md-layout-item md-size-100 md-small-size-100">
@@ -43,33 +43,33 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field class="text-center">
                                         <div class="md-layout-item md-small-size-50">
-                                            <label>START TIME</label>
+                                            <label>{{$lang.services.start}}</label>
                                             <md-input :value="value_edit_book.start" disabled></md-input>
                                         </div>
                                     </md-field>
                                     <md-field>
                                         <div class="md-layout-item md-small-size-50">
-                                            <label>END TIME</label>
+                                            <label>{{$lang.services.end}}</label>
                                             <md-input :value="value_edit_book.end" disabled></md-input>
                                         </div>
                                     </md-field>
 
                                     <md-field>
-                                        <label>User</label>
+                                        <label>{{$lang.services.user}}</label>
                                         <md-input :value="value_edit_book.user_name"
                                                   disabled />
                                     </md-field>
 
                                     <div class="md-layout-item md-small-size-100">
                                         <md-field>
-                                            <label>Status</label>
+                                            <label>{{$lang.services.status}}</label>
                                             <md-select name="event" v-model="value_edit_book.status" md-dense
                                                        :disabled="processingBook"
                                             >
-                                                <md-option value="pending">Pending</md-option>
-                                                <md-option value="confirmed">Confirmed</md-option>
-                                                <md-option value="rejected">Rejected</md-option>
-                                                <md-option value="finished">Finished</md-option>
+                                                <md-option value="pending">{{$lang.services.pending}}</md-option>
+                                                <md-option value="confirmed">{{$lang.services.confirmed}}</md-option>
+                                                <md-option value="rejected">{{$lang.services.rejected}}</md-option>
+                                                <md-option value="finished">{{$lang.services.finished}}</md-option>
                                             </md-select>
                                         </md-field>
                                     </div>
@@ -87,13 +87,13 @@
                             <md-dialog-actions>
                                 <md-button :disabled="processingBook" class="md-accent"
                                            @click="deleteBook(value_edit_book.book_id)">
-                                    Delete</md-button>
+                                    {{$lang.buttons.delete}}</md-button>
                                 <md-button :disabled="processingBook" class="md-primary" @click="CancelUpdateBook">
-                                    Close</md-button>
+	                                {{$lang.buttons.close}}</md-button>
                                 <md-button :disabled="processingBook"
                                            type="submit"
                                            class="md-accent md-raised"
-                                >Update</md-button>
+                                >{{$lang.buttons.update}}</md-button>
                             </md-dialog-actions>
                         </md-card-actions>
 
@@ -150,6 +150,7 @@
                     end: '',
                 },
                 flagUpdateBook: false,
+	            initialLocale: 'en',
             }
         },
 
@@ -203,6 +204,7 @@
                     };
 
                     myConfig = {
+	                    locale: this.initialLocale,
                         defaultView: 'agendaWeek',
                         editable: false,
                         eventLimit: false, // allow "more" link when too many events
@@ -221,6 +223,7 @@
                 }
                 else
                     myConfig = {
+	                    locale: this.initialLocale,
                         defaultView: 'agendaWeek',
                         editable: false,
                         eventLimit: false, // allow "more" link when too many events

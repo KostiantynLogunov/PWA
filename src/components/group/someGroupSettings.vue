@@ -1,6 +1,6 @@
 <template>
     <div class="page-container md-layout-column">
-        <div class="alert alert-warning" v-if="!group_info">Loading....
+        <div class="alert alert-warning" v-if="!group_info">{{$lang.messages.loading}}
             <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
             <div class="errors" v-if="errors">
                 <div class="alert alert-danger">
@@ -11,77 +11,77 @@
         <div v-else>
             <form novalidate class="md-layout" @submit.prevent="updateSettings" >
                 <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
-                    <span>You updated the group information successfull!</span>
-                    <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+                    <span>{{$lang.messages.you_updated_group_information}}</span>
+                    <md-button class="md-accent" @click="showSnackbar = false">{{$lang.buttons.close}}</md-button>
                 </md-snackbar>
                 <md-card class="md-layout-item md-size-100 md-small-size-100">
                     <md-card-header>
-                        <div class="md-title">General Settings</div>
+                        <div class="md-title">{{$lang.groups.general_settings}}</div>
                     </md-card-header>
 
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-small-size-100">
                                 <md-field :class="">
-                                    <label for="username">USERNAME</label>
+                                    <label for="username">{{$lang.fields.username}}</label>
                                     <md-input name="username" id="username"  :value="form.username" disabled readonly/>
                                 </md-field>
 
                                 <md-field :class="">
-                                    <label for="name">NAME</label>
+                                    <label for="name">{{$lang.fields.name}}</label>
                                     <md-input name="name" id="name" v-model="form.name" :disabled="pandingResponseServer" />
                                 </md-field>
 
                                 <md-field>
-                                    <label for="about">About</label>
+                                    <label for="about">{{$lang.fields.about}}</label>
                                     <md-textarea name="about" id="about" v-model="form.about" :disabled="pandingResponseServer" />
                                 </md-field>
 
 
 
                                 <!--<md-field >-->
-                                    <label>PRIVACY</label>
-                                    <md-radio v-model="form.type" value="open" class="md-primary" :disabled="pandingResponseServer"><i class="fas fa-globe"></i> OPEN GROUP
-                                        <br><small>Anyone can see and join the group.</small></md-radio>
-                                    <md-radio v-model="form.type" value="close" class="md-primary" :disabled="pandingResponseServer"><i class="fas fa-lock"></i> CLOSED GROUP
-                                        <br><small>Anyone can see and request to join the group.</small></md-radio>
-                                    <md-radio v-model="form.type" value="secret" class="md-primary" :disabled="pandingResponseServer"><i class="fas fa-hamsa"></i> SECRET GROUP
-                                        <br><small>Only members can access the group.</small></md-radio>
+                                    <label>PRIVACY{{$lang.fields.title}}</label>
+                                    <md-radio v-model="form.type" value="open" class="md-primary" :disabled="pandingResponseServer"><i class="fas fa-globe"></i> {{$lang.fields.open_group}}
+                                        <br><small>{{$lang.fields.anyone_can_see_and_join_group}}</small></md-radio>
+                                    <md-radio v-model="form.type" value="close" class="md-primary" :disabled="pandingResponseServer"><i class="fas fa-lock"></i> {{$lang.fields.close_group}}
+                                        <br><small>{{$lang.fields.anyone_can_see_and_request_to_join_group}}</small></md-radio>
+                                    <md-radio v-model="form.type" value="secret" class="md-primary" :disabled="pandingResponseServer"><i class="fas fa-hamsa"></i> {{$lang.fields.secret_group}}
+                                        <br><small>{{$lang.fields.only_members_can_access_group}}</small></md-radio>
                                 <!--</md-field>-->
 
                                 <md-field>
-                                    <label>WHO CAN ADD MEMBERS TO THIS GROUP</label>
+                                    <label>{{$lang.fields.WHO_CAN_ADD_MEMBERS_TO_THIS_GROUP}}</label>
                                     <md-select name="member_privacy" id="member_privacy" v-model="form.member_privacy" md-dense :disabled="pandingResponseServer">
-                                        <md-option value="members" selected>Members</md-option>
-                                        <md-option value="only_admins">Admins</md-option>
+                                        <md-option value="members" selected>{{$lang.fields.members}}</md-option>
+                                        <md-option value="only_admins">{{$lang.fields.admins}}</md-option>
                                     </md-select>
                                 </md-field>
 
                                 <md-field>
-                                    <label>WHO CAN POST ON THIS GROUP</label>
+                                    <label>{{$lang.fields.WHO_CAN_POST_ON_THIS_GROUP}}</label>
                                     <md-select name="post_privacy" id="post_privacy" v-model="form.post_privacy" md-dense :disabled="pandingResponseServer">
-                                        <md-option value="members">Members</md-option>
-                                        <md-option value="only_admins">Admins</md-option>
-                                        <md-option value="everyone">EveryOne</md-option>
+                                        <md-option value="members">{{$lang.fields.members}}</md-option>
+                                        <md-option value="only_admins">{{$lang.fields.admins}}</md-option>
+                                        <md-option value="everyone">{{$lang.fields.everyOne}}</md-option>
                                     </md-select>
                                 </md-field>
 
                                 <md-field>
-                                    <label>WHO CAN ADD EVENTS TO THE GROUP</label>
+                                    <label>{{$lang.fields.WHO_CAN_ADD_EVENTS_TO_GROUP}}</label>
                                     <md-select name="event_privacy" id="event_privacy" v-model="form.event_privacy" md-dense :disabled="pandingResponseServer">
-                                        <md-option value="members">Members</md-option>
-                                        <md-option value="only_admins">Admins</md-option>
+                                        <md-option value="members">{{$lang.fields.members}}</md-option>
+                                        <md-option value="only_admins">{{$lang.fields.admins}}</md-option>
                                     </md-select>
                                 </md-field>
 
 
-                                <md-checkbox v-model="invite" @change="checkInviteUrl" class="md-primary" :checked="url_invite"></md-checkbox>ALLOW INVATION BY URL
+                                <md-checkbox v-model="invite" @change="checkInviteUrl" class="md-primary" :checked="url_invite"></md-checkbox>{{$lang.fields.ALLOW_INVATION_BY_URL}}
                                     <transition name="boom">
                                         <md-button type="button" class="md-raised md-accent" :disabled="pandingResponseServer" v-if="url_invite"
                                                    v-clipboard:copy="url_invite"
                                                    v-clipboard:success="onCopy"
                                                    v-clipboard:error="onError"
-                                        >Copy!</md-button>
+                                        >{{$lang.buttons.copy}}</md-button>
 
                                     </transition>
                                     <md-field>
@@ -93,7 +93,7 @@
                                     <md-dialog-alert
                                             :md-active.sync="second"
                                             md-title="You successfully copied link !"
-                                            :md-content="'You just copied: ' + url_invite" />
+                                            :md-content="$lang.fields.you_just_copied + ' ' + url_invite" />
                             </div>
                         </div>
                         <div class="errors" v-if="errors">
@@ -106,10 +106,10 @@
                     </md-card-content>
                     <md-progress-bar md-mode="indeterminate" v-if="pandingResponseServer" />
                     <md-card-actions>
-                        <md-button type="submit" class="md-primary md-raised ml-3" :disabled="pandingResponseServer">Update</md-button>
+                        <md-button type="submit" class="md-primary md-raised ml-3" :disabled="pandingResponseServer">{{$lang.buttons.update}}</md-button>
                     </md-card-actions>
                 </md-card>
-                <md-snackbar :md-active.sync="showSnackbar">You updated the group information successfull!</md-snackbar>
+                <md-snackbar :md-active.sync="showSnackbar">{{$lang.messages.you_updated_group_information}}</md-snackbar>
             </form>
         </div>
     </div>

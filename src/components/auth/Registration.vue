@@ -3,7 +3,7 @@
 		<form  class="md-layout" @submit.prevent="registration">
 			<md-card class="md-layout-item md-size-50 md-small-size-100">
 				<md-card-header>
-					<div class="md-title">Create an Account</div>
+					<div class="md-title">{{$lang.registerForm.create_account}}</div>
 				</md-card-header>
 
 				<md-card-content>
@@ -11,54 +11,54 @@
 					<div class="md-layout md-gutter">
 						<div class="md-layout-item md-size-50 md-small-size-50 ">
 							<md-field>
-								<label for="affiliate">Affiliate Code <small>(optional)</small></label>
+								<label for="affiliate">{{$lang.registerForm.affiliate_code}} <small>({{$lang.registerForm.optional}})</small></label>
 								<md-input type="affiliate" name="affiliate" id="affiliate" v-model="form.affiliate" :disabled="sending" />
 							</md-field>
 						</div>
 
 						<div class="md-layout-item md-size-50 md-small-size-50">
 							<md-field>
-								<label for="email">Email</label>
+								<label for="email">{{$lang.registerForm.email}}</label>
 								<md-input type="email" name="email" id="email" autocomplete="email" v-model="form.email" :disabled="sending" required/>
 							</md-field>
 						</div>
 
 						<div class="md-layout-item md-size-50 md-small-size-50 ">
 							<md-field >
-								<label for="name">Name</label>
+								<label for="name">{{$lang.registerForm.name}}</label>
 								<md-input name="name" id="name" autocomplete="name" v-model="form.name" :disabled="sending" required/>
 							</md-field>
 						</div>
 
 						<div class="md-layout-item md-size-50 md-small-size-50">
 							<md-field>
-								<label>Gender</label>
+								<label>{{$lang.registerForm.gender}}</label>
 								<md-select name="gender" id="gender" v-model="form.gender" md-dense :disabled="sending" required>
 									<!--<md-option disabled>Select gander</md-option>-->
-									<md-option value="male">Male</md-option>
-									<md-option value="female">Famale</md-option>
-									<md-option value="other">None</md-option>
+									<md-option value="male">{{$lang.registerForm.male}}</md-option>
+									<md-option value="female">{{$lang.registerForm.famale}}</md-option>
+									<md-option value="other">{{$lang.registerForm.none}}</md-option>
 								</md-select>
 							</md-field>
 						</div>
 
 						<div class="md-layout-item md-size-50 md-small-size-50">
 							<md-field>
-								<label for="username">Username</label>
+								<label for="username">{{$lang.registerForm.username}}</label>
 								<md-input name="username" id="username" autocomplete="username" v-model="form.username" :disabled="sending" required/>
 							</md-field>
 						</div>
 
 						<div class="md-layout-item md-size-50 md-small-size-50">
 							<md-field>
-								<label for="password">Password</label>
+								<label for="password">{{$lang.registerForm.password}}</label>
 								<md-input type="password" name="password" id="password" autocomplete="password" v-model="form.password" :disabled="sending" required/>
 							</md-field>
 						</div>
 
 						<div class="md-layout-item md-size-50 md-small-size-50">
 							<md-field>
-								<label for="phone">Phone</label>
+								<label for="phone">{{$lang.registerForm.phone}}</label>
 								<md-input type="tel" name="phone" id="phone" autocomplete="phone" v-model="form.phone" :disabled="sending" required/>
 							</md-field>
 						</div>
@@ -76,7 +76,7 @@
 				<md-progress-bar md-mode="indeterminate" v-if="sending" />
 
 				<md-card-actions>
-					<md-button type="submit" class="md-primary" :disabled="sending">Sign Up & Login</md-button>
+					<md-button type="submit" class="md-primary" :disabled="sending">{{$lang.registerForm.sign_and_login}}</md-button>
 				</md-card-actions>
 			</md-card>
 		</form>

@@ -2,45 +2,45 @@
     <div class="page-container md-layout-column">
         <md-toolbar>
             <div class="md-toolbar-section-end">
-                <md-button @click="showSidepanel = true">Group Menu</md-button>
+                <md-button @click="showSidepanel = true">{{$lang.group_menu.group_menu}}</md-button>
             </div>
         </md-toolbar>
 
         <md-drawer class="md-right" :md-active.sync="showSidepanel">
             <md-toolbar class="md-transparent" md-elevation="0">
-                <span class="md-title">Group Menu</span>
+                <span class="md-title">{{$lang.group_menu.group_menu}}</span>
             </md-toolbar>
 
             <md-list>
                 <md-list-item :to="{ name: 'someGroupMembers' }" @click="closeSideMenu">
                 <!--<md-list-item @click.prevent="goToLink('someGroupMembers')">-->
                     <md-icon><i class="fas fa-users"></i></md-icon>
-                    <span class="md-list-item-text">Members</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.members}}</span>
                 </md-list-item>
 
                 <md-list-item :to="{ name: 'someGroupEvents' }"  @click="closeSideMenu">
                     <md-icon><i class="far fa-calendar-alt"></i></md-icon>
-                    <span class="md-list-item-text">Events</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.events}}</span>
                 </md-list-item>
 
                 <md-list-item :to="{ name: 'someGroupPosts' }"  @click="closeSideMenu">
                     <md-icon><i class="far fa-clipboard"></i></md-icon>
-                    <span class="md-list-item-text">Posts</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.posts}}</span>
                 </md-list-item>
 
                 <md-list-item :to="{ name: 'someGroupTasks' }"   @click="closeSideMenu">
                     <md-icon><i class="fas fa-thumbtack"></i></md-icon>
-                    <span class="md-list-item-text">Tasks</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.tasks}}</span>
                 </md-list-item>
 
                 <md-list-item :to="{ name: 'someGroupChecklists' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-tasks"></i></md-icon>
-                    <span class="md-list-item-text">Checklists</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.checklists}}</span>
                 </md-list-item>
 
                 <md-list-item :to="{ name: 'someGroupDutyRoster' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-calendar-alt"></i></md-icon>
-                    <span class="md-list-item-text">Duty roster</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.duty_roster}}</span>
                 </md-list-item>
 
                 <!--<md-list-item  :to="{ name: 'someGroupSharing' }"  @click="closeSideMenu">
@@ -50,27 +50,27 @@
 
                 <md-list-item  :to="{ name: 'someGroupDocuments' }"  @click="closeSideMenu">
                     <md-icon><i class="far fa-file-alt"></i></md-icon>
-                    <span class="md-list-item-text">Documents</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.documents}}</span>
                 </md-list-item>
 
                 <md-list-item  :to="{ name: 'someGroupServices' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-share-square"></i></md-icon>
-                    <span class="md-list-item-text">Sharing</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.sharing}}</span>
                 </md-list-item>
 
                 <md-list-item  :to="{ name: 'someGroupNotes' }"  @click="closeSideMenu">
                     <md-icon><i class="fas fa-book-open"></i></md-icon>
-                    <span class="md-list-item-text">Notes</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.notes}}</span>
                 </md-list-item>
 
                 <md-list-item  :to="{ name: 'someGroupSettings' }"  @click="closeSideMenu"  v-if="checkGroupAdmins(currentUser_id)">
                     <md-icon><i class="fas fa-cogs"></i></md-icon>
-                    <span class="md-list-item-text">Group settings</span>
+                    <span class="md-list-item-text">{{$lang.group_menu.group_settings}}</span>
                 </md-list-item>
 
                 <md-list-item    @click="showConfirm = true">
                     <md-icon><i class="fas fa-sign-out-alt"></i></md-icon>
-                    <span class="md-list-item-text">Exit group
+                    <span class="md-list-item-text">{{$lang.group_menu.exit_group}}
                         <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
                     </span>
                 </md-list-item>
@@ -84,10 +84,10 @@
         </md-content>
         <md-dialog-confirm
                 :md-active.sync="showConfirm"
-                md-title="Are you sure you want to exit from this group?"
-                md-content="if you confirm you will leave this group."
-                md-confirm-text="Agree"
-                md-cancel-text="Disagree"
+                :md-title="$lang.messages.are_you_sure_exit_from_group"
+                :md-content="$lang.messages.if_confirm_you_leave_group"
+                :md-confirm-text="$lang.buttons.agree"
+                :md-cancel-text="$lang.buttons.disagree"
                 @md-cancel="showConfirm = false"
                 @md-confirm="unjoin" />
     </div>

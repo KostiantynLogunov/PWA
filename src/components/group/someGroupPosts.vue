@@ -2,18 +2,18 @@
     <div class="page-container md-layout-column">
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
-            <span>You created new post!</span>
-            <md-button class="md-accent" @click="showSnackbarPost = false">Close</md-button>
+            <span>{{$lang.messages.you_created_post}}</span>
+            <md-button class="md-accent" @click="showSnackbarPost = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeletePost" md-persistent>
-            <span>You deleted post successfull!</span>
-            <md-button class="md-accent" @click="flagDeletePost = false">Close</md-button>
+            <span>{{$lang.messages.you_deleted_post}}</span>
+            <md-button class="md-accent" @click="flagDeletePost = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="updatedPost" md-persistent>
-            <span>You updated new post!</span>
-            <md-button class="md-accent" @click="updatedPost = false">Close</md-button>
+            <span>{{$lang.messages.you_updated_post}}</span>
+            <md-button class="md-accent" @click="updatedPost = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <div v-if="checkGroupAdmins(currentUser_id)" >
@@ -21,7 +21,7 @@
 
             <md-card class="md-layout-item md-size-50 md-small-size-100">
                 <md-card-header>
-                      <div class="md-title">What's going on ?</div>
+                      <div class="md-title">{{$lang.groups.title_creating_post}}</div>
                 </md-card-header>
 
                 <md-card-content>
@@ -45,15 +45,15 @@
                 <md-progress-bar md-mode="indeterminate" v-if="sending" />
 
                 <md-card-actions>
-                    <md-button type="button" class="md-primary" @click="CreateEvent">Create event</md-button>
-                    <md-button type="submit" class="md-primary md-raised" :disabled="sending">Post</md-button>
+                    <md-button type="button" class="md-primary" @click="CreateEvent">{{$lang.buttons.create_event}}</md-button>
+                    <md-button type="submit" class="md-primary md-raised" :disabled="sending">{{$lang.buttons.post}}</md-button>
                 </md-card-actions>
             </md-card>
         </form>
         </div>
         <br>
 
-        <div class="alert alert-warning" v-if="groupPosts.length == 0">No posts were found...</div>
+        <div class="alert alert-warning" v-if="groupPosts.length == 0">{{$lang.messages.no_posts_were_found}}</div>
         <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         <div v-for="post in groupPosts" :key="post.id">
             <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
@@ -83,7 +83,7 @@
                                     <md-progress-bar md-mode="indeterminate" v-show="processingPost" />
 
                                     <form novalidate class="md-layout" @submit.prevent="editPost(value_edit_post.id)">
-                                        <md-dialog-title>Editing post</md-dialog-title>
+                                        <md-dialog-title>{{$lang.groups.editing_post}}</md-dialog-title>
                                         <div class="md-layout-item md-small-size-100">
                                             <md-field>
                                                 <md-textarea name="post" v-model="value_edit_post.post" :disabled="processingPost" />
@@ -103,11 +103,11 @@
                                         </div>
 
                                         <md-dialog-actions>
-                                            <md-button :disabled="processingPost" class="md-primary" @click="CancelEditingPost()">Close</md-button>
+                                            <md-button :disabled="processingPost" class="md-primary" @click="CancelEditingPost()">{{$lang.buttons.close}}</md-button>
                                             <md-button :disabled="processingPost"
                                                        type="submit"
                                                        class="md-accent md-raised"
-                                            >Update</md-button>
+                                            >{{$lang.buttons.update}}</md-button>
                                         </md-dialog-actions>
                                     </form>
                                 </md-dialog>
@@ -118,8 +118,8 @@
                                         </md-button>
 
                                         <md-menu-content>
-                                            <md-menu-item @click="onFormUpdatePost(post.id, post.description)" :disabled="processingPost"><span><i class="far fa-edit"></i> Edit</span></md-menu-item>
-                                            <md-menu-item @click="deletePost(post.id)" :disabled="deletingPost != 0"><span><i class="fas fa-trash"></i> Delete</span></md-menu-item>
+                                            <md-menu-item @click="onFormUpdatePost(post.id, post.description)" :disabled="processingPost"><span><i class="far fa-edit"></i>{{$lang.buttons.edit}}</span></md-menu-item>
+                                            <md-menu-item @click="deletePost(post.id)" :disabled="deletingPost != 0"><span><i class="fas fa-trash"></i> {{$lang.buttons.delete}}</span></md-menu-item>
                                         </md-menu-content>
                                     </md-menu>
                                 </div>
@@ -137,9 +137,9 @@
 
                     <md-card-actions>
                         <md-button class="md-primary" @click="likePost(post.id)" :disabled="liking"><i class="far fa-thumbs-up"></i>
-                            Like</md-button>
+                            {{$lang.buttons.like}}</md-button>
                         <md-button @click="turnComment(post.id)"><i class="far fa-comment"></i>
-                            Comment</md-button>
+                            {{$lang.buttons.comment}}</md-button>
                     </md-card-actions>
 
                     <transition name="boom">
@@ -150,7 +150,7 @@
                                         <div class="md-layout md-gutter">
                                             <div class="md-layout-item md-small-size-100">
                                                 <md-field :class="">
-                                                    <label for="comment">Comment</label>
+                                                    <label for="comment">{{$lang.buttons.comment}}</label>
                                                     <md-input @keyup.enter="sendComment(post.id)" name="comment" id="comment" autocomplete="given-comment" v-model="formComment.comment" :disabled="sendingComment" />
                                                 </md-field>
                                             </div>

@@ -1,6 +1,6 @@
 <template>
     <div class="conversation">
-        <h1>{{ contact ? 'selected: '+contact.name : 'Select a Contact' }}</h1>
+        <h1>{{ contact ? $lang.messenger.selected + ': '+contact.name : $lang.messenger.select_contact }}</h1>
         <MessagesFeed :contact="contact" :messages="messages"/>
         <MessageComposer @send="sendMessage"/>
     </div>

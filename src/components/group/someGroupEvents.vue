@@ -2,7 +2,7 @@
     <div class="page-container md-layout-column">
         <br>
         <md-tabs  md-alignment="centered">
-            <md-tab :key="key" id="tab-home" md-label="All" style="min-height: 120px;">
+            <md-tab :key="key" id="tab-home" :md-label="$lang.groups.all" style="min-height: 120px;">
                 <md-list class="md-triple-line" v-if="group_events">
                     <md-list-item  v-for="event in group_events" :key="event.id">
                         <md-avatar v-if="event.user.avatar">
@@ -19,11 +19,11 @@
                     </md-list-item>
                 </md-list>
                 <md-list v-else>
-                    <div class="alert alert-warning">No events added yet!</div>
+                    <div class="alert alert-warning">{{$lang.messages.no_events_added_yet}}</div>
                 </md-list>
             </md-tab>
 
-            <md-tab id="tab-pages" md-label="Ongoing">
+            <md-tab id="tab-pages" :md-label="$lang.groups.ongoing">
                 <md-list class="md-triple-line" v-if="ongoing_events">
                     <md-list-item v-for="event in ongoing_events" :key="event.id">
                         <md-avatar v-if="event.user">
@@ -41,11 +41,11 @@
                     </md-list-item>
                 </md-list>
                 <md-list v-else>
-                    <div class="alert alert-warning">No events added yet!</div>
+                    <div class="alert alert-warning">{{$lang.messages.no_events_added_yet}}</div>
                 </md-list>
             </md-tab>
 
-            <md-tab id="tab-posts" md-label="Upcoming">
+            <md-tab id="tab-posts" :md-label="$lang.groups.upcoming">
                 <md-list class="md-triple-line" v-if="upcoming_events">
                     <md-list-item v-for="event in upcoming_events" :key="event.id">
                         <md-avatar v-if="event.user">
@@ -67,13 +67,13 @@
                     <!--{{ updateRender()}}-->
                 </md-list>
                 <md-list v-else>
-                    <div class="alert alert-warning">No events added yet!</div>
+                    <div class="alert alert-warning">{{$lang.messages.no_events_added_yet}}</div>
                 </md-list>
             </md-tab>
 
-            <md-tab id="tab-new" md-label="New" v-if="checkGroupAdmins(currentUser_id)">
+            <md-tab id="tab-new" :md-label="$lang.groups.new" v-if="checkGroupAdmins(currentUser_id)">
                 <div class="text-center">
-                    <md-button type="button" class="md-raised md-primary" @click="CreateEvent">Create event</md-button>
+                    <md-button type="button" class="md-raised md-primary" @click="CreateEvent">{{$lang.buttons.create_event}}</md-button>
                 </div>
             </md-tab>
 

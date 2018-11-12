@@ -2,24 +2,24 @@
     <div class="page-container md-layout-column">
         <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
-            <span>You added a new CheckList !</span>
-            <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+            <span>{{$lang.messages.you_added_new_checkList}}</span>
+            <md-button class="md-accent" @click="showSnackbar = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteCheckList" md-persistent>
-            <span>You deleted a CheckList!</span>
-            <md-button class="md-accent" @click="flagDeleteCheckList = false">Close</md-button>
+            <span>{{$lang.messages.you_deleted_checkLis}}</span>
+            <md-button class="md-accent" @click="flagDeleteCheckList = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="updatedChecklist" md-persistent>
-            <span>You edited a Checklist !</span>
-            <md-button class="md-accent" @click="updatedChecklist = false">Close</md-button>
+            <span>{{$lang.messages.you_edited_checkList}}</span>
+            <md-button class="md-accent" @click="updatedChecklist = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
 
         <div class="text-center" v-if="!creatingForm">
             <div v-if="checkGroupAdmins(currentUser_id)">
-                <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">Create CheckList</md-button>
+                <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true" :disabled="sending">{{$lang.buttons.create_checkList}}</md-button>
             </div>
         </div>
         <div v-else>
@@ -27,25 +27,25 @@
 
                 <md-card class="md-layout-item md-size-50 md-small-size-100">
                     <md-card-header>
-                        <div class="md-title">Creating CheckList</div>
+                        <div class="md-title">{{$lang.groups.creating_checkList}}</div>
                     </md-card-header>
 
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-small-size-100">
                                 <md-field>
-                                    <label for="title">Title</label>
+                                    <label for="title">{{$lang.fields.title}}</label>
                                     <md-input name="title" id="title" autocomplete="title" v-model="form.title" :disabled="sending" />
                                 </md-field>
 
                                 <md-field>
-                                    <label for="description">Description</label>
+                                    <label for="description">{{$lang.fields.description}}</label>
                                     <md-textarea name="description" id="description" autocomplete="description" v-model="form.description" :disabled="sending" />
                                 </md-field>
 
                                 <div class="text-center w-100">
                                     <div class="viewport">
-                                        <h6>To Do List</h6>
+                                        <h6>{{$lang.fields.to_do_list}}</h6>
                                         <input v-model="newTodo" :disabled="sending" />
                                         <md-button class="md-icon-button md-list-action" @click="AddTodo(newTodo)" >
                                             <md-icon class="md-primary" >
@@ -74,7 +74,7 @@
 
                             <div class="md-layout-item md-small-size-100">
                                 <fieldset class="form-group" id="usersTag">
-                                    <label class="control-label">MEMBERS</label>
+                                    <label class="control-label">{{$lang.fields.members}}</label>
                                     <tags-input element-id="tags"
                                                 class="form-control"
                                                 v-model="form.responsible_user"
@@ -93,7 +93,7 @@
                                 </md-field>-->
 
                                 <md-field :class="">
-                                    <label>Target Event</label>
+                                    <label>{{$lang.fields.target_event}}</label>
                                     <md-select name="event"  v-model="form.target_event" md-dense :disabled="sending" placeholder="Please choose event">
 
                                         <div v-if="group_events.length">
@@ -106,7 +106,7 @@
                                         </div>
                                         <div v-else>
                                             <md-option  value="" disabled>
-                                                Not any events
+                                                {{$lang.fields.not_any_events}}
                                             </md-option>
                                         </div>
                                     </md-select>
@@ -126,17 +126,17 @@
                     <md-progress-bar md-mode="indeterminate" v-if="sending" />
 
                     <md-card-actions>
-                        <md-button type="button" class="md-primary" @click="creatingForm = false">Cancel</md-button>
-                        <md-button type="submit" class="md-primary md-raised" :disabled="sending">Create Checklist</md-button>
+                        <md-button type="button" class="md-primary" @click="creatingForm = false">{{$lang.buttons.cancel}}</md-button>
+                        <md-button type="submit" class="md-primary md-raised" :disabled="sending">{{$lang.buttons.create_checkList}}</md-button>
                     </md-card-actions>
                 </md-card>
 
-                <md-snackbar :md-active.sync="checklistSaved">The user saved Checklist successfull!</md-snackbar>
+                <md-snackbar :md-active.sync="checklistSaved">{{$lang.messages.user_saved_checklist_successfull}}</md-snackbar>
             </form>
         </div>
 
         <br>
-        <div class="alert alert-warning" v-if="!groupChecklist">No Checklist yet....
+        <div class="alert alert-warning" v-if="!groupChecklist">{{$lang.messages.no_checklist_yet}}
             <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         </div>
         <div v-for="checklist in groupChecklist" :key="checklist.id">
@@ -152,7 +152,7 @@
                         <h6>{{ checklist.description }}</h6>
 
                         <div v-if="checklist.responsible_user.length">
-                            Responsible users:
+                            {{$lang.groups.responsible_user}}
                             <span v-for="member in checklist.responsible_user" class="one_member_link">
                                 <!-- link = member.link-->
                                 <a class="mr-3">
@@ -166,12 +166,12 @@
                             </span>
                         </div>
                         <div v-else>
-                            <div class="alert alert-warning">No responsable user !</div>
+                            <div class="alert alert-warning">{{$lang.messages.no_responsable_user}}</div>
                         </div>
 
 
                         <div v-if="checklist.todolist.length">
-                            <ul><b>Items:</b>
+                            <ul><b>{{$lang.groups.items}}</b>
                                 <li v-for="todo in checklist.todolist">
                                     <input type="checkbox" :checked="todo.check" disabled>
                                     {{ todo.todo }}
@@ -198,12 +198,12 @@
                     <md-card-actions>
                         <div v-if="checkAuthor(checklist.author_id) || checkGroupAdmins(currentUser_id)">
                             <md-button :disabled="editingChecklist == checklist.id" @click=" onFormEditChecklist(checklist.title, checklist.description, checklist.todolist, checklist.responsible_user, checklist.target_event, checklist.id)"><i class="far fa-edit"></i>
-                                Edit</md-button>
+                                {{$lang.buttons.edit}}</md-button>
                             <md-button class="md-accent" :disabled="deleteProcess" @click="deleteChecklist(checklist.id)"><i class="far fa-trash-alt"></i>
-                                Delete</md-button>
+                                {{$lang.buttons.delete}}</md-button>
                         </div>
                         <md-button @click="turnComment(checklist.id)"><i class="far fa-comments"></i>
-                            Comments</md-button>
+                            {{$lang.buttons.comments}}</md-button>
                     </md-card-actions>
 
                     <div v-if="deletingChecklist == checklist.id">
@@ -218,25 +218,25 @@
 
                             <md-card class="md-layout-item md-size-50 md-small-size-100">
                                 <md-card-header>
-                                    <div class="md-title text-center">Editing CheckList</div>
+                                    <div class="md-title text-center">{{$lang.groups.editing_checkList}}</div>
                                 </md-card-header>
 
                                 <md-card-content>
                                     <div class="md-layout md-gutter">
                                         <div class="md-layout-item md-small-size-100">
                                             <md-field>
-                                                <label for="title">Title</label>
+                                                <label for="title">{{$lang.fields.title}}</label>
                                                 <md-input name="title" v-model="value_edit_checklist.title" :disabled="processingChecklist" />
                                             </md-field>
 
                                             <md-field>
-                                                <label for="description">Description</label>
+                                                <label for="description">{{$lang.fields.description}}</label>
                                                 <md-textarea name="description" v-model="value_edit_checklist.description" :disabled="processingChecklist" />
                                             </md-field>
 
                                             <div class="text-center w-100">
                                                 <div class="viewport">
-                                                    <h6>To Do List</h6>
+                                                    <h6>{{$lang.fields.to_do_list}}</h6>
                                                     <input v-model="newTodo" :disabled="processingChecklist" />
                                                     <md-button class="md-icon-button md-list-action" @click="AddTodoEdit(newTodo)" >
                                                         <md-icon class="md-primary" >
@@ -265,7 +265,7 @@
 
                                         <div class="md-layout-item md-small-size-100">
                                             <fieldset id="membersTag">
-                                                <label class="control-label" style="color: grey">Members</label>
+                                                <label class="control-label" style="color: grey">{{$lang.fields.members}}</label>
                                                 <tags-input element-id="tags"
                                                             class="form-control"
                                                             v-model="value_edit_checklist.responsible_user"
@@ -282,7 +282,7 @@
 
 
                                             <md-field>
-                                                <label>Target Event</label>
+                                                <label>{{$lang.fields.target_event}}</label>
                                                 <md-select name="event"  v-model="value_edit_checklist.target_event" md-dense :disabled="processingChecklist">
 
                                                     <div v-if="group_events.length">
@@ -295,7 +295,7 @@
                                                     </div>
                                                     <div v-else>
                                                         <md-option  value="" disabled>
-                                                            Not any events
+                                                            {{$lang.fields.not_any_events}}
                                                         </md-option>
                                                     </div>
                                                 </md-select>
@@ -314,11 +314,11 @@
 
                                 <md-progress-bar md-mode="indeterminate" v-if="processingChecklist" />
                                 <md-card-actions>
-                                    <md-button :disabled="processingChecklist" class="md-primary" @click="CancelEditingChecklist()">Close</md-button>
+                                    <md-button :disabled="processingChecklist" class="md-primary" @click="CancelEditingChecklist()">{{$lang.buttons.close}}</md-button>
                                     <md-button :disabled="processingChecklist"
                                                type="submit"
                                                class="md-accent md-raised"
-                                    >Update</md-button>
+                                    >{{$lang.buttons.update}}</md-button>
                                 </md-card-actions>
                                 <div class="errors" v-if="updateErrors">
                                     <ul >
@@ -345,7 +345,7 @@
                                         <div class="md-layout md-gutter">
                                             <div class="md-layout-item md-small-size-100">
                                                 <md-field :class="">
-                                                    <label for="comment">Comment</label>
+                                                    <label for="comment">{{$lang.fields.comment}}</label>
                                                     <md-input name="comment" id="comment" @keyup.enter="sendComment(checklist.id)" autocomplete="given-comment" v-model="formComment.comment" :disabled="sendingComment" />
                                                 </md-field>
                                             </div>

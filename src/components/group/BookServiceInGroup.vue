@@ -4,8 +4,8 @@
             <!--SNACKBAR-->
             <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration"
                          :md-active.sync="flagCreateBook" md-persistent>
-                <span>You created booking successfully!</span>
-                <md-button class="md-accent" @click="flagCreateBook = false">Close</md-button>
+                <span>{{$lang.messages.you_created_booking_successfully}}</span>
+                <md-button class="md-accent" @click="flagCreateBook = false">{{$lang.buttons.close}}</md-button>
             </md-snackbar>
             <!--SNACKBAR-->
 
@@ -13,7 +13,7 @@
         <div class="text-center">
             <div v-if="pandingResponseServer && service == null">
                 <div class="alert alert-warning">
-                    Loading....<md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate"></md-progress-spinner>
+                    {{$lang.messages.loading}}<md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate"></md-progress-spinner>
                 </div>
             </div>
             <div v-else>
@@ -26,7 +26,7 @@
         </div>
 
 	    <md-dialog :md-active.sync="doBooking">
-		    <md-dialog-title>Booking</md-dialog-title>
+		    <md-dialog-title>{{$lang.groups.booking}}</md-dialog-title>
 		    <div md-dynamic-height>
 			    <form md-dynamic-height novalidate class="md-layout" @submit.prevent="sendNewBooking">
 				    <md-card class="md-layout-item md-size-100 md-small-size-100">
@@ -35,20 +35,20 @@
 						    <div class=" md-small-size-100">
 							    <md-field>
 								    <div class="md-layout-item md-small-size-50">
-									    <label>START </label>
+									    <label>{{$lang.fields.start}}</label>
 									    <md-input  disabled :value="data.startBook | moment('subtract', '2 hours', 'MM-DD-YYYY HH:mm')"></md-input>
 								    </div>
 							    </md-field>
 							    <md-field>
 								    <div class="md-layout-item md-small-size-50">
-									    <label>END </label>
+									    <label>{{$lang.fields.end}}</label>
 									    <md-input :value="data.endBook | moment('subtract', '2 hours', 'MM-DD-YYYY HH:mm')" disabled></md-input>
 								    </div>
 							    </md-field>
 								    <br>
 								    <div class="md-layout-item md-small-size-100">
 									    <md-field>
-										    <label>Message</label>
+										    <label>{{$lang.fields.message}}</label>
 										    <md-input v-model="data.message" :disabled="processCreateBook" required/>
 									    </md-field>
 								    </div>
@@ -56,11 +56,11 @@
 					    </md-card-content>
 					    <md-card-actions>
 						    <md-dialog-actions>
-							    <md-button :disabled="processCreateBook" class="md-primary" @click="cancelFormCreatedBook">Close</md-button>
+							    <md-button :disabled="processCreateBook" class="md-primary" @click="cancelFormCreatedBook">{{$lang.buttons.close}}</md-button>
 							    <md-button :disabled="processCreateBook"
 							               type="submit"
 							               class="md-accent md-raised"
-							    >Book</md-button>
+							    >{{$lang.buttons.book}}</md-button>
 						    </md-dialog-actions>
 					    </md-card-actions>
 					    <!--<div class="errors" v-if="serverErrors">

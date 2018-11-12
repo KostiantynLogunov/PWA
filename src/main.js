@@ -38,8 +38,11 @@ import {initialize} from  './_helpers/general'
 initialize(store, router);
 
 import FullCalendar from 'vue-full-calendar'
-Vue.use(FullCalendar)
+Vue.use(FullCalendar);
 
+import Lang from 'vuejs-localization';
+Lang.requireAll(require.context('./lang', true, /\.js$/));
+Vue.use(Lang);
 /*import InputTag from 'vue-input-tag'
 Vue.use(InputTag);
 Vue.component('input-tag', InputTag);*/

@@ -10,7 +10,7 @@
                     <span v-else>
                             <img :src="avatarDefaultUrl" alt="default">
                         </span>
-                    {{ task.user.name }} (task)
+                    {{ task.user.name }} ({{$lang.groups.task}})
                 </div>
                 <div class="md-subhead">
                     {{ convertDate(task.created_at) | moment("from") }}
@@ -19,8 +19,8 @@
 
             <md-card-content>
                 {{ task.title }}<br>
-                <span v-if="task.responsible_user">Responsible user: {{ task.responsible_user }} <br></span>
-                Task description: {{ task.description }}
+                <span v-if="task.responsible_user">{{$lang.groups.responsible_user}} {{ task.responsible_user }} <br></span>
+	            {{$lang.groups.task_description}} {{ task.description }}
             </md-card-content>
 
         </md-ripple>

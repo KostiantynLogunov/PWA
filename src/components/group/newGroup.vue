@@ -3,37 +3,37 @@
         <form @submit.prevent="add">
             <table class="table">
                 <tr>
-                    <th>Name</th>
+                    <th>{{$lang.fields.name}}</th>
                     <td>
                         <input type="text" class="form-control" v-model="group.name" placeholder="Group name">
                     </td>
                 </tr>
                 <tr>
-                    <th>Alias</th>
+                    <th>{{$lang.fields.alias}}</th>
                     <td>
                         <input type="text" class="form-control" v-model="group.username" placeholder="Group alias">
                     </td>
                 </tr>
                 <tr>
-                    <th>About</th>
+                    <th>{{$lang.fields.about}}</th>
                     <td>
                         <textarea class="form-control" rows="2" v-model="group.about"></textarea>
                     </td>
                 </tr>
                 <tr>
-                    <th>Privacy</th>
+                    <th>{{$lang.fields.privacy}}</th>
                     <td>
-                        <md-radio v-model="group.type" value="open" selected>Open group</md-radio>
-                        <md-radio v-model="group.type" value="close">Close group</md-radio>
-                        <md-radio v-model="group.type" value="secret">Secret group</md-radio>
+                        <md-radio v-model="group.type" value="open" selected>{{$lang.fields.open_group}}</md-radio>
+                        <md-radio v-model="group.type" value="close">{{$lang.fields.close_group}}</md-radio>
+                        <md-radio v-model="group.type" value="secret">{{$lang.fields.secret_group}}</md-radio>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <md-button class="md-accent" @click="cancel">Cancel</md-button>
+                        <md-button class="md-accent" @click="cancel">{{$lang.buttons.cancel}}</md-button>
                     </td>
                     <td class="text-right">
-                        <input type="submit" class="btn btn-primary"  :disabled="pandding" value="Create Group">
+                        <input type="submit" class="btn btn-primary"  :disabled="pandding" :value="$lang.buttons.create_group">
                     </td>
                 </tr>
             </table>

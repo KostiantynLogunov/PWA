@@ -2,22 +2,22 @@
     <div>
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteDocument" md-persistent>
-            <span>You deleted a document!</span>
-            <md-button class="md-accent" @click="flagDeleteDocument = false">Close</md-button>
+            <span>{{$lang.messages.you_deleted_document}}</span>
+            <md-button class="md-accent" @click="flagDeleteDocument = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="docUploaded" md-persistent>
-            <span>You downloaded a new document!</span>
-            <md-button class="md-accent" @click="docUploaded = false">Close</md-button>
+            <span>{{$lang.messages.you_downloaded_document}}</span>
+            <md-button class="md-accent" @click="docUploaded = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
 
         <div class="btn-getFiles text-center">
-            <md-button type="buttom" class="md-primary" v-if="!showUploadForm" @click="showUploadForm = !showUploadForm">Upload document</md-button>
+            <md-button type="buttom" class="md-primary" v-if="!showUploadForm" @click="showUploadForm = !showUploadForm">{{$lang.buttons.upload_document}}</md-button>
 
             <md-button type="buttom" >
                 <file-picker-button :config="gConfig" @picked="showDetails">
-                    Open Google Drive Dialog
+                    {{$lang.buttons.open_google_drive_dialog}}
                 </file-picker-button>
             </md-button>
 
@@ -27,7 +27,7 @@
         </div>
 
         <md-dialog :md-active.sync="showUploadForm">
-            <md-dialog-title>New Document</md-dialog-title>
+            <md-dialog-title>{{$lang.groups.new_document}}</md-dialog-title>
             <div md-dynamic-height>
                 <form class="md-layout" @submit.prevent="uploadNewDoc" >
                     <md-card class="md-layout-item md-size-100 md-small-size-100">
@@ -36,7 +36,7 @@
                             <div class="md-layout md-gutter">
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
-                                        <label for="name">Name</label>
+                                        <label for="name">{{$lang.fields.name}}</label>
                                         <!--<md-input name="name" id="name" autocomplete="given-name" v-model="form.name" :disabled="uploading" v-validate="'required|alpha_num'"/>-->
                                         <md-input name="name" id="name" autocomplete="given-name" v-model="form.name" :disabled="uploading" />
                                     </md-field>
@@ -58,13 +58,13 @@
                             </md-field>
                             <!--<span class="errors">{{ errors.first('file') }}</span>-->
 
-                            <md-checkbox v-model="form.shared" class="md-primary">Shared</md-checkbox>
+                            <md-checkbox v-model="form.shared" class="md-primary">{{$lang.fields.shared}}</md-checkbox>
 
                         </md-card-content>
 
                         <md-card-actions>
-                            <md-button :disabled="uploading" class="md-accent" @click="CancelUploadForm">Close</md-button>
-                            <md-button type="submit" class="md-primary" :disabled="uploading">Upload document</md-button>
+                            <md-button :disabled="uploading" class="md-accent" @click="CancelUploadForm">{{$lang.buttons.close}}</md-button>
+                            <md-button type="submit" class="md-primary" :disabled="uploading">{{$lang.buttons.upload_document}}</md-button>
                         </md-card-actions>
 
                         <div class="errors" v-if="uploadsErrors">
@@ -79,7 +79,7 @@
             </div>
         </md-dialog>
 
-        <div class="alert alert-warning text-center" v-if="!groupDocuments.length">No any Documents yet....
+        <div class="alert alert-warning text-center" v-if="!groupDocuments.length">{{$lang.messages.no_any_documents_yet}}
             <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         </div>
 
@@ -87,7 +87,7 @@
             <md-table v-model="documents" md-sort="name" md-sort-order="asc" md-card >
                 <md-progress-bar md-mode="indeterminate" class="md-accent" v-if="deleteProcess" />
                 <md-table-toolbar>
-                    <h1 class="md-title">Documents</h1>
+                    <h1 class="md-title">{{$lang.groups.documents}}</h1>
                 </md-table-toolbar>
 
                 <md-table-row slot="md-table-row" slot-scope="{ item }" v-if="groupDocuments.length">
@@ -95,13 +95,13 @@
                     <md-table-cell md-label="Sharing" md-sort-by="shared">
                         <input type="checkbox" :checked="item.shared== '1'" disabled>
                     </md-table-cell>
-                    <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
-                    <md-table-cell md-label="Tag" md-sort-by="tag">{{ item.tag }}</md-table-cell>
-                    <md-table-cell md-label="Owner" md-sort-by="owner">{{ item.owner }}</md-table-cell>
-                    <md-table-cell md-label="Date Created" md-sort-by="created_at">{{ item.created_at }}</md-table-cell>
-                    <md-table-cell md-label="Date Update" md-sort-by="updated_at">{{ item.updated_at }}</md-table-cell>
-                    <md-table-cell md-label="Mention Link" md-sort-by="token">{{ item.token }}</md-table-cell>
-                    <md-table-cell md-label="Actions" v-if="checkAuthor(item.user_id) || checkGroupAdmins(currentUser_id)">
+                    <md-table-cell :md-label="$lang.fields.name" md-sort-by="name">{{ item.name }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.fields.tag" md-sort-by="tag">{{ item.tag }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.fields.owner" md-sort-by="owner">{{ item.owner }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.fields.date_created" md-sort-by="created_at">{{ item.created_at }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.fields.date_update" md-sort-by="updated_at">{{ item.updated_at }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.fields.mention_link" md-sort-by="token">{{ item.token }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.fields.actions" v-if="checkAuthor(item.user_id) || checkGroupAdmins(currentUser_id)">
                         <button class="btn btn-warning"><i class="far fa-edit"></i></button>
                         <button class="btn btn-danger" @click="deleteDocument(item.id, item.index)" :disabled="deleteProcess"><i class="far fa-trash-alt"></i></button>
 

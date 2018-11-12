@@ -10,7 +10,7 @@
                     <span v-else>
                             <img :src="avatarDefaultUrl" alt="default">
                         </span>
-                    {{ event.user.name }} (event)
+                    {{ event.user.name }} ({{$lang.groups.event}})
                 </div>
                 <div class="md-subhead">
                     {{ convertDate(event.created_at) | moment("from") }}
@@ -19,8 +19,8 @@
 
             <md-card-content>
                 {{ event.name }}
-                at {{ event.location}} <br>
-                From {{ event.start_date }}, Till {{ event.end_date }}
+                {{$lang.groups.at}} {{ event.location}} <br>
+                {{$lang.groups.from}} {{ event.start_date }}, {{$lang.groups.till}} {{ event.end_date }}
             </md-card-content>
 
         </md-ripple>

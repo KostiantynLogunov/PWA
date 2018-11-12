@@ -2,32 +2,32 @@
     <div class="page-container md-layout-column">
             <form novalidate class="md-layout" @submit.prevent="createEvent" >
                 <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="eventSaved" md-persistent>
-                    <span>You added new event !</span>
-                    <md-button class="md-accent" @click="eventSaved = false">Close</md-button>
+                    <span>{{$lang.messages.you_added_new_event}}</span>
+                    <md-button class="md-accent" @click="eventSaved = false">{{$lang.buttons.close}}</md-button>
                 </md-snackbar>
                 <md-card class="md-layout-item md-size-50 md-small-size-100">
                     <md-card-header>
-                        <div class="md-title">Creating Event</div>
+                        <div class="md-title">{{ $lang.groups.creating_event }}</div>
                     </md-card-header>
 
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-small-size-100">
-                                <md-field :class="">
-                                    <label>Type</label>
-                                    <md-select name="type" id="type" v-model="event.type" md-dense :disabled="sending" placeholder="Please select">
-                                        <md-option value="private">Private</md-option>
-                                        <md-option value="p ublic">Public</md-option>
+                                <md-field>
+                                    <label>{{ $lang.fields.type}}</label>
+                                    <md-select name="type" id="type" v-model="event.type" md-dense :disabled="sending">
+                                        <md-option value="private">{{ $lang.fields.private}}</md-option>
+                                        <md-option value="public">{{ $lang.fields.public}}</md-option>
                                     </md-select>
                                 </md-field>
 
                                 <md-field :class="">
-                                    <label for="title">Name</label>
+                                    <label for="name">{{ $lang.fields.name}}</label>
                                     <md-input name="name" id="name" autocomplete="given-name" v-model="event.name" :disabled="sending" />
                                 </md-field>
 
                                 <md-field :class="">
-                                    <label for="location">Location</label>
+                                    <label for="location">{{ $lang.fields.location}}</label>
                                     <md-input name="location" id="location" autocomplete="given-location" v-model="event.location" :disabled="sending" />
                                 </md-field>
                             </div>
@@ -35,11 +35,11 @@
                             <div class="md-layout-item md-small-size-100">
                                 <div class="md-layout md-gutter">
                                     <div class="md-layout-item md-small-size-50">
-                                        <label>START DATE</label>
+                                        <label>{{ $lang.fields.start}}</label>
                                         <date-picker v-model="event.start_date" :config="options"></date-picker>
                                     </div>
                                     <div class="md-layout-item md-small-size-50">
-                                        <label>END DATE</label>
+                                        <label>{{ $lang.fields.end}}</label>
                                         <date-picker v-model="event.end_date" :config="options"></date-picker>
                                     </div>
 
@@ -50,25 +50,25 @@
                                      :key="key">
 
                                     <div class="md-layout-item md-small-size-50">
-                                        <label>START DATE</label>
+                                        <label>{{ $lang.fields.start}}</label>
                                         <date-picker v-model="event.alt_start_date[key]" :config="options"></date-picker>
                                     </div>
 
                                     <div class="md-layout-item md-small-size-50">
-                                        <label>END DATE</label>
+                                        <label>{{ $lang.fields.end}}</label>
                                         <date-picker v-model="event.alt_end_date[key]" :config="options"></date-picker>
                                     </div>
                                         <div class="text-danger text-right w-100 mt-1 mr-3 closeAltDate" v-on:click="deleteAltDate(key)">
 
-                                            <i class="fas fa-times-circle"><md-tooltip md-direction="bottom">Close</md-tooltip></i>
+                                            <i class="fas fa-times-circle"><md-tooltip md-direction="bottom">{{$lang.buttons.close}}</md-tooltip></i>
                                         </div>
                                 </div>
                                 <div class="text-center">
-                                    <md-button type="button" class="md-primary" @click="AddAltDate">Add new alternative date</md-button>
+                                    <md-button type="button" class="md-primary" @click="AddAltDate">{{$lang.buttons.add_new_alternative_date}}</md-button>
                                 </div>
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
-                                        <label for="about">About</label>
+                                        <label for="about">{{$lang.buttons.about}}</label>
                                         <md-textarea name="about" id="about" autocomplete="given-about" v-model="event.about" :disabled="sending" />
                                     </md-field>
                                 </div>
@@ -85,11 +85,11 @@
                     </md-card-content>
                     <md-progress-bar md-mode="indeterminate" v-if="sending" />
                     <md-card-actions>
-                        <md-button type="button" class="md-primary" @click="cancel">Cancel</md-button>
-                        <md-button type="submit" class="md-primary md-raised" :disabled="sending">Create Event</md-button>
+                        <md-button type="button" class="md-primary" @click="cancel">{{$lang.buttons.cancel}}</md-button>
+                        <md-button type="submit" class="md-primary md-raised" :disabled="sending">{{$lang.buttons.create_event}}</md-button>
                     </md-card-actions>
                 </md-card>
-                <md-snackbar :md-active.sync="eventSaved">The user saved event successfull!</md-snackbar>
+                <md-snackbar :md-active.sync="eventSaved">{{$lang.messages.user_saved_event_successfull}}</md-snackbar>
             </form>
     </div>
 </template>

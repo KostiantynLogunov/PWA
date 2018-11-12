@@ -11,8 +11,8 @@
                     @md-confirm="onConfirm" />
             <md-content class="md-layout-item">
                 <div class="header">
-                    <h4>Groups you manage:</h4>
-                    <md-button class="md-raised md-primary" @click="pushToNewGroup">Create group</md-button>
+                    <h4>{{$lang.groups.groups_you_manage}}</h4>
+                    <md-button class="md-raised md-primary" @click="pushToNewGroup">{{$lang.buttons.create_group}}</md-button>
                 </div>
                 <div class="manageGroups" v-if="own_groups[0]">
                     <ul>
@@ -39,13 +39,13 @@
                 </div>
                 <div v-else>
                     <div class="alert alert-warning">
-                        <i>Haven't managed any groups yet!</i>
+                        <i>{{$lang.messages.no_any_managed_group}}</i>
                         <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
                     </div>
                 </div>
             </md-content>
             <md-content class="md-layout-item">
-                <div class="header"><h4>Joined Groups:</h4></div>
+                <div class="header"><h4>{{$lang.groups.joined_groups}}</h4></div>
                 <div class="joinedGroups" v-if="joingroups[0]" >
                     <ul>
                         <li v-for="group in joingroups" :key="group.id">
@@ -62,7 +62,7 @@
                                 </router-link>
                             </span>
 
-                            <md-button class="md-raised md-accent" @click="unjoin(group.username)">UnJoin</md-button>
+                            <md-button class="md-raised md-accent" @click="unjoin(group.username)">{{$lang.buttons.unjoin}}</md-button>
                         </li>
                     </ul>
                 </div>
@@ -70,7 +70,7 @@
                 <div v-else>
 
                     <div class="alert alert-warning">
-                        <i>Haven't joined any groups yet!</i>
+                        <i>{{$lang.messages.no_any_joined_group}}</i>
                     </div>
 
                 </div>

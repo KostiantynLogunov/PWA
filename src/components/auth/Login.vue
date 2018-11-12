@@ -1,34 +1,28 @@
 <template>
     <div>
 	    <!--SNACKBAR-->
-	    <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="newAccountCreated">
-		    <span>The new account was created with success!</span>
-		    <md-button class="md-accent" @click="newAccountCreated = false">Close</md-button>
-	    </md-snackbar>
-	    <!--SNACKBAR-->
-	    <!--SNACKBAR-->
 	    <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagAboutInvite">
 		    <span>{{ messageAboutInvite }}</span>
-		    <md-button class="md-accent" @click="flagAboutInvite = false">Close</md-button>
+		    <md-button class="md-accent" @click="flagAboutInvite = false">{{$lang.buttons.close}}</md-button>
 	    </md-snackbar>
 	    <!--SNACKBAR-->
 
         <form novalidate class="md-layout" @submit.prevent="authenticate">
             <md-card class="md-layout-item md-size-50 md-small-size-100">
                 <md-card-header>
-                    <div class="md-title">Login</div>
+                    <div class="md-title">{{$lang.loginForm.login}}</div>
                 </md-card-header>
 
                 <md-card-content>
 
                     <md-field >
-                        <label for="email">Email</label>
+                        <label for="email">{{$lang.loginForm.email}}</label>
                         <md-input type="email" name="email" id="email" v-model="form.email" :disabled="sending" />
                     </md-field>
 
                     <div class="md-layout-item md-small-size-100">
                         <md-field >
-                            <label for="password">Password</label>
+                            <label for="password">{{$lang.loginForm.password}}</label>
                             <md-input type="password" name="password" id="password" v-model="form.password" :disabled="sending" />
                         </md-field>
                     </div>
@@ -37,8 +31,8 @@
                 <md-progress-bar md-mode="indeterminate" v-if="sending" />
 
                 <md-card-actions>
-	                <md-button type="button" class="md-primary" @click="$router.push({ name: 'register' })" :disabled="sending">Sign Up</md-button>
-                    <md-button type="submit" class="md-primary" :disabled="sending">Login</md-button>
+	                <md-button type="button" class="md-primary" @click="$router.push({ name: 'register' })" :disabled="sending">{{$lang.buttons.sign_up}}</md-button>
+                    <md-button type="submit" class="md-primary" :disabled="sending">{{$lang.buttons.login}}</md-button>
                 </md-card-actions>
                 <div class="errors" v-if="authError">
                     <ul>
@@ -56,7 +50,7 @@
                 </div>
             </md-card>
 
-            <md-snackbar :md-active.sync="userLogged">The user was logged with success!</md-snackbar>
+            <md-snackbar :md-active.sync="userLogged">{{$lang.buttons.logged_success}}</md-snackbar>
         </form>
 
     </div>
@@ -82,7 +76,6 @@
 	            position: 'center',
 	            duration: 4000,
 
-	            newAccountCreated: false,
 	            messageAboutInvite: null,
 	            flagAboutInvite: false
             };

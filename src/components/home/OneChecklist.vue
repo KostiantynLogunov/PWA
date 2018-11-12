@@ -10,7 +10,7 @@
                     <span v-else>
                             <img :src="avatarDefaultUrl" alt="default">
                         </span>
-                    {{ checklist.user.name }} (checklist)
+                    {{ checklist.user.name }} ({{$lang.groups.checklist}})
                 </div>
                 <div class="md-subhead">
                     {{ convertDate(checklist.created_at) | moment("from") }}
@@ -19,7 +19,7 @@
 
             <md-card-content>
                 {{ checklist.title }}<br>
-                <span v-if="checklist.responsible_user">Responsible user: {{ checklist.responsible_user }} <br></span>
+                <span v-if="checklist.responsible_user">{{$lang.groups.responsible_user}} {{ checklist.responsible_user }} <br></span>
             </md-card-content>
 
         </md-ripple>

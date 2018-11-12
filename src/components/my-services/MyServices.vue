@@ -2,18 +2,18 @@
     <div>
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteService" md-persistent>
-            <span>You deleted service successfully!</span>
-            <md-button class="md-accent" @click="flagDeleteService = false">Close</md-button>
+            <span>{{$lang.messages.service_deleted}}</span>
+            <md-button class="md-accent" @click="flagDeleteService = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR--><!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagCreateService" md-persistent>
-            <span>You created service successfully!</span>
-            <md-button class="md-accent" @click="flagCreateService = false">Close</md-button>
+            <span>{{$lang.messages.service_created}}</span>
+            <md-button class="md-accent" @click="flagCreateService = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR--><!--SNACKBAR--><!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagEditService" md-persistent>
-            <span>You edited service successfully!</span>
-            <md-button class="md-accent" @click="flagEditService = false">Close</md-button>
+            <span>{{$lang.messages.service_edited}}</span>
+            <md-button class="md-accent" @click="flagEditService = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
 
@@ -21,25 +21,25 @@
         <div class="md-layout">
             <md-table v-model="my_services" md-sort="name" md-sort-order="asc" md-card>
                 <md-table-toolbar>
-                    <h1 class="md-title">My Helping Services</h1>
+                    <h1 class="md-title">{{$lang.services.title}}</h1>
                     <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
-                    <button class="btn btn-success btn-sm" @click="onCreateFormService">Add New</button>
+                    <button class="btn btn-success btn-sm" @click="onCreateFormService">{{$lang.buttons.add_new}}</button>
                 </md-table-toolbar>
 
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
-                    <md-table-cell md-label="Active" md-sort-by="active">
+                    <md-table-cell :md-label="$lang.services.active" md-sort-by="active">
                         <input type="checkbox" :checked="item.active == 'on'" disabled>
                     </md-table-cell>
-                    <md-table-cell md-label="Kind" md-sort-by="type">{{ item.kind }}</md-table-cell>
-                    <md-table-cell md-label="Type" md-sort-by="type">{{ item.type }}</md-table-cell>
-                    <md-table-cell md-label="Sevice" md-sort-by="service">{{ item.name }}</md-table-cell>
-                    <md-table-cell md-label="Description">{{ item.description }}</md-table-cell>
-                    <md-table-cell md-label="Group" md-sort-by="group">{{ item.group_name }}</md-table-cell>
-                    <md-table-cell md-label="Price" md-sort-by="price">{{ item.price }}</md-table-cell>
-                    <md-table-cell md-label="Pending" md-sort-by="pending">{{ item.pending }}</md-table-cell>
-                    <md-table-cell md-label="Confirmed" md-sort-by="confirmed">{{ item.confirmed }}</md-table-cell>
-                    <md-table-cell md-label="Finished" md-sort-by="finished">{{ item.finished }}</md-table-cell>
-                    <md-table-cell md-label="Actions">
+                    <md-table-cell :md-label="$lang.services.kind" md-sort-by="type">{{ item.kind }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.services.type" md-sort-by="type">{{ item.type }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.services.sevice" md-sort-by="service">{{ item.name }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.services.description">{{ item.description }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.services.group" md-sort-by="group">{{ item.group_name }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.services.price" md-sort-by="price">{{ item.price }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.services.pending" md-sort-by="pending">{{ item.pending }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.services.confirmed" md-sort-by="confirmed">{{ item.confirmed }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.services.finished" md-sort-by="finished">{{ item.finished }}</md-table-cell>
+                    <md-table-cell :md-label="$lang.services.actions">
                         <button class="btn btn-warning btn-sm"
                                 @click="onEditFormService(item)"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-danger btn-sm"
@@ -48,14 +48,13 @@
                         <md-progress-bar md-mode="indeterminate" v-if="deletingService == item.id" />
                     </md-table-cell>
                 </md-table-row>
-                <div class="alert alert-warning text-center" v-if="!my_services.length && pandingResponseServer==false">No any
-                    Helping Services yet....
+                <div class="alert alert-warning text-center" v-if="!my_services.length && pandingResponseServer==false">{{ $lang.messages.no_service_yet}}
                 </div>
             </md-table>
         </div>
 
         <md-dialog :md-active.sync="creatingService">
-            <md-dialog-title>Create Service</md-dialog-title>
+            <md-dialog-title>{{$lang.services.create_service}}</md-dialog-title>
             <div md-dynamic-height>
                 <form md-dynamic-height novalidate class="md-layout" @submit.prevent="CreateService()">
                     <md-card class="md-layout-item md-size-100 md-small-size-100">
@@ -64,42 +63,42 @@
                             <!--<div class="md-layout md-gutter">-->
                                 <div class="md-layout-item md-small-size-100">
                                     <md-checkbox v-model="form_create_service.active" value="on"
-                                                 :disabled="processingService">Active</md-checkbox>
+                                                 :disabled="processingService">{{$lang.services.active}}</md-checkbox>
 
 	                                <br>
 	                                <md-radio v-model="form_create_service.kind" value="service">
-		                                Service
-		                                <small>(Default)</small>
+		                                {{$lang.services.service}}
+		                                <small>({{$lang.services.default}})</small>
 	                                </md-radio>
-	                                <md-radio v-model="form_create_service.kind" value="item" class="md-primary">Item</md-radio>
+	                                <md-radio v-model="form_create_service.kind" value="item" class="md-primary">{{$lang.services.item}}</md-radio>
 
                                     <br>
                                     <md-radio v-model="form_create_service.type" value="provide">
-                                        Provide
-                                        <small>(Default)</small>
+                                        {{$lang.services.provide}}
+                                        <small>({{$lang.services.default}})</small>
                                     </md-radio>
-                                    <md-radio v-model="form_create_service.type" value="request" class="md-primary">Request </md-radio>
+                                    <md-radio v-model="form_create_service.type" value="request" class="md-primary">{{$lang.services.request}}</md-radio>
 
                                     <md-field>
-                                        <label>Name</label>
+                                        <label>{{$lang.services.name}}</label>
                                         <md-input v-model="form_create_service.name"
                                                   :disabled="processingService" />
                                     </md-field>
 
                                     <md-field>
-                                        <label>Description</label>
+                                        <label>{{$lang.services.description}}</label>
                                         <md-textarea v-model="form_create_service.description" :disabled="processingService" />
                                     </md-field>
 
                                     <md-field>
-                                        <label>Price(optional)</label>
+                                        <label>{{$lang.services.price}}({{$lang.services.optional}})</label>
                                         <md-input v-model="form_create_service.price"
                                                   :disabled="processingService" />
                                     </md-field>
 
                                     <div class="md-layout-item md-small-size-100">
                                         <md-field>
-                                            <label>Target Group</label>
+                                            <label>{{$lang.services.target_group}}</label>
                                             <md-select name="event" v-model="form_create_service.group_id" md-dense
                                                        placeholder="Please select target group"
                                                        :disabled="processingService">
@@ -112,7 +111,7 @@
                                                 </div>
                                                 <div v-else>
                                                     <md-option  disabled>
-                                                        Not any groups
+                                                        {{$lang.services.not_any_groups}}
                                                     </md-option>
                                                 </div>
                                             </md-select>
@@ -121,16 +120,16 @@
                                     <div id="business_hours text-center" v-if="form_create_service.type == 'provide'"
                                          v-for="(business, index) in form_create_service.business_hours">
                                         <div class="row">
-                                            <md-checkbox v-model="business.days" value="0">mo</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="1">tu</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="2">we</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="3">th</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="4">fr</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="5">sa</md-checkbox>
-                                            <md-checkbox v-model="business.days" value="6">su</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="0">{{$lang.services.mo}}</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="1">{{$lang.services.tu}}</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="2">{{$lang.services.we}}</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="3">{{$lang.services.th}}</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="4">{{$lang.services.fr}}</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="5">{{$lang.services.sa}}</md-checkbox>
+                                            <md-checkbox v-model="business.days" value="6">{{$lang.services.su}}</md-checkbox>
                                         </div>
                                             <div class="md-layout-item md-small-size-100 text-center ">
-                                                <label class="align-center">START DATE
+                                                <label class="align-center">{{$lang.services.start}}
                                                     <md-button class="md-icon-button md-accent"
                                                                @click="removeBusiness(index)"
                                                     >
@@ -143,7 +142,7 @@
                                             </div>
                                             <br>
                                             <div class="md-layout-item md-small-size-100 text-center">
-                                                <label>END DATE</label>
+                                                <label>{{$lang.services.end}}</label>
                                                 <date-picker
                                                         v-model="business.time.end_time"
                                                              :config="options" placeholder="18:00"></date-picker>
@@ -178,11 +177,11 @@
                         <md-card-actions>
                             <md-dialog-actions>
                                 <md-button :disabled="processingService" class="md-primary" @click="CancelCreateService">
-                                    Close</md-button>
+                                    {{$lang.buttons.close}}</md-button>
                                 <md-button :disabled="processingService"
                                            type="submit"
                                            class="md-accent md-raised"
-                                >Create</md-button>
+                                >{{$lang.buttons.create}}</md-button>
                             </md-dialog-actions>
                         </md-card-actions>
 
@@ -193,7 +192,7 @@
         </md-dialog>
 
         <md-dialog :md-active.sync="editingService">
-            <md-dialog-title>Edit Service</md-dialog-title>
+            <md-dialog-title>{{$lang.services.edit_service}}</md-dialog-title>
             <div md-dynamic-height>
                 <form md-dynamic-height novalidate class="md-layout" @submit.prevent="editService()">
                     <md-card class="md-layout-item md-size-100 md-small-size-100">
@@ -206,37 +205,36 @@
 
 	                            <br>
 	                            <md-radio v-model="form_edit_service.kind" value="service">
-		                            Service
-		                            <!--<small>(Default)</small>-->
+		                            {{$lang.services.service}}
 	                            </md-radio>
-	                            <md-radio v-model="form_edit_service.kind" value="item" class="md-primary">Item</md-radio>
+	                            <md-radio v-model="form_edit_service.kind" value="item" class="md-primary">{{$lang.services.item}}</md-radio>
 
                                 <br>
                                 <md-radio v-model="form_edit_service.type" value="provide">
-                                    Provide
+                                    {{$lang.services.provide}}
                                 </md-radio>
-                                <md-radio v-model="form_edit_service.type" value="request" class="md-primary">Request </md-radio>
+                                <md-radio v-model="form_edit_service.type" value="request" class="md-primary">{{$lang.services.request}}</md-radio>
 
                                 <md-field>
-                                    <label>Name</label>
+                                    <label>{{$lang.services.name}}</label>
                                     <md-input v-model="form_edit_service.name"
                                               :disabled="processingService" />
                                 </md-field>
 
                                 <md-field>
-                                    <label>Description</label>
+                                    <label>{{$lang.services.description}}</label>
                                     <md-textarea v-model="form_edit_service.description" :disabled="processingService" />
                                 </md-field>
 
                                 <md-field>
-                                    <label>Price(optional)</label>
+                                    <label>{{$lang.services.price}}({{$lang.services.optional}})</label>
                                     <md-input v-model="form_edit_service.price"
                                               :disabled="processingService" />
                                 </md-field>
 
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
-                                        <label>Target Group</label>
+                                        <label>Target Group{{$lang.services.edit_service}}</label>
                                         <md-select name="event" v-model="form_edit_service.group_id" md-dense
                                                    placeholder="Please select target group"
                                                    :disabled="processingService">
@@ -249,7 +247,7 @@
                                             </div>
                                             <div v-else>
                                                 <md-option  disabled>
-                                                    Not any groups
+                                                    Not any groups{{$lang.services.edit_service}}
                                                 </md-option>
                                             </div>
                                         </md-select>
@@ -258,16 +256,16 @@
                                 <div class="text-center" v-if="form_edit_service.type == 'provide'"
                                      v-for="(business, index) in form_edit_service.business_hours">
                                     <div class="row text-center">
-                                        <md-checkbox v-model="business.days" value="0">mo</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="1">tu</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="2">we</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="3">th</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="4">fr</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="5">sa</md-checkbox>
-                                        <md-checkbox v-model="business.days" value="6">su</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="0">{{$lang.services.mo}}</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="1">{{$lang.services.tu}}</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="2">{{$lang.services.we}}</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="3">{{$lang.services.th}}</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="4">{{$lang.services.fr}}</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="5">{{$lang.services.sa}}</md-checkbox>
+                                        <md-checkbox v-model="business.days" value="6">{{$lang.services.su}}</md-checkbox>
                                     </div>
                                     <div class="md-layout-item md-small-size-100 text-center ">
-                                        <label class="align-center">START DATE
+                                        <label class="align-center">{{$lang.services.start}}
                                             <md-button class="md-icon-button md-accent"
                                                        @click="removeBusinessFromEdit(index)"
                                             >
@@ -280,7 +278,7 @@
                                     </div>
                                     <br>
                                     <div class="md-layout-item md-small-size-100 text-center">
-                                        <label>END DATE</label>
+                                        <label>{{$lang.services.end}}</label>
                                         <date-picker
                                                 v-model="business.time.end_time"
                                                 :config="options" placeholder="18:00"></date-picker>
@@ -316,11 +314,11 @@
                         <md-card-actions>
                             <md-dialog-actions>
                                 <md-button :disabled="processingService" class="md-primary" @click="CancelEditService">
-                                    Close</md-button>
+                                    {{$lang.buttons.close}}</md-button>
                                 <md-button :disabled="processingService"
                                            type="submit"
                                            class="md-accent md-raised"
-                                >Update</md-button>
+                                >{{$lang.buttons.update}}</md-button>
                             </md-dialog-actions>
                         </md-card-actions>
 
@@ -661,7 +659,7 @@
             },
 
             deleteItem(service_id) {
-                if ( !confirm('Are you sure you want to delete service? ') ) return;
+                if ( !confirm(this.$lang.messages.are_you_sure_delete_service) ) return;
 
                 this.deletingService = service_id;
 

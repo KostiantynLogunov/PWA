@@ -2,17 +2,17 @@
     <div class="">
         <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="updatedTask" md-persistent>
-            <span>You update a task !</span>
-            <md-button class="md-accent" @click="updatedTask = false">Close</md-button>
+            <span>{{$lang.messages.you_updated_task}}</span>
+            <md-button class="md-accent" @click="updatedTask = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="addedNewTask" md-persistent>
-            <span>You added new task !</span>
-            <md-button class="md-accent" @click="addedNewTask = false">Close</md-button>
+            <span>{{$lang.messages.you_added_new_task}}</span>
+            <md-button class="md-accent" @click="addedNewTask = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
 
-        <div class="alert alert-warning text-center" v-if="!groupTasks">No Data yet....
+        <div class="alert alert-warning text-center" v-if="!groupTasks">{{$lang.messages.no_data_yet}}
             <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         </div>
         <div v-else>
@@ -25,7 +25,7 @@
         </div>
 
         <md-dialog :md-active.sync="editingTask">
-            <md-dialog-title>Editing Task</md-dialog-title>
+            <md-dialog-title>{{$lang.groups.editing_task}}</md-dialog-title>
             <div md-dynamic-height>
                 <form md-dynamic-height novalidate class="md-layout" @submit.prevent="editTask()">
                     <md-card class="md-layout-item md-size-100 md-small-size-100">
@@ -34,12 +34,12 @@
                             <div class="md-layout md-gutter">
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
-                                        <label>Title</label>
+                                        <label>{{$lang.fields.title}}</label>
                                         <md-input name="title" v-model="value_edit_task.title" :disabled="processingTask" />
                                     </md-field>
 
                                     <md-field>
-                                        <label>Description</label>
+                                        <label>{{$lang.fields.description}}</label>
                                         <md-textarea name="description" v-model="value_edit_task.description" :disabled="processingTask" />
                                     </md-field>
 
@@ -47,10 +47,10 @@
                                     <!--<label>Status</label>-->
                                     <div class="text-center">
                                         <select name="status" v-model="value_edit_task.status" :disabled="processingTask">
-                                            <option value="New">New</option>
-                                            <option value="In progress">In progress</option>
-                                            <option value="Complated">Complated</option>
-                                            <option value="Postponed">Postponed</option>
+                                            <option value="New">{{$lang.fields.new}}</option>
+                                            <option value="In progress">{{$lang.fields.in_progress}}</option>
+                                            <option value="Complated">{{$lang.fields.complated}}</option>
+                                            <option value="Postponed">{{$lang.fields.postponed}}</option>
                                         </select>
                                     </div>
                                     <br>
@@ -58,27 +58,20 @@
                                 </div>
                                 <br>
                                 <div class="md-layout-item md-small-size-100 text-center">
-                                    <!--<div class="md-layout md-gutter">-->
-                                    <!--<div class="md-layout-item md-small-size-0">-->
-                                    <label>START DATE</label>
+                                    <label>{{$lang.fields.start}}</label>
                                     <date-picker v-model="value_edit_task.start_date" :config="options"></date-picker>
-                                    <!--</div>-->
-                                    <!--<div class="md-layout-item md-small-size-50">-->
                                     <br>
-                                    <label>END DATE</label>
+                                    <label>{{$lang.fields.end}}</label>
                                     <date-picker v-model="value_edit_task.end_date" :config="options"></date-picker>
-                                    <!--</div>-->
-                                    <!--</div>-->
-
                                     <div class="md-layout-item md-small-size-100 text-left">
                                         <fieldset id="membersTag">
-                                            <label class="control-label" style="color: grey">Members</label>
+                                            <label class="control-label" style="color: grey">{{$lang.fields.members}}</label>
                                             <tags-input element-id="tags"
                                                         class="form-control"
                                                         v-model="value_edit_task.members"
                                                         :existing-tags="allUsers"
                                                         :typeahead="true"
-                                                        placeholder="Add a responsable member"
+                                                        :placeholder="$lang.messages.add_responsable_member"
                                                         :only-existing-tags="true"
                                                         name="members"
                                                         :disabled="processingTask"
@@ -109,11 +102,11 @@
                         <md-progress-bar md-mode="indeterminate" v-if="processingTask" />
                         <md-card-actions>
                             <md-dialog-actions>
-                                <md-button :disabled="processingTask" class="md-primary" @click="CancelEditingTask">Close</md-button>
+                                <md-button :disabled="processingTask" class="md-primary" @click="CancelEditingTask">{{$lang.buttons.close}}</md-button>
                                 <md-button :disabled="processingTask"
                                            type="submit"
                                            class="md-accent md-raised"
-                                >Update</md-button>
+                                >{{$lang.buttons.update}}</md-button>
                             </md-dialog-actions>
                         </md-card-actions>
                         <div class="deleteErrors" v-if="updateErrors">
@@ -133,7 +126,7 @@
         </md-dialog>
 
         <md-dialog :md-active.sync="creatingNewTask">
-            <md-dialog-title>Creating Task</md-dialog-title>
+            <md-dialog-title>{{$lang.groups.creating_task}}</md-dialog-title>
             <div md-dynamic-height>
                 <form md-dynamic-height novalidate class="md-layout" @submit.prevent="createTask()">
                     <md-card class="md-layout-item md-size-100 md-small-size-100">
@@ -142,21 +135,21 @@
                             <div class="md-layout md-gutter">
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
-                                        <label>Title</label>
+                                        <label>{{$lang.fields.title}}</label>
                                         <md-input name="title" v-model="form.title" :disabled="processingTask" />
                                     </md-field>
 
                                     <md-field>
-                                        <label>Description</label>
+                                        <label>{{$lang.fields.description}}</label>
                                         <md-textarea name="description" v-model="form.description" :disabled="processingTask" />
                                     </md-field>
 
                                     <div class="text-center">
                                         <select name="status" v-model="form.status" :disabled="processingTask">
-                                            <option value="New">New</option>
-                                            <option value="In progress">In progress</option>
-                                            <option value="Complated">Complated</option>
-                                            <option value="Postponed">Postponed</option>
+                                            <option value="New">{{$lang.fields.new}}</option>
+                                            <option value="In progress">{{$lang.fields.in_progress}}</option>
+                                            <option value="Complated">{{$lang.fields.complated}}</option>
+                                            <option value="Postponed">{{$lang.fields.postponed}}</option>
                                         </select>
                                     </div>
                                     <br>
@@ -166,7 +159,7 @@
                                 <div class="md-layout-item md-small-size-100 text-center">
                                     <div class="md-layout-item md-small-size-100 text-left">
                                         <fieldset class="membersTag">
-                                            <label class="control-label" style="color: grey">Members</label>
+                                            <label class="control-label" style="color: grey">{{$lang.fields.members}}</label>
                                             <tags-input element-id="tags"
                                                         class="form-control"
                                                         v-model="form.members"
@@ -185,7 +178,7 @@
 
                                     <div class="md-layout-item md-small-size-100 text-center">
                                         <select name="event" v-model="form.event"  :disabled="processingTask" placeholder="Select event">
-                                            <option value="" disabled selected>Select event</option>
+                                            <option value="" disabled selected>{{$lang.fields.select_event}}</option>
                                             <option v-for="group_event in group_events" :value="group_event.timeline.name">
                                                 {{ group_event.timeline.name }}
                                             </option>
@@ -198,11 +191,11 @@
                         <md-progress-bar md-mode="indeterminate" v-if="processingTask" />
                         <md-card-actions>
                             <md-dialog-actions>
-                                <md-button :disabled="processingTask" class="md-primary" @click="CancelCreatingTask">Close</md-button>
+                                <md-button :disabled="processingTask" class="md-primary" @click="CancelCreatingTask">{{$lang.buttons.close}}</md-button>
                                 <md-button :disabled="processingTask"
                                            type="submit"
                                            class="md-accent md-raised"
-                                >Create</md-button>
+                                >{{$lang.buttons.create}}</md-button>
                             </md-dialog-actions>
                         </md-card-actions>
                         <div class="deleteErrors" v-if="createErrors">

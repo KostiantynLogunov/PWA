@@ -1,26 +1,26 @@
 <template>
-    <div class="alert alert-warning text-center" v-if="!groupServices">No any Helping Services yet....
+    <div class="alert alert-warning text-center" v-if="!groupServices">{{$lang.messages.no_any_services_yet}}
         <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
     </div>
     <div class="md-layout" v-else>
         <md-table v-model="services" md-sort="name" md-sort-order="asc" md-card >
             <md-table-toolbar>
-                <h1 class="md-title">Shared Services</h1>
+                <h1 class="md-title">{{$lang.groups.shared_services}}</h1>
             </md-table-toolbar>
 
             <md-table-row slot="md-table-row" slot-scope="{ item }">
-                <md-table-cell md-label="Kind" md-sort-by="type">{{ item.kind }}</md-table-cell>
-                <md-table-cell md-label="Type" md-sort-by="type">{{ item.type }}</md-table-cell>
-                <md-table-cell md-label="Sevice" md-sort-by="service">{{ item.service }}</md-table-cell>
-                <md-table-cell md-label="User" md-sort-by="user">{{ item.user }}</md-table-cell>
-                <md-table-cell md-label="Description">{{ item.description }}</md-table-cell>
-                <md-table-cell md-label="Group" md-sort-by="group">{{ item.group }}</md-table-cell>
-                <md-table-cell md-label="Price" md-sort-by="price">{{ item.price }}</md-table-cell>
-                <md-table-cell md-label="Pending" md-sort-by="pending">{{ item.pending }}</md-table-cell>
-                <md-table-cell md-label="Confirmed" md-sort-by="confirmed">{{ item.confirmed }}</md-table-cell>
-                <md-table-cell md-label="Finished" md-sort-by="finished">{{ item.finished }}</md-table-cell>
-                <md-table-cell md-label="Actions">
-                    <button class="btn btn-primary btn-sm" @click="goBookItemInGroup(item.id)">Booking</button>
+                <md-table-cell :md-label="$lang.fields.kind" md-sort-by="type">{{ item.kind }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.type" md-sort-by="type">{{ item.type }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.sevice" md-sort-by="service">{{ item.service }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.user" md-sort-by="user">{{ item.user }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.description">{{ item.description }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.group" md-sort-by="group">{{ item.group }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.price" md-sort-by="price">{{ item.price }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.pending" md-sort-by="pending">{{ item.pending }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.confirmed" md-sort-by="confirmed">{{ item.confirmed }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.finished" md-sort-by="finished">{{ item.finished }}</md-table-cell>
+                <md-table-cell :md-label="$lang.fields.actions">
+                    <button class="btn btn-primary btn-sm" @click="goBookItemInGroup(item.id)">{{$lang.buttons.booking}}</button>
                 </md-table-cell>
             </md-table-row>
         </md-table>

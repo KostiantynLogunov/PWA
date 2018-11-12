@@ -18,17 +18,17 @@
             </md-app-toolbar>
 
             <md-app-drawer :md-active.sync="menuVisible">
-                <md-toolbar class="md-transparent" md-elevation="0">Main Menu:</md-toolbar>
+                <md-toolbar class="md-transparent" md-elevation="0">{{$lang.left_menu.main_menu}}</md-toolbar>
 
                 <md-list>
 	                <md-list-item @click.prevent="goRegister" v-if="!currentUser">
 		                <md-icon><i class="fas fa-user-plus"></i></md-icon>
-		                <span class="md-list-item-text">Sign Up</span>
+		                <span class="md-list-item-text">{{$lang.left_menu.sign_up}}</span>
 	                </md-list-item>
 
 	                <md-list-item @click.prevent="goLogin" v-if="!currentUser">
 		                <md-icon><i class="fas fa-sign-in-alt"></i></md-icon>
-		                <span class="md-list-item-text">Login</span>
+		                <span class="md-list-item-text">{{$lang.left_menu.login}}</span>
 	                </md-list-item>
 
 
@@ -37,23 +37,23 @@
 
                     <md-list-item @click.prevent="goHome" v-if="currentUser">
                         <md-icon>move_to_inbox</md-icon>
-                        <span class="md-list-item-text">Home page</span>
+                        <span class="md-list-item-text">{{$lang.left_menu.home}}</span>
                     </md-list-item>
 
                     <md-list-item @click.prevent="goGroups" v-if="currentUser">
                         <md-icon><i class="fas fa-users"></i></md-icon>
-                        <span class="md-list-item-text">Groups</span>
+                        <span class="md-list-item-text">{{$lang.left_menu.groups}}</span>
                     </md-list-item>
 
 
                     <md-list-item @click.prevent="goMessenger" v-if="currentUser">
                         <md-icon><i class="far fa-comments"></i></md-icon>
-                        <span class="md-list-item-text">Messenger</span>
+                        <span class="md-list-item-text">{{$lang.left_menu.messenger}}</span>
                     </md-list-item>
 
                     <md-list-item @click.prevent="goMyServices" v-if="currentUser">
                         <md-icon><i class="fas fa-share-square"></i></md-icon>
-                        <span class="md-list-item-text">Sharing</span>
+                        <span class="md-list-item-text">{{$lang.left_menu.sharing}}</span>
                     </md-list-item>
 
                     <!--<md-list-item @click.prevent="goMyItems">
@@ -63,23 +63,23 @@
 
                     <md-list-item v-if="currentUser" @click.prevent="logout">
                         <md-icon><i class="fas fa-sign-out-alt"></i></md-icon>
-                        <span class="md-list-item-text" >Logout</span>
+                        <span class="md-list-item-text" >{{$lang.left_menu.logout}}</span>
                     </md-list-item>
 
 
 	                <md-list-item @click.prevent="">
 		                <md-icon><i class="fas fa-info-circle"></i></md-icon>
-		                <span class="md-list-item-text">About</span>
+		                <span class="md-list-item-text">{{$lang.left_menu.about}}</span>
 	                </md-list-item>
 
 	                <md-list-item @click.prevent="">
 		                <md-icon><i class="fas fa-user-secret"></i></md-icon>
-		                <span class="md-list-item-text">Privacy</span>
+		                <span class="md-list-item-text">{{$lang.left_menu.privacy}}</span>
 	                </md-list-item>
 
 	                <md-list-item @click.prevent="">
 		                <md-icon><i class="fas fa-at"></i></md-icon>
-		                <span class="md-list-item-text">Contact</span>
+		                <span class="md-list-item-text">{{$lang.left_menu.contact}}</span>
 	                </md-list-item>
 
                 </md-list>

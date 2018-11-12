@@ -2,18 +2,18 @@
     <div class="page-container md-layout-column">
         <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="noteSaved" md-persistent>
-            <span>You added new note successful !</span>
-            <md-button class="md-accent" @click="noteSaved = false">Close</md-button>
+            <span>{{$lang.messages.you_added_new_note_successful}}</span>
+            <md-button class="md-accent" @click="noteSaved = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="noteDeleted" md-persistent>
-            <span>You deleted a note successful !</span>
-            <md-button class="md-accent" @click="noteDeleted = false">Close</md-button>
+            <span>{{$lang.messages.you_deleted_note_successful}}</span>
+            <md-button class="md-accent" @click="noteDeleted = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="updatedNote" md-persistent>
-            <span>You updated a note successful !</span>
-            <md-button class="md-accent" @click="updatedNote = false">Close</md-button>
+            <span>{{$lang.messages.you_updated_note_successful}}</span>
+            <md-button class="md-accent" @click="updatedNote = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
 
@@ -31,24 +31,24 @@
                 <form novalidate class="md-layout" @submit.prevent="createNote" >
                     <md-card class="md-layout-item md-size-50 md-small-size-100">
                         <md-card-header>
-                            <div class="md-title">Creating Note</div>
+                            <div class="md-title">{{$lang.groups.creating_note}}</div>
                         </md-card-header>
 
                         <md-card-content>
                             <div class="md-layout md-gutter">
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field :class="">
-                                        <label for="title">Title</label>
+                                        <label for="title">{{$lang.fields.title}}</label>
                                         <md-input name="title" id="title" v-model="form.title" :disabled="sending" />
                                     </md-field>
 
                                     <md-field>
-                                        <label for="description">Description</label>
+                                        <label for="description">{{$lang.fields.description}}</label>
                                         <md-textarea name="description" id="description" v-model="form.description" :disabled="sending" />
                                     </md-field>
 
                                     <md-field>
-                                        <label for="tag">Tags:</label>
+                                        <label for="tag">{{$lang.fields.tags}}</label>
                                         <md-textarea name="tag" id="tag" v-model="form.tag" :disabled="sending" />
                                     </md-field>
                                 </div>
@@ -72,7 +72,7 @@
         </div>
 
         <br>
-        <div class="alert alert-warning" v-if="groupNotes.length == 0">No notes were found...</div>
+        <div class="alert alert-warning" v-if="groupNotes.length == 0">{{$lang.messages.no_notes_were_found}}</div>
         <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         <div v-for="note in groupNotes" :key="note.id">
             <md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
@@ -111,7 +111,7 @@
         </div>
 
         <md-dialog :md-active.sync="formEditingNote">
-            <md-dialog-title>Editing Note</md-dialog-title>
+            <md-dialog-title>{{$lang.groups.editing_note}}</md-dialog-title>
             <div md-dynamic-height>
                 <form md-dynamic-height novalidate class="md-layout" @submit.prevent="editNote()">
                     <md-card class="md-layout-item md-size-100 md-small-size-100">
@@ -121,17 +121,17 @@
                                 <div class="md-layout md-gutter">
                                     <div class="md-layout-item md-small-size-100">
                                         <md-field>
-                                            <label >Title</label>
+                                            <label >{{$lang.fields.title}}</label>
                                             <md-input v-model="value_edit_note.title" :disabled="processEditingNote" />
                                         </md-field>
 
                                         <md-field>
-                                            <label>Description</label>
+                                            <label>{{$lang.fields.description}}</label>
                                             <md-textarea v-model="value_edit_note.description" :disabled="processEditingNote" />
                                         </md-field>
 
                                         <md-field>
-                                            <label >Tags:</label>
+                                            <label >{{$lang.fields.tags}}</label>
                                             <md-textarea  v-model="value_edit_note.tags" :disabled="processEditingNote" />
                                         </md-field>
                                     </div>
@@ -140,11 +140,11 @@
                         </md-card-content>
                         <md-card-actions>
                             <md-dialog-actions>
-                                <md-button :disabled="processEditingNote" class="md-primary" @click="CancelEditingNote">Close</md-button>
+                                <md-button :disabled="processEditingNote" class="md-primary" @click="CancelEditingNote">{{$lang.buttons.close}}</md-button>
                                 <md-button :disabled="processEditingNote"
                                            type="submit"
                                            class="md-accent md-raised"
-                                >Update</md-button>
+                                >{{$lang.buttons.update}}</md-button>
                             </md-dialog-actions>
                         </md-card-actions>
                         <div class="errors" v-if="updateErrorsServer">

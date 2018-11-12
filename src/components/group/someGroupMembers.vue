@@ -1,27 +1,35 @@
 <template>
     <div class="page-container md-layout-column">
-        <!--SNACKBAR-->
-        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
-            <span>You updated info about member!</span>
-            <md-button class="md-accent" @click="showSnackbarPost = false">Close</md-button>
-        </md-snackbar>
-        <!--SNACKBAR-->
-        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="deletedMember" md-persistent>
-            <span>You deleted a member!</span>
-            <md-button class="md-accent" @click="deletedMember = false">Close</md-button>
-        </md-snackbar>
+	    <div class="snackbars">
+	        <!--SNACKBAR-->
+	        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
+	            <span>{{$lang.messages.you_updated_info_about_member}}</span>
+	            <md-button class="md-accent" @click="showSnackbarPost = false">{{$lang.buttons.close}}</md-button>
+	        </md-snackbar>
+	        <!--SNACKBAR-->
+	        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="deletedMember" md-persistent>
+	            <span>{{$lang.messages.you_deleted_member}}</span>
+	            <md-button class="md-accent" @click="deletedMember = false">{{$lang.buttons.close}}</md-button>
+	        </md-snackbar>
+		    <!--SNACKBAR-->
+		    <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="aboutAddMember" md-persistent>
+			    <span>{{ msgAbotAddMember }}</span>
+			    <md-button class="md-accent" @click="aboutAddMember = false">{{$lang.buttons.close}}</md-button>
+		    </md-snackbar>
+		    <!--SNACKBAR-->
+	    </div>
 
         <br>
         <md-tabs  md-alignment="centered">
 
-            <md-tab id="tab-home" md-label="Add member">
+            <md-tab id="tab-home" :md-label="$lang.groups.add_member">
                 <form novalidate class="md-layout md-size-50 md-small-size-50" @submit.prevent="">
                     <input type="text" class="form-control" v-model="form.searchname" @input="searchMember(form.searchname)">
                 </form>
                 <md-progress-bar md-mode="indeterminate" v-if="gettingUser" />
             </md-tab>
 
-            <md-tab id="tab-pages" md-label="Members">
+            <md-tab id="tab-pages" :md-label="$lang.groups.members">
                 <md-list class="md-triple-line">
                     <md-list-item v-for="member in members" :key="member.id">
                         <div class="">
@@ -42,7 +50,7 @@
                             <form novalidate class="md-layout" @submit.prevent="assign(member.id, member.pivot.tag, member.pivot.role_id, member.pivot.group_id)">
                                 <div class="row">
 
-                                    <input type="text" name="tag" v-model="member.pivot.tag" placeholder="Tag" :disabled="sending == member.id" size="5"/>
+                                    <input type="text" name="tag" v-model="member.pivot.tag" :placeholder="$lang.groups.tag" :disabled="sending == member.id" size="5"/>
                                     <select name="member_role"  :disabled="sending == member.id" v-model="member.pivot.role_id">
                                         <option v-for="(role, index) in member_role_optionsmembers" :key="role.id"
                                                 :value="index"
@@ -59,7 +67,7 @@
 
                 </md-list>
             </md-tab>
-            <md-tab id="tab-posts" md-label="Admins">
+            <md-tab id="tab-posts" :md-label="$lang.groups.admins">
                 <md-list class="md-triple-line">
                     <md-list-item v-for="admin in admins" :key="admin.id">
                         <md-avatar v-if="admin.avatar">
@@ -97,17 +105,12 @@
 
                 <md-button class=" md-list-action md-primary" @click="addMember(user.id)" :disabled="additingUser == user.id">
                     <i class="fas fa-plus-circle"></i>
-                    Join
+                    {{$lang.buttons.join}}
                 </md-button>
 
             </md-list-item>
         </md-list>
-        <!--SNACKBAR-->
-        <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="aboutAddMember" md-persistent>
-            <span>{{ msgAbotAddMember }}</span>
-            <md-button class="md-accent" @click="aboutAddMember = false">Close</md-button>
-        </md-snackbar>
-        <!--SNACKBAR-->
+
         <div class="errors" v-if="memberErrors">
             <ul >
                 <li v-for="error in memberErrors">{{ error }}</li>
@@ -189,7 +192,7 @@
                         this.getMembers();
                         if (response.data.message)
                             this.msgAbotAddMember = response.data.message;
-                        else this.msgAbotAddMember = 'successfully accepted member';
+                        else this.msgAbotAddMember = this.$lang.messages.successfully_accepted_member;
 
                         this.aboutAddMember = true;
                     })

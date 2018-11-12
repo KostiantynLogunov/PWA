@@ -2,23 +2,23 @@
     <div class="page-container md-layout-column">
         <!--SNACKBAR-->
         <md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteTask" md-persistent>
-            <span>You deleted a task!</span>
-            <md-button class="md-accent" @click="flagDeleteTask = false">Close</md-button>
+            <span>{{$lang.messages.you_deleted_task}}</span>
+            <md-button class="md-accent" @click="flagDeleteTask = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbar" md-persistent>
-            <span>You added new task !</span>
-            <md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+            <span>{{$lang.messages.you_added_new_task}}</span>
+            <md-button class="md-accent" @click="showSnackbar = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="updatedTask" md-persistent>
-            <span>You edited a task !</span>
-            <md-button class="md-accent" @click="updatedTask = false">Close</md-button>
+            <span>{{$lang.messages.you_edited_task}}</span>
+            <md-button class="md-accent" @click="updatedTask = false">{{$lang.buttons.close}}</md-button>
         </md-snackbar>
         <!--SNACKBAR-->
         <div class="text-center" v-if="!creatingForm">
             <div v-if="checkGroupAdmins(currentUser_id)">
-                <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true; editingTask = null" :disabled="sending">Create Task</md-button>
+                <md-button type="submit" class="md-primary md-raised"  @click="creatingForm = true; editingTask = null" :disabled="sending">{{$lang.buttons.create_task}}</md-button>
             </div>
         </div>
         <div v-else>
@@ -26,29 +26,29 @@
 
                 <md-card class="md-layout-item md-size-50 md-small-size-100">
                     <md-card-header>
-                        <div class="md-title">Creating Task</div>
+                        <div class="md-title">{{$lang.groups.creating_task}}</div>
                     </md-card-header>
 
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-small-size-100">
                                 <md-field :class="">
-                                    <label for="title">Title</label>
+                                    <label for="title">{{$lang.fields.title}}</label>
                                     <md-input name="title" id="title" autocomplete="given-title" v-model="form.title" :disabled="sending" />
                                 </md-field>
 
                                 <md-field>
-                                    <label for="description">Description</label>
+                                    <label for="description">{{$lang.fields.description}}</label>
                                     <md-textarea name="description" id="description" autocomplete="given-description" v-model="form.description" :disabled="sending" />
                                 </md-field>
 
                                 <md-field :class="">
-                                    <label>Status</label>
+                                    <label>{{$lang.fields.status}}</label>
                                     <md-select name="status" id="status" v-model="form.status" md-dense :disabled="sending" placeholder="Please select status">
-                                        <md-option value="New">New</md-option>
-                                        <md-option value="In progress">In progress</md-option>
-                                        <md-option value="Complated">Complated</md-option>
-                                        <md-option value="Postponed">Postponed</md-option>
+                                        <md-option value="New">{{$lang.fields.new}}</md-option>
+                                        <md-option value="In progress">{{$lang.fields.in_progress}}</md-option>
+                                        <md-option value="Complated">{{$lang.fields.complated}}</md-option>
+                                        <md-option value="Postponed">{{$lang.fields.postponed}}</md-option>
                                     </md-select>
                                 </md-field>
                             </div>
@@ -58,11 +58,11 @@
 
                                     <div class="md-layout md-gutter">
                                             <div class="md-layout-item md-small-size-50">
-                                                <label>START DATE</label>
+                                                <label>{{$lang.fields.start}}</label>
                                                 <date-picker v-model="form.start_date" :config="options"></date-picker>
                                             </div>
                                         <div class="md-layout-item md-small-size-50">
-                                            <label>END DATE</label>
+                                            <label>{{$lang.fields.end}}</label>
                                             <date-picker v-model="form.end_date" :config="options"></date-picker>
                                         </div>
                                     </div>
@@ -70,7 +70,7 @@
                                 <br>
                                 <div class="md-layout-item md-small-size-100">
                                     <fieldset class="form-group" id="usersTag">
-                                        <label class="control-label">MEMBERS</label>
+                                        <label class="control-label">{{$lang.fields.members}}</label>
                                         <tags-input element-id="tags"
                                                     class="form-control"
                                                     v-model="form.members"
@@ -86,7 +86,7 @@
 
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
-                                        <label>Target Event</label>
+                                        <label>{{$lang.fields.target_event}}</label>
                                         <md-select name="event" id="event" v-model="form.event" md-dense :disabled="sending">
 
                                             <div v-if="group_events.length">
@@ -99,7 +99,7 @@
                                             </div>
                                             <div v-else>
                                                 <md-option  disabled>
-                                                    Not any events
+                                                    {{$lang.fields.not_any_events}}
                                                 </md-option>
                                             </div>
                                         </md-select>
@@ -117,17 +117,17 @@
                     </md-card-content>
                     <md-progress-bar md-mode="indeterminate" v-if="sending" />
                     <md-card-actions>
-                        <md-button type="button" class="md-primary" @click="creatingForm = false">Cancel</md-button>
-                        <md-button type="submit" class="md-primary md-raised" :disabled="sending">Create Task</md-button>
+                        <md-button type="button" class="md-primary" @click="creatingForm = false">{{$lang.buttons.cancel}}</md-button>
+                        <md-button type="submit" class="md-primary md-raised" :disabled="sending">{{$lang.buttons.create_task}}</md-button>
                     </md-card-actions>
                 </md-card>
-                <md-snackbar :md-active.sync="taskSaved">The user saved task successfull!</md-snackbar>
+                <md-snackbar :md-active.sync="taskSaved">{{$lang.messages.user_saved_task_successfully}}</md-snackbar>
             </form>
         </div>
 
         <br>
 
-        <div class="alert alert-warning" v-if="!groupTasks.length">No tasks yet....
+        <div class="alert alert-warning" v-if="!groupTasks.length">{{$lang.messages.no_tasks_yet}}
             <md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate" v-if="pandingResponseServer"></md-progress-spinner>
         </div>
         <div v-for="task in groupTasks">
@@ -146,7 +146,7 @@
                         <h6>{{ task.description }}</h6>
                         <br>
                         <div v-if="task.responsible_user.length">
-                            Responsible users:
+                            {{$lang.groups.responsible_user}}
                             <span v-for="member in task.responsible_user" class="one_member_link">
                                 <!-- link = member.link-->
                                 <a class="mr-3">
@@ -160,7 +160,7 @@
                             </span>
                         </div>
                         <div v-else>
-                            <div class="alert alert-warning">No responsable user !</div>
+                            <div class="alert alert-warning">{{$lang.messages.no_responsable_user}}</div>
                         </div>
                         <br>
                         <div class="">
@@ -177,12 +177,12 @@
 
                     <md-card-actions>
                         <md-button @click="turnComment(task.id)"><i class="far fa-comments"></i>
-                                Comments</md-button>
+                                {{$lang.buttons.comments}}</md-button>
                         <span v-if="checkAuthor(task.author_id) || checkGroupAdmins(currentUser_id)">
                             <md-button :disabled="editingTask == task.id" @click="onFormEditTask(task.title, task.description, task.status, task.responsible_user, task.target_event, task.time_from, task.time_till, task.id)"><i class="far fa-edit"></i>
-                                Edit</md-button>
+                                {{$lang.buttons.edit}}</md-button>
                             <md-button class="md-accent" :disabled="deleteProcess" @click="deleteTask(task.id)"><i class="far fa-trash-alt"></i>
-                            Delete</md-button>
+                            {{$lang.buttons.delete}}</md-button>
                         </span>
 
                     </md-card-actions>
@@ -202,7 +202,7 @@
                                         <div class="md-layout md-gutter">
                                             <div class="md-layout-item md-small-size-100">
                                                 <md-field :class="">
-                                                    <label for="comment">Comment</label>
+                                                    <label for="comment">{{$lang.fields.comment}}</label>
                                                     <md-input name="comment" id="comment" @keyup.enter="sendComment(task.id)" autocomplete="given-comment" v-model="formComment.comment" :disabled="sendingComment" />
                                                 </md-field>
                                             </div>
@@ -257,28 +257,28 @@
                 <div v-if="editingTask == task.id">
                     <form novalidate class="md-layout" @submit.prevent="editTask()">
                         <md-card class="md-layout-item md-size-100 md-small-size-100">
-                            <h5 class="text-center">Editing Task</h5>
+                            <h5 class="text-center">{{ $lang.groups.editing_task }}</h5>
 
                             <md-card-content>
                                 <div class="md-layout md-gutter">
                                     <div class="md-layout-item md-small-size-100">
                                         <md-field :class="">
-                                            <label for="title">Title</label>
+                                            <label for="title">{{ $lang.fields.title }}</label>
                                             <md-input name="title" v-model="value_edit_task.title" :disabled="processingTask" />
                                         </md-field>
 
                                         <md-field>
-                                            <label for="description">Description</label>
+                                            <label for="description">{{ $lang.fields.description }}</label>
                                             <md-textarea name="description" v-model="value_edit_task.description" :disabled="processingTask" />
                                         </md-field>
 
                                         <md-field>
-                                            <label>Status</label>
+                                            <label>{{ $lang.fields.status }}</label>
                                             <md-select name="status" v-model="value_edit_task.status" :disabled="processingTask" :placeholder="value_edit_task.status">
-                                                <md-option value="New">New</md-option>
-                                                <md-option value="In progress">In progress</md-option>
-                                                <md-option value="Complated">Complated</md-option>
-                                                <md-option value="Postponed">Postponed</md-option>
+                                                <md-option value="New">{{ $lang.fields.new }}</md-option>
+                                                <md-option value="In progress">{{ $lang.fields.in_progress }}</md-option>
+                                                <md-option value="Complated">{{ $lang.fields.complated }}</md-option>
+                                                <md-option value="Postponed">{{ $lang.fields.postponed }}</md-option>
                                             </md-select>
                                         </md-field>
                                     </div>
@@ -286,18 +286,18 @@
                                     <div class="md-layout-item md-small-size-100">
                                         <div class="md-layout md-gutter">
                                             <div class="md-layout-item md-small-size-50">
-                                                <label>START DATE</label>
+                                                <label>{{ $lang.fields.start }}</label>
                                                 <date-picker v-model="value_edit_task.start_date" :config="options"></date-picker>
                                             </div>
                                             <div class="md-layout-item md-small-size-50">
-                                                <label>END DATE</label>
+                                                <label>{{ $lang.fields.end }}</label>
                                                 <date-picker v-model="value_edit_task.end_date" :config="options"></date-picker>
                                             </div>
                                         </div>
                                         <br>
                                         <div class="md-layout-item md-small-size-100">
                                             <fieldset id="membersTag">
-                                                <label class="control-label" style="color: grey">Members</label>
+                                                <label class="control-label" style="color: grey">{{ $lang.fields.members }}</label>
                                                 <tags-input element-id="tags"
                                                             class="form-control"
                                                             v-model="value_edit_task.members"
@@ -314,7 +314,7 @@
                                         <br>
                                         <div class="md-layout-item md-small-size-100">
                                             <md-field>
-                                                <label>Target Event</label>
+                                                <label>{{ $lang.fields.target_event }}</label>
                                                 <md-select name="event" v-model="value_edit_task.event" md-dense :disabled="processingTask">
                                                     <div v-if="group_events.length">
                                                         <div v-for="group_event in group_events">
@@ -325,7 +325,7 @@
                                                     </div>
                                                     <div v-else>
                                                         <md-option  value="" disabled>
-                                                            Not any events
+                                                            {{ $lang.fields.not_any_events }}
                                                         </md-option>
                                                     </div>
                                                 </md-select>
@@ -344,11 +344,11 @@
                             <md-progress-bar md-mode="indeterminate" v-if="processingTask" />
                             <md-card-actions>
                                 <md-dialog-actions>
-                                    <md-button :disabled="processingTask" class="md-primary" @click="CancelEditingTask">Close</md-button>
+                                    <md-button :disabled="processingTask" class="md-primary" @click="CancelEditingTask">{{$lang.buttons.close}}</md-button>
                                     <md-button :disabled="processingTask"
                                                type="submit"
                                                class="md-accent md-raised"
-                                    >Update</md-button>
+                                    >{{$lang.buttons.update}}</md-button>
                                 </md-dialog-actions>
                             </md-card-actions>
                             <div class="errors" v-if="updateErrors">

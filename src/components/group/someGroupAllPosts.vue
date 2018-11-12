@@ -2,15 +2,15 @@
 	<div class="page-container md-layout-column">
 		<!--SNACKBAR-->
 		<md-snackbar :md-position="position" :md-duration="duration" :md-active.sync="showSnackbarPost" md-persistent>
-			<span>You created new post!</span>
-			<md-button class="md-accent" @click="showSnackbar = false">Close</md-button>
+			<span>{{$lang.messages.you_created_post}}</span>
+			<md-button class="md-accent" @click="showSnackbar = false">{{$lang.buttons.close}}</md-button>
 		</md-snackbar>
 		<!--SNACKBAR-->
 
 		<!--SNACKBAR-->
 		<md-snackbar :md-persistent="true" :md-position="position" :md-duration="duration" :md-active.sync="flagDeleteComment" md-persistent>
-			<span>You deleted a comment!</span>
-			<md-button class="md-accent" @click="flagDeleteComment = false">Close</md-button>
+			<span>{{$lang.messages.you_deleted_post}}</span>
+			<md-button class="md-accent" @click="flagDeleteComment = false">{{$lang.buttons.close}}</md-button>
 		</md-snackbar>
 		<!--SNACKBAR-->
 
@@ -18,7 +18,7 @@
 
 			<md-card class="md-layout-item md-size-50 md-small-size-100" v-if="checkGroupAdmins(currentUser_id)">
 				<md-card-header>
-					<div class="md-title">What's going on ?</div>
+					<div class="md-title">{{$lang.groups.title_creating_post}}</div>
 				</md-card-header>
 
 				<md-card-content>
@@ -42,15 +42,16 @@
 				<md-progress-bar md-mode="indeterminate" v-if="sending"/>
 
 				<md-card-actions>
-					<md-button type="button" class="md-primary" @click="CreateEvent">Create event</md-button>
-					<md-button type="submit" class="md-primary md-raised" :disabled="sending">Post</md-button>
+					<md-button type="button" class="md-primary" @click="CreateEvent">{{$lang.buttons.create_event}}</md-button>
+					<md-button type="submit" class="md-primary md-raised" :disabled="sending">{{$lang.buttons.post}}</md-button>
 				</md-card-actions>
 			</md-card>
 
-			<md-snackbar :md-active.sync="postSaved">The post was saved with success!</md-snackbar>
+			<md-snackbar :md-active.sync="postSaved">{{$lang.messages.post_saved_success}}</md-snackbar>
 		</form>
+
 		<br>
-		<div class="alert alert-warning" v-if="allActivity.length == 0">No posts were found...</div>
+		<div class="alert alert-warning" v-if="allActivity.length == 0">{{$lang.messages.no_posts_were_found}}</div>
 		<md-progress-spinner :md-diameter="30" :md-stroke="3" md-mode="indeterminate"
 		                     v-if="pandingResponseServer"></md-progress-spinner>
 		<div v-for="post in allActivity" :key="post.id">
@@ -71,16 +72,14 @@
 				<div>
 					<md-card md-with-hover class="md-layout-item md-size-50 md-small-size-100">
 						<md-ripple>
-
 							<md-card-header>
 								<div class="md-title">
-
-                <span v-if="post.user">
-                    <img :src="post.user.avatar" alt="avatar">
-                </span>
+					                <span v-if="post.user">
+					                    <img :src="post.user.avatar" alt="avatar">
+					                </span>
 									<span v-else>
-                  <img :src="avatarDefaultUrl" alt="default">
-              </span>
+					                  <img :src="avatarDefaultUrl" alt="default">
+					                 </span>
 									{{ post.user.name }}
 								</div>
 								<div class="md-subhead">
@@ -94,10 +93,10 @@
 
 							<md-card-actions>
 								<md-button class="md-primary" @click="likePost(post.id)" :disabled="liking"><i class="far fa-thumbs-up"></i>
-									Like
+									{{$lang.buttons.like}}
 								</md-button>
 								<md-button @click="turnComment(post.id)"><i class="far fa-comment"></i>
-									Comment
+									{{$lang.buttons.comment}}
 								</md-button>
 							</md-card-actions>
 							<transition name="boom">
@@ -108,7 +107,7 @@
 												<div class="md-layout md-gutter">
 													<div class="md-layout-item md-small-size-100">
 														<md-field :class="">
-															<label for="comment">Comment</label>
+															<label for="comment">{{$lang.buttons.comment}}</label>
 															<md-input @keyup.enter="sendComment(post.id)" name="comment" id="comment"
 															          autocomplete="given-comment" v-model="formComment.comment"
 															          :disabled="sendingComment"/>
@@ -132,12 +131,12 @@
 											<md-ripple>
 												<md-card-header>
 													<div class="md-title">
-                            <span v-if="comment.user.avatar">
-                                <img :src="comment.user.avatar" alt="avatar">
-                            </span>
-														<span v-else>
-                                <img :src="avatarDefaultUrl" alt="">
-                            </span>
+							                            <span v-if="comment.user.avatar">
+							                                <img :src="comment.user.avatar" alt="avatar">
+							                            </span>
+																					<span v-else>
+							                                <img :src="avatarDefaultUrl" alt="">
+							                            </span>
 														{{ comment.user.name }}
 													</div>
 													<div class="md-subhead">{{ convertDate(comment.created_at) | moment("from") }}</div>
@@ -150,8 +149,8 @@
 												<md-card-actions>
 													<md-button class="md-primary"><i class="far fa-thumbs-up"></i></md-button>
 													<span v-if="checkAuthor(comment.user_id) || checkGroupAdmins(currentUser_id)">
-                              <md-button class="md-accent" @click="deleteComment(comment.id)"><i class="fas fa-times"></i></md-button>
-                          </span>
+                                                        <md-button class="md-accent" @click="deleteComment(comment.id)"><i class="fas fa-times"></i></md-button>
+                                                    </span>
 													<md-button><i class="far fa-share-square"></i></md-button>
 												</md-card-actions>
 											</md-ripple>

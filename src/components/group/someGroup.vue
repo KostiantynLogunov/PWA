@@ -90,6 +90,8 @@
                 :md-cancel-text="$lang.buttons.disagree"
                 @md-cancel="showConfirm = false"
                 @md-confirm="unjoin" />
+
+
     </div>
 </template>
 
@@ -121,6 +123,7 @@
         },
 
         methods: {
+
             getGroupAdminsId(){
                 axios.get(config.apiUrl + '/group_admins_id/' + this.$route.params.groupname, {
                     headers: {
@@ -164,6 +167,18 @@
         },
     }
 </script>
+
+<style lang="scss" scoped>
+	.phone-viewport {
+		width: 322px;
+		height: 200px;
+		display: inline-flex;
+		align-items: flex-end;
+		overflow: hidden;
+		border: 1px solid rgba(#000, .26);
+		background: rgba(#000, .06);
+	}
+</style>
 
 <style scoped>
     .page-container {

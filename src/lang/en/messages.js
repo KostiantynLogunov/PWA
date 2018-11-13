@@ -48,4 +48,5 @@ module.exports = {
 	you_updated_note_successful : "You updated a note successful !",
 	no_notes_were_found : "No notes were found...",
 	you_updated_group_information : "You updated the group information successfully !",
+	you_changed_avatar : "You changed your avatar successfully !",
 };

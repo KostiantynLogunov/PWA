@@ -89,7 +89,35 @@
 
                 <router-view></router-view>
 
+	            <!--<div class="phone-viewport">-->
+	            <md-bottom-bar md-type="shift" >
+		            <md-bottom-bar-item md-label="Home" md-icon="home" @click="goHome"></md-bottom-bar-item>
+
+		                <md-bottom-bar-item md-label="Chat" class="md-icon-button" @click="goMessenger">
+			                <span class="badge badge-danger" v-if="countNewMessages>0">{{ countNewMessages }}</span>
+			                <md-icon>chat</md-icon>
+		                </md-bottom-bar-item>
+		            <md-menu>
+			            <md-bottom-bar-item  md-label="Create" md-icon="add" class="md-icon-button" md-menu-trigger></md-bottom-bar-item>
+			            <md-menu-content>
+				            <md-menu-item @click="">
+					            <span>New Group</span>
+					            <md-icon>add</md-icon>
+				            </md-menu-item>
+
+				            <md-menu-item @click="">
+					            <span>New Event</span>
+					            <md-icon>add</md-icon>
+				            </md-menu-item>
+			            </md-menu-content>
+		            </md-menu>
+
+		            <md-bottom-bar-item md-label="Settings" md-icon="settings" @click="goSettings"></md-bottom-bar-item>
+	            </md-bottom-bar>
+	            <!--</div>-->
+
             </md-app-content>
+
         </md-app>
 
     </div>
@@ -106,6 +134,7 @@
             return {
                 menuVisible: false,
                 // showSidepanel: false
+	            countNewMessages: 1
             }
         },
 
@@ -116,6 +145,13 @@
         },
 
         methods: {
+	        goSettings(){
+		        // console.log('some Settings...' + this.$store.getters.currentUser.username);
+		        this.$router.push({name: 'profile', params: {username: this.$store.getters.currentUser.username}});
+	        },
+
+
+
             goMyItems(){
                 this.menuVisible = false;
                 this.$router.push('/my_items');
@@ -159,7 +195,13 @@
         }
     }
 </script>
-
+<style lang="scss" scoped>
+	.demo-badge {
+		> div {
+			margin-bottom: 16px;
+		}
+	}
+</style>
 <style>
     .page-container{
         background: #EFF3F6;

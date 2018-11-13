@@ -90,7 +90,7 @@
                 <router-view></router-view>
 
 	            <!--<div class="phone-viewport">-->
-	            <md-bottom-bar md-type="shift" >
+	            <md-bottom-bar md-type="shift" v-if="currentUser">
 		            <md-bottom-bar-item md-label="Home" md-icon="home" @click="goHome"></md-bottom-bar-item>
 
 		                <md-bottom-bar-item md-label="Chat" class="md-icon-button" @click="goMessenger">
@@ -100,7 +100,7 @@
 		            <md-menu>
 			            <md-bottom-bar-item  md-label="Create" md-icon="add" class="md-icon-button" md-menu-trigger></md-bottom-bar-item>
 			            <md-menu-content>
-				            <md-menu-item @click="">
+				            <md-menu-item @click="goCreateNewGroup">
 					            <span>New Group</span>
 					            <md-icon>add</md-icon>
 				            </md-menu-item>
@@ -145,6 +145,10 @@
         },
 
         methods: {
+	        goCreateNewGroup(){
+		        this.$router.push({name: 'newGroup'})
+	        },
+
 	        goSettings(){
 		        // console.log('some Settings...' + this.$store.getters.currentUser.username);
 		        this.$router.push({name: 'profile', params: {username: this.$store.getters.currentUser.username}});

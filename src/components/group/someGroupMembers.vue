@@ -370,6 +370,4 @@
         cursor: crosshair;
         border-radius: 5px;
     }
-
-
 </style>

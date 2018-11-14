@@ -7,6 +7,7 @@
 	    </md-snackbar>
 	    <!--SNACKBAR-->
 
+
         <h1>It's your profile</h1>
 	    <!--<a href="" @click.prevent="logout" >Logout</a>-->
 		<p>Avatar:

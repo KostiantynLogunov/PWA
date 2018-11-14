@@ -1,0 +1,15 @@
+module.exports = {
+	create_account : 'Create an Account  POLAND',
+	affiliate_code : 'Affiliate Code',
+	optional : 'optional',
+	email : 'Email',
+	name : 'Name',
+	gender : 'Gender',
+	male : 'Male',
+	female : 'Female',
+	other : 'Other',
+	username : 'Username',
+	password : 'Password',
+	phone : 'Phone',
+	sign_and_login : 'Sign Up & Login',
+};

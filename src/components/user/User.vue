@@ -81,7 +81,7 @@
         created () {
         	this.href_avatar = this.$store.getters.currentUser.avatar;
         	this.user = this.$store.getters.currentUser;
-        	console.log(this.$store.getters.currentUser);
+        	// console.log(this.$store.getters.currentUser);
         }
     };
 </script>

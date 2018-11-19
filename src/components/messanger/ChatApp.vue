@@ -4,7 +4,8 @@
             <div class="card">
                 <div class="card-header">
                     <h6 >{{ user.name }}</h6>
-                    <md-button class="md-icon-button md-raised" @click="showOtherUsers = !showOtherUsers">
+	                <md-button class="md-raised md-primary" @click="generalChat">General Group Chat</md-button>
+	                <md-button class="md-icon-button md-raised" @click="showOtherUsers = !showOtherUsers">
                         <i class="fas fa-users">
                             <i v-if="newSmsFromId != null"
                                class="fas fa-envelope fa-pulse text-danger"></i>
@@ -16,7 +17,13 @@
                 <!--</div>-->
                 <div class="card-body">
                     <div class="chat-app">
-                        <Conversation :contact="selectedContact" :messages="messages" @new="saveNewMessage" @checkNewMsg="checkNewSms"/>
+	                    <GeneralGroupChat v-if="showGeneralChat"/>
+                        <Conversation v-if="!showGeneralChat"
+                                      :contact="selectedContact"
+                                      :messages="messages"
+                                      @new="saveNewMessage"
+                                      @checkNewMsg="checkNewSms"
+                        />
 
                         <ContactsList :showOtherUsers="showOtherUsers" :contacts="contacts" :newMsgFromId="newSmsFromId"
                                       @selected="startConversationWith"  @checkNewMsg="checkNewSms"/>
@@ -35,6 +42,7 @@
 
     import Conversation from './Conversation';
     import ContactsList from './ContactsList';
+    import GeneralGroupChat from './GeneralGroupChat';
 
     export default {
 
@@ -45,9 +53,17 @@
                 contacts: [],
                 user: false,
                 newSmsFromId: null,
-                showOtherUsers: false
+                showOtherUsers: false,
+	            showGeneralChat: false,
             }
         },
+
+	    created(){
+            	let newSmsFrom = localStorage.getItem("newSmsFrom");
+            	if (newSmsFrom != null || newSmsFrom != undefined){
+		            this.newSmsFromId = +newSmsFrom;
+	            }
+	    },
 
         mounted() {
             this.user = this.$store.getters.currentUser;
@@ -67,7 +83,6 @@
                 });
 
             var io = require('socket.io-client');
-
             // var socket = io.connect('http://pwa.mybest.com.ua:6001');
             var socket = io.connect('http://192.168.13.13:3000');
 
@@ -77,15 +92,29 @@
                 // console.log(data.message.text);
 
                 this.newSmsFromId = +data.message.from;
+                // localStorage.setItem("newSms", 'is');
 
                 if (this.selectedContact && data.message.from == this.selectedContact.id)
                     this.messages.push(data.message);
 
             }.bind(this));
         },
+
         methods: {
+
+	        generalChat(){
+	            // console.log('general chat')
+		        this.showGeneralChat = !this.showGeneralChat;
+	        },
+
             checkNewSms(data){
-                if (data.contact_id == this.newSmsFromId) this.newSmsFromId = null;
+                if (data.contact_id == this.newSmsFromId)
+                {
+	                this.newSmsFromId = null;
+	                localStorage.removeItem("newSmsFrom");
+	                // $eventHub.$emit('sms-reed');
+                }
+
             },
 
             startConversationWith(contact){
@@ -137,7 +166,7 @@
                     });
             }
         },
-        components: { Conversation, ContactsList }
+        components: { Conversation, ContactsList, GeneralGroupChat }
     }
 </script>
 

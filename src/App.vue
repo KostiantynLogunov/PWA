@@ -93,10 +93,8 @@
 								<md-bottom-bar-item md-label="Home" md-icon="home" @click="goHome"></md-bottom-bar-item>
 
 								<md-bottom-bar-item md-label="Chat" class="md-icon-button" @click="goMessenger">
-									<span class="badge badge-danger" v-if="countNewMessages>0">
-
-									</span>
-									<i class="fas fa-envelope fa-pulse text-danger"></i>
+									<!--<span class="badge badge-danger" v-if="countNewMessages>0"></span>-->
+									<i class="fas fa-envelope fa-pulse text-danger" v-if="newSms"></i>
 									<md-icon>chat</md-icon>
 								</md-bottom-bar-item>
 								<md-menu>
@@ -134,8 +132,27 @@
                 // showSidepanel: false
 	            countNewMessages: 1,
 	            language: null,
+	            newSms: null,
+	            user: null,
             }
         },
+
+	    mounted() {
+		    this.user = this.$store.getters.currentUser;
+
+		    if (this.user) {
+			    var io = require('socket.io-client');
+			    // var socket = io.connect('http://pwa.mybest.com.ua:6001');
+			    var socket = io.connect('http://192.168.13.13:3000');
+
+			    socket.on("news-action." + this.user.id + ":App\\Events\\PrivateMessage", function (data) {
+
+				    localStorage.setItem("newSmsFrom", data.message.from);
+				    this.newSms = data.message.from;
+			    }.bind(this));
+		    }
+
+	    },
 
 	    created(){
         	let lang = localStorage.getItem("lang");
@@ -143,12 +160,22 @@
 	        {
 		        lang = 'en';
 		        localStorage.setItem("lang", lang );
-		        this.$lang.setLang(lang)
+		        this.$lang.setLang(lang);
 		        this.language = 'en';
 	        } else {
 		        this.$lang.setLang(lang);
 		        this.language = lang;
 	        }
+
+		    /*let newSms = localStorage.getItem("newSms");
+        	console.log(newSms);
+		    if (newSms == "is")
+		    {
+		    	this.newSms = true;
+		    } else {
+			    this.newSms = false;
+			    localStorage.removeItem("newSms");
+		    }*/
 	    },
 
         computed: {
@@ -190,6 +217,7 @@
             goMessenger(){
                 this.menuVisible = false;
                 this.$router.push('/messenger');
+	            this.newSms = null;
             },
 
             logout() {

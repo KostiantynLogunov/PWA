@@ -119,6 +119,7 @@
                     .then((response) => {
                         this.groupDelete.group_id = false;
                         this.$store.dispatch('getGroups');
+	                    this.$store.dispatch('getUserGroups');
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;
@@ -139,7 +140,8 @@
                     }
                 })
                     .then((response) => {
-                        this.$store.dispatch('getGroups')
+                    	this.$store.dispatch('getGroups');
+	                    this.$store.dispatch('getUserGroups');
                     })
                     .catch((err) => {
                         this.errors = err.response.data.message || err.response.data ||  err.message || err.data;

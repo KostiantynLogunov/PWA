@@ -59,6 +59,7 @@
 
         mounted() {
             this.getActivity();
+
 	        /*this.messageAboutInvite = localStorage.getItem("AboutInvate");
 			console.log('localStorage on login = ' + this.messageAboutInvite);
 			if (this.messageAboutInvite ) {

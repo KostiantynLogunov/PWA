@@ -119,7 +119,7 @@
                         this.$store.commit("loginSuccess", res);
                         this.clearForm();
                         this.sending = false;
-
+	                    this.$store.dispatch('getUserGroups');
 
 	                    if (res.aboutInvite.status == 'go group')
 	                    {

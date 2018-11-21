@@ -36,3 +36,13 @@ export function getAllUsers() {
 
     return JSON.parse(allUserStr);
 }
+
+export function getAllUserGroups() {
+	const allUserGroupsStr = localStorage.getItem("allUserGroups");
+
+	if (!allUserGroupsStr) {
+		return null;
+	}
+
+	return JSON.parse(allUserGroupsStr);
+}

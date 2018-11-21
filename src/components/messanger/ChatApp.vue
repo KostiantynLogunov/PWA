@@ -4,8 +4,17 @@
             <div class="card">
                 <div class="card-header">
                     <h6 >{{ user.name }}</h6>
-	                <md-button class="md-raised md-primary" @click="generalChat">General Group Chat</md-button>
-	                <md-button class="md-icon-button md-raised" @click="showOtherUsers = !showOtherUsers">
+	                <md-menu>
+	                    <md-button class="md-raised md-primary " md-menu-trigger>General Group Chat <i class="fas fa-sort-down"></i></md-button>
+		                <md-menu-content>
+			                <!--<md-menu-item v-for="group in groups" :key="group.id" @click="generalChat(group.id, group.name)">-->
+			                <md-menu-item v-for="group in groups" :key="group.id" @click="generalChat(group.id, group.name)">
+				                <span class="general-chats-item">{{ group.name }}</span>
+				                <md-icon>chat</md-icon>
+			                </md-menu-item>
+		                </md-menu-content>
+	                </md-menu>
+	                <md-button class="md-icon-button md-raised" @click="showOtherUsers = !showOtherUsers; showGeneralChat = false;">
                         <i class="fas fa-users">
                             <i v-if="newSmsFromId != null"
                                class="fas fa-envelope fa-pulse text-danger"></i>
@@ -17,12 +26,17 @@
                 <!--</div>-->
                 <div class="card-body">
                     <div class="chat-app">
-	                    <GeneralGroupChat v-if="showGeneralChat"/>
+	                    <GeneralGroupChat v-if="showGeneralChat"
+	                                      :group="chooseGroup"
+	                                      :messages="groupChatMessages"
+	                                      @showEnteredMsg="PrintEnteredMsg($event)"
+	                    />
                         <Conversation v-if="!showGeneralChat"
                                       :contact="selectedContact"
                                       :messages="messages"
                                       @new="saveNewMessage"
                                       @checkNewMsg="checkNewSms"
+
                         />
 
                         <ContactsList :showOtherUsers="showOtherUsers" :contacts="contacts" :newMsgFromId="newSmsFromId"
@@ -43,6 +57,7 @@
     import Conversation from './Conversation';
     import ContactsList from './ContactsList';
     import GeneralGroupChat from './GeneralGroupChat';
+    import Echo from 'laravel-echo'
 
     export default {
 
@@ -55,14 +70,35 @@
                 newSmsFromId: null,
                 showOtherUsers: false,
 	            showGeneralChat: false,
+	            groups: null,
+	            chooseGroup:{
+                	id: null,
+                	name: null,
+	            },
+	            groupChatMessages: null
             }
         },
 
-	    created(){
-            	let newSmsFrom = localStorage.getItem("newSmsFrom");
-            	if (newSmsFrom != null || newSmsFrom != undefined){
-		            this.newSmsFromId = +newSmsFrom;
-	            }
+	    created()
+	    {
+            let newSmsFrom = localStorage.getItem("newSmsFrom");
+            if (newSmsFrom != null || newSmsFrom != undefined){
+	            this.newSmsFromId = +newSmsFrom;
+            }
+            this.groups = this.$store.state.allUserGroups;
+            // console.log(this.groups);
+
+		    window.Echo = new Echo({
+			    broadcaster: 'socket.io',
+			    host: 'http://social.loc:6006',
+			    auth:
+				    {
+					    headers:
+						    {
+							    "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+						    }
+				    }
+		    });
 	    },
 
         mounted() {
@@ -74,7 +110,8 @@
                 }
             })
                 .then((response) => {
-                    this.contacts = response.data;
+                	this.contacts = response.data.contacts;
+                	// console.log(this.contacts);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -100,11 +137,66 @@
             }.bind(this));
         },
 
-        methods: {
+	    watch: {
+		    'chooseGroup.id': function(newVal, oldVal)
+		    {
+			    if (oldVal)
+			    {
+				    window.Echo.leave('group-room.' + oldVal);
+				    console.log('left channel ' + oldVal);
+			    }
 
-	        generalChat(){
+			    console.log('chooseGroup-id changed: ', newVal, ' | was: ', oldVal);
+
+			    window.Echo.private('group-room.' + newVal)
+				    .listen('PrivateChat', ({data}) => {
+					    console.log(data);
+					    // if (message.name != this.$store.getters.currentUser.name)
+					    // this.messages.push(data.body)
+				    });
+
+			    axios.get(config.apiUrl + '/group-chat/' + newVal, {
+				    headers: {
+					    "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+				    }
+			    })
+				    .then((response) => {
+					    this.groupChatMessages = response.data.messages;
+					    console.log(this.groupChatMessages);
+				    })
+				    .catch((err) => {
+					    console.log(err);
+				    })
+				    .finally( () => {
+				    });
+
+		    },
+	    },
+
+        methods:
+        {
+	        PrintEnteredMsg(data){
+	            let msg = {
+	                	body: data.body,
+	                	created_at: data.created_at,
+	                	group_id: data.group_id,
+		                user: {
+	                		id: this.$store.getters.currentUser.id,
+	                		avatar: this.$store.getters.currentUser.avatar,
+			                name: this.$store.getters.currentUser.name,
+		                }
+	            };
+	            this.groupChatMessages.push(msg);
+	        },
+
+	        generalChat(group_id, group_name){
 	            // console.log('general chat')
-		        this.showGeneralChat = !this.showGeneralChat;
+		        this.chooseGroup.id = group_id;
+		        this.chooseGroup.name = group_name;
+		        // console.log(this.group);
+		        this.showGeneralChat = true;
+		        this.showOtherUsers = false;
+
 	        },
 
             checkNewSms(data){
@@ -189,5 +281,13 @@
     .md-card{
         margin: 0;
         padding: 0;
+    }
+
+    .general-chats-item{
+	    cursor: pointer;
+    }
+
+    .general-chats-item:hover{
+	    color: blue;
     }
 </style>

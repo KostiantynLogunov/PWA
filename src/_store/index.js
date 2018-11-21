@@ -3,13 +3,15 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex);
 
-import { getLocalUser, getAllUsers } from "../_helpers/auth";
+import { getLocalUser, getAllUsers, getAllUserGroups } from "../_helpers/auth";
 import axios from "axios/index";
 import {config} from '../_services/config'
 import { router } from '../_helpers';
+import Echo from 'laravel-echo'
 
 const user = getLocalUser();
 const allUser = getAllUsers();
+const allUserGroups = getAllUserGroups();
 
 export const store = new Vuex.Store({
 
@@ -23,6 +25,7 @@ export const store = new Vuex.Store({
         groupPosts: [],
 
         allUsers: allUser,
+	    allUserGroups: allUserGroups,
 
 	    // aboutInvite: null
     },
@@ -92,7 +95,9 @@ export const store = new Vuex.Store({
             state.auth_error = null;
         },
         logout(state) {
+	        localStorage.removeItem("allUserGroups");
             localStorage.removeItem("user");
+            state.allUserGroups = null;
             state.isLoggedIn = false;
             state.currentUser =null;
         },
@@ -168,6 +173,7 @@ export const store = new Vuex.Store({
 			    	// console.log(response.data.message);
 				    // localStorage.setItem("AboutInvate", response.data.message);
 			    	if (response.data.status == 'go group'){
+			    		store.dispatch('getUserGroups');
 					    router.push({ name: 'someGroupAllPosts', params: { groupname: response.data.group_alias }});
 				    }
 				    else if (response.data.status == 'fail'){
@@ -181,6 +187,26 @@ export const store = new Vuex.Store({
 			    .catch((err) => {
 				    // console.log(err);
 			    })
+	    },
+
+	    getUserGroups(store){
+		    if (store.state.currentUser) {
+			    axios.get(config.apiUrl + '/info', {
+				    headers: {
+					    "Authorization": `Bearer ${store.state.currentUser.token}`
+				    }
+			    })
+				    .then((response) => {
+					    store.state.allUserGroups = response.data.groups;
+					    console.log(store.state.allUserGroups);
+					    localStorage.setItem("allUserGroups", JSON.stringify(store.state.allUserGroups));
+				    })
+				    .catch((err) => {
+					    console.log(err);
+				    })
+				    .finally( () => {
+				    });
+		    }
 	    }
     },
 

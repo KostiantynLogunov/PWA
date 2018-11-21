@@ -1,16 +1,26 @@
 <template>
 	<div class="general-group-chat">
-		<h1 class="text-center"> GENERAL GROUP CHAT </h1>
+		<h1 class="text-center"> GENERAL CHAT of GROUP  {{ group.name }}</h1>
 		<!--<GeneralMessagesFeed />
 		<GeneralMessageComposer />-->
-		<hr>
+		<!--<hr>-->
+
 		<div class="row">
 			<div class="col-sm-12">
-                <textarea class="form-control" rows="10" readonly>
-                    {{ messages.join('\n') }}
-                </textarea>
-				<hr>
-				<input type="text" class="form-control" v-model="textMessage" @keyup.enter="sendMessage">
+				<div class="textarea-chat">
+		                <div v-for="msg in messages" :key="msg.id" :class="msg.user.id == $store.getters.currentUser.id ? 'text-right' : ''">
+			                <md-avatar>
+				                <img :src="msg.user.avatar" alt="People">
+			                </md-avatar>
+
+			                <span><b>{{ msg.user.name }}</b></span><br>
+			                <span>{{ msg.body }}</span>
+			                <p style="font-size: 0.7rem">{{ msg.created_at }}</p>
+		                </div>
+				</div>
+				<!--<hr>-->
+				<input type="text" class="form-control" v-model="textMessage" @keyup.enter="sendMessage" placeholder="Write youe msg....">
+				<br>
 			</div>
 		</div>
 	</div>
@@ -25,72 +35,65 @@
 
 	import Echo from 'laravel-echo'
 
-	/*window.io = require('socket.io-client');
-	window.Echo = new Echo({
-		broadcaster: 'socket.io',
-		host: window.location.hostname + ':6001'
-	});*/
-
 	export default {
 		name: "GeneralGroupChat",
 
+		props: ['group', 'messages'],
+
 		data(){
 			return {
-				messages: [],
-				textMessage: ''
+				// messages: [],
+				textMessage: '',
+
 			}
 		},
 
-		mounted(){
-			window.Echo = new Echo({
-				broadcaster: 'socket.io',
-				host: 'http://social.loc:6006',
-				auth:
-					{
-						headers:
-							{
-								"Authorization": `Bearer ${this.$store.getters.currentUser.token}`
-							}
-					}
-			});
+		created(){
 
-			console.log(Echo.socketId);
-
-			/*window.Echo.channel('chat')
-				.listen('Message', ({message}) => {
-					// console.log(message);
-					if (message.name != this.$store.getters.currentUser.name)
-						this.messages.push(message.text)
-				});*/
-
-			window.Echo.private('room.2')
-				.listen('PrivateChat', ({data}) => {
-					// console.log(message);
-					// if (message.name != this.$store.getters.currentUser.name)
-						this.messages.push(data.body)
-				});
 		},
 
-		methods: {
-			sendMessage() {
-				axios.post(config.apiUrl + '/general-group-messages', { body: this.textMessage, room_id: 2 },
-					{
-						headers: {
-							"Authorization": `Bearer ${this.$store.getters.currentUser.token}`,
-							// "X-Socket-Id": Echo.socketId,
-						}
-					});
-				this.messages.push(this.textMessage);
-				this.textMessage = '';
-			}
+		mounted()
+		{
+			// console.log(this.group);
 		},
 
-		// components:{GeneralMessageComposer, GeneralMessagesFeed}
-	}
+		/*watch: {
+			group: function(newVal, oldVal) {
+				console.log('group changed: ', newVal, ' | was: ', oldVal)
+			},
+		},*/
+
+	  methods: {
+		  sendMessage() {
+			  axios.post(config.apiUrl + '/general-group-messages', { body: this.textMessage, group_id: this.group.id },
+				  {
+					  headers: {
+						  "Authorization": `Bearer ${this.$store.getters.currentUser.token}`,
+						  // "X-Socket-Id": Echo.socketId,
+					  }
+				  })
+				  .then((response) => {
+					  // this.groupChatMessages = response.data.messages;
+					  // console.log(response.data);
+					  this.$emit('showEnteredMsg', response.data.result);
+					  // this.messages.push(this.textMessage);
+					  this.textMessage = '';
+				  });
+
+		  }
+	  },
+
+  // components:{GeneralMessageComposer, GeneralMessagesFeed}
+}
 
 </script>
 
 <style lang="scss" scoped>
+
+	.textarea-chat{
+		/*min-height: 20vh;*/
+		background: lightgrey;
+	}
 	.general-group-chat {
 	        flex: 5;
 	        display: flex;

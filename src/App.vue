@@ -123,6 +123,10 @@
 
 <script>
     /* eslint-disable */
+    import axios from 'axios'
+    import { config } from './_services/config'
+    import Echo from 'laravel-echo'
+
     export default {
         name: 'app',
 
@@ -134,10 +138,27 @@
 	            language: null,
 	            newSms: null,
 	            user: null,
+	            groups: null
             }
         },
 
-	    mounted() {
+	    created()
+	    {
+		    let lang = localStorage.getItem("lang");
+		    if (lang == null || lang == undefined)
+		    {
+			    lang = 'en';
+			    localStorage.setItem("lang", lang );
+			    this.$lang.setLang(lang);
+			    this.language = 'en';
+		    } else {
+			    this.$lang.setLang(lang);
+			    this.language = lang;
+		    }
+	    },
+
+	    mounted()
+	    {
 		    this.user = this.$store.getters.currentUser;
 
 		    if (this.user) {
@@ -145,44 +166,99 @@
 			    // var socket = io.connect('http://pwa.mybest.com.ua:6001');
 			    var socket = io.connect('http://192.168.13.13:3000');
 
-			    socket.on("news-action." + this.user.id + ":App\\Events\\PrivateMessage", function (data) {
-
+			    socket.on("news-action." + this.user.id + ":App\\Events\\PrivateMessage", function (data)
+			    {
 				    localStorage.setItem("newSmsFrom", data.message.from);
 				    this.newSms = data.message.from;
 			    }.bind(this));
+
+
+			    /*if (localStorage.getItem("allUserGroups"))
+			    {
+				    // console.log('user E');
+				    // console.log(localStorage.getItem("allUserGroups"));
+				    let userGroups = JSON.parse(localStorage.getItem("allUserGroups"));
+				    // if (userGroups == null || userGroups == undefined) {
+					//     this.$store.dispatch('getUserGroups');
+				    // }
+				    if (userGroups != null || userGroups != undefined) {
+					    window.Echo = new Echo({
+						    broadcaster: 'socket.io',
+						    host: 'http://social.loc:6006',
+						    auth:
+							    {
+								    headers:
+									    {
+										    "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+									    }
+							    }
+					    });
+
+					    for (let group of userGroups) {
+						    console.log(group.id);
+						    window.Echo.private('group-room.' + group.id)
+							    .listen('PrivateChat', ({data}) => {
+								    console.log(data);
+								    // if (message.name != this.$store.getters.currentUser.name)
+								    // this.messages.push(data.body)
+							    });
+					    }
+				    }
+			    }*/
 		    }
 
-	    },
 
-	    created(){
-        	let lang = localStorage.getItem("lang");
-        	if (lang == null || lang == undefined)
-	        {
-		        lang = 'en';
-		        localStorage.setItem("lang", lang );
-		        this.$lang.setLang(lang);
-		        this.language = 'en';
-	        } else {
-		        this.$lang.setLang(lang);
-		        this.language = lang;
-	        }
 
-		    /*let newSms = localStorage.getItem("newSms");
-        	console.log(newSms);
-		    if (newSms == "is")
-		    {
-		    	this.newSms = true;
-		    } else {
-			    this.newSms = false;
-			    localStorage.removeItem("newSms");
-		    }*/
 	    },
 
         computed: {
             currentUser() {
+
                 return this.$store.getters.currentUser
             }
         },
+
+	    /*watch:{
+        	'$store.state.allUserGroups' : function (newVal, oldVal) {
+        		/!*console.log('new ' + val);
+        		console.log('old ' + oldVal);*!/
+		        if (this.$store.state.allUserGroups != null) {
+			        console.log('user E');
+
+			        let userGroups = JSON.parse(localStorage.getItem("allUserGroups"));
+			        console.log(userGroups);
+			        window.Echo = new Echo({
+				        broadcaster: 'socket.io',
+				        host: 'http://social.loc:6006',
+				        auth:
+					        {
+						        headers:
+							        {
+								        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+							        }
+					        }
+			        });
+
+			        for (let group of userGroups) {
+				        console.log(group.id);
+				        window.Echo.private('group-room.' + group.id)
+				        // this.channel(group.id)
+					        .listen('PrivateChat', ({data}) => {
+						        console.log(data);
+						        // if (message.name != this.$store.getters.currentUser.name)
+						        // this.messages.push(data.body)
+					        });
+			        }
+		        }
+		        if (newVal == null)
+		        {
+			        for (let group of oldVal) {
+				        window.Echo.leave('group-room.' + group.id);
+			        }
+
+		        }
+	        }
+	    },*/
 
         methods: {
 	        changeLanguage(lang){
@@ -201,8 +277,6 @@
 		        // console.log('some Settings...' + this.$store.getters.currentUser.username);
 		        this.$router.push({name: 'profile', params: {username: this.$store.getters.currentUser.username}});
 	        },
-
-
 
             goMyItems(){
                 this.menuVisible = false;

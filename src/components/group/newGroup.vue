@@ -93,7 +93,8 @@
                         }
                     })
                         .then((response) => {
-                            this.$router.push({ name: 'myGroupsList'});
+                        	this.$router.push({ name: 'myGroupsList'});
+	                        this.$store.dispatch('getUserGroups');
                         })
                         .catch((err) => {
                             this.errors = err.response.data.message || err.response.data ||  err.message || err.data;

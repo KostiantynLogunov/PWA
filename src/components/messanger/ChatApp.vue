@@ -36,7 +36,6 @@
                                       :messages="messages"
                                       @new="saveNewMessage"
                                       @checkNewMsg="checkNewSms"
-
                         />
 
                         <ContactsList :showOtherUsers="showOtherUsers" :contacts="contacts" :newMsgFromId="newSmsFromId"
@@ -150,7 +149,23 @@
 
 			    window.Echo.private('group-room.' + newVal)
 				    .listen('PrivateChat', ({data}) => {
+					    // console.log('New data event');
 					    console.log(data);
+					    if(data.user_id != this.$store.getters.currentUser.id)
+					    {
+						    let msg = {
+							    body: data.body,
+							    created_at: data.created_at,
+							    group_id: data.group_id,
+							    user: {
+								    id: data.user_id,
+								    avatar: data.user_avatar,
+								    name: data.user_name,
+							    }
+						    };
+						    this.groupChatMessages.push(msg);
+					    }
+
 					    // if (message.name != this.$store.getters.currentUser.name)
 					    // this.messages.push(data.body)
 				    });
@@ -162,7 +177,7 @@
 			    })
 				    .then((response) => {
 					    this.groupChatMessages = response.data.messages;
-					    console.log(this.groupChatMessages);
+					    // console.log(this.groupChatMessages);
 				    })
 				    .catch((err) => {
 					    console.log(err);

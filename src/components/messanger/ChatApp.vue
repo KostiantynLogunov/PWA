@@ -2,19 +2,20 @@
     <div class="row justify-content-center">
         <div class="col-sm-12">
             <div class="card">
+	            <br>
                 <div class="card-header">
                     <h6 >{{ user.name }}</h6>
 	                <md-menu>
+
 	                    <md-button class="md-raised md-primary " md-menu-trigger>General Group Chat <i class="fas fa-sort-down"></i></md-button>
 		                <md-menu-content>
-			                <!--<md-menu-item v-for="group in groups" :key="group.id" @click="generalChat(group.id, group.name)">-->
 			                <md-menu-item v-for="group in groups" :key="group.id" @click="generalChat(group.id, group.name)">
 				                <span class="general-chats-item">{{ group.name }}</span>
 				                <md-icon>chat</md-icon>
 			                </md-menu-item>
 		                </md-menu-content>
 	                </md-menu>
-	                <md-button class="md-icon-button md-raised" @click="showOtherUsers = !showOtherUsers; showGeneralChat = false;">
+	                <md-button class="md-icon-button md-raised" @click="pressAllContacts">
                         <i class="fas fa-users">
                             <i v-if="newSmsFromId != null"
                                class="fas fa-envelope fa-pulse text-danger"></i>
@@ -30,6 +31,8 @@
 	                                      :group="chooseGroup"
 	                                      :messages="groupChatMessages"
 	                                      @showEnteredMsg="PrintEnteredMsg($event)"
+	                                      :activeUser="isActive"
+	                                      @typingText="actionUser($event)"
 	                    />
                         <Conversation v-if="!showGeneralChat"
                                       :contact="selectedContact"
@@ -74,7 +77,9 @@
                 	id: null,
                 	name: null,
 	            },
-	            groupChatMessages: null
+	            groupChatMessages: null,
+	            isActive: false,
+	            typingTimer: false
             }
         },
 
@@ -136,6 +141,12 @@
             }.bind(this));
         },
 
+	    computed: {
+            channel() {
+            	return window.Echo.private('group-room.' + this.chooseGroup.id)
+            }
+	    },
+
 	    watch: {
 		    'chooseGroup.id': function(newVal, oldVal)
 		    {
@@ -147,49 +158,72 @@
 
 			    console.log('chooseGroup-id changed: ', newVal, ' | was: ', oldVal);
 
-			    window.Echo.private('group-room.' + newVal)
-				    .listen('PrivateChat', ({data}) => {
-					    // console.log('New data event');
-					    console.log(data);
-					    if(data.user_id != this.$store.getters.currentUser.id)
-					    {
-						    let msg = {
-							    body: data.body,
-							    created_at: data.created_at,
-							    group_id: data.group_id,
-							    user: {
-								    id: data.user_id,
-								    avatar: data.user_avatar,
-								    name: data.user_name,
-							    }
-						    };
-						    this.groupChatMessages.push(msg);
+			    if (newVal) {
+				    // window.Echo.private('group-room.' + newVal)
+				    this.channel
+					    .listen('PrivateChat', ({data}) => {
+						    this.isActive = false;
+						    if (data.user_id != this.$store.getters.currentUser.id) {
+							    let msg = {
+								    body: data.body,
+								    created_at: data.created_at,
+								    group_id: data.group_id,
+								    user: {
+									    id: data.user_id,
+									    avatar: data.user_avatar,
+									    name: data.user_name,
+								    }
+							    };
+							    this.groupChatMessages.push(msg);
+						    }
+
+						    // if (message.name != this.$store.getters.currentUser.name)
+						    // this.messages.push(data.body)
+					    })
+					    .listenForWhisper('typing', (e) => {
+						    this.isActive = e;
+
+						    if (this.typingTimer) clearTimeout(this.typingTimer);
+						    this.typingTimer = setTimeout(() => {
+							    this.isActive = false;
+						    }, 500)
+					    });
+
+				    axios.get(config.apiUrl + '/group-chat/' + newVal, {
+					    headers: {
+						    "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
 					    }
-
-					    // if (message.name != this.$store.getters.currentUser.name)
-					    // this.messages.push(data.body)
-				    });
-
-			    axios.get(config.apiUrl + '/group-chat/' + newVal, {
-				    headers: {
-					    "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
-				    }
-			    })
-				    .then((response) => {
-					    this.groupChatMessages = response.data.messages;
-					    // console.log(this.groupChatMessages);
 				    })
-				    .catch((err) => {
-					    console.log(err);
-				    })
-				    .finally( () => {
-				    });
-
+					    .then((response) => {
+						    this.groupChatMessages = response.data.messages;
+						    // console.log(this.groupChatMessages);
+					    })
+					    .catch((err) => {
+						    console.log(err);
+					    })
+					    .finally(() => {
+					    });
+			    }
 		    },
 	    },
 
         methods:
         {
+	        pressAllContacts(){
+		        this.showOtherUsers = !this.showOtherUsers;
+		        this.showGeneralChat = false;
+		        this.chooseGroup.id = null;
+		        // window.Echo.leave('group-room.' + this.chooseGroup.id);
+	        },
+
+        	actionUser(data){
+        	    this.channel
+		        // window.Echo.private('group-room.' + data.group_id)
+		            .whisper('typing', {
+		            	name: this.user.name
+		            });
+	        },
+
 	        PrintEnteredMsg(data){
 	            let msg = {
 	                	body: data.body,
@@ -273,6 +307,12 @@
                     });
             }
         },
+
+	    beforeRouteLeave (to, from, next) {
+		    window.Echo.leave('group-room.' + this.chooseGroup.id);
+		    next();
+	    },
+
         components: { Conversation, ContactsList, GeneralGroupChat }
     }
 </script>

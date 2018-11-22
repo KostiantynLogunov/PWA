@@ -198,7 +198,7 @@ export const store = new Vuex.Store({
 			    })
 				    .then((response) => {
 					    store.state.allUserGroups = response.data.groups;
-					    console.log(store.state.allUserGroups);
+					    // console.log(store.state.allUserGroups);
 					    localStorage.setItem("allUserGroups", JSON.stringify(store.state.allUserGroups));
 				    })
 				    .catch((err) => {

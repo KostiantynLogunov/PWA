@@ -127,8 +127,11 @@
 </template>
 
 <script>
+    import Echo from 'laravel-echo'
+    import axios from 'axios'
 
-    export default {
+    export default
+    {
         name: 'app',
 
         data: function () {
@@ -163,6 +166,8 @@
 		    this.user = this.$store.getters.currentUser;
 
 		    if (this.user) {
+
+
 			    var io = require('socket.io-client');
 			    // var socket = io.connect('http://pwa.mybest.com.ua:6001');
 			    var socket = io.connect('http://192.168.13.13:3000');
@@ -172,20 +177,145 @@
 				    localStorage.setItem("newSmsFrom", data.message.from);
 				    this.newSms = data.message.from;
 			    }.bind(this));
+
+
+			    // =====================================================================
+                axios.get('http://social.loc:6006/apps/c5ab22919ece838b/channels/private-single-channel.'+this.user.id, {
+                    headers: {
+                        "Authorization": "Bearer 195f79e11e154501f807dfaa51a25c61"
+                    }
+                })
+                    .then((response) => {
+                        let res = response.data.occupied;
+                        // console.log(res);
+                        if (!res) {
+                            this.$toasted.success(
+                                'reconected WS !!', {
+                                    duration: 4000,
+                                    // you can pass a single action as below
+                                    action : [
+                                        {
+                                            text : 'Cancel',
+                                            onClick : (e, toastObject) => {
+                                                toastObject.goAway(0);
+                                            }
+                                        },
+                                    ]
+                                });
+
+                            window.Echo = new Echo({
+                                broadcaster: 'socket.io',
+                                host: 'http://social.loc:6006',
+                                auth:
+                                    {
+                                        headers:
+                                            {
+                                                "Authorization": `Bearer ${this.user.token}`
+                                            }
+                                    }
+                            });
+                            // window.Echo.leave('single-channel.' + this.user.id);
+                            window.Echo.private('single-channel.' + this.user.id)
+                                .listen('SingleChannel', ({data}) => {
+                                                        // code
+                                    this.catchEvent(data);
+                                });
+                        }
+                    });
+
+
 		    }
-
-
-
 	    },
 
         computed: {
             currentUser() {
-
                 return this.$store.getters.currentUser
+            },
+        },
+
+        watch: {
+            '$store.getters.currentUser': function (newVal, oldVal)
+            {
+                console.log('current user_id changed: ', newVal, ' | was: ', oldVal);
+
+
+                if (oldVal != null )
+                {
+                    window.Echo.leave('single-channel.' + oldVal.id);
+                    console.log('left single-channel ' + oldVal.id);
+                }
+
+                if (newVal)
+                {
+                    window.Echo = new Echo({
+                        broadcaster: 'socket.io',
+                        host: 'http://social.loc:6006',
+                        auth:
+                            {
+                                headers:
+                                    {
+                                        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
+                                    }
+                            }
+                    });
+                    window.Echo.private('single-channel.' + newVal.id)
+                        .listen('SingleChannel', ({data}) => {
+                            this.catchEvent(data);
+                            /*if (data.user_id != this.$store.getters.currentUser.id) {
+
+                            }*/
+                        });
+
+                    /*axios.get('http://social.loc:6006/apps/c5ab22919ece838b/channels/single-channel.'+newVal.id, {
+                        headers: {
+                            "Authorization": "Bearer 195f79e11e154501f807dfaa51a25c61"
+                        }
+                    })
+                        .then((response) => {
+                            console.log(response);
+                        })*/
+                }
             }
         },
 
         methods: {
+            catchEvent(data)
+            {
+                // console.log(data);
+
+                if (data.type == "new_msg" )
+                {
+                    this.$toasted.success(
+                        'You new message from: ' + data.from, {
+                            duration: 4000,
+                            // you can pass a single action as below
+                            action : [
+                                {
+                                    text : 'Cancel',
+                                    onClick : (e, toastObject) => {
+                                        toastObject.goAway(0);
+                                    }
+                                },
+                            ]
+                        });
+                }
+                if (data.type == 'test' ) {
+                    this.$toasted.success(
+                        'You msg: ' + data.text, {
+                            duration: 4000,
+                            // you can pass a single action as below
+                            action: [
+                                {
+                                    text: 'Cancel',
+                                    onClick: (e, toastObject) => {
+                                        toastObject.goAway(0);
+                                    }
+                                },
+                            ]
+                        });
+                }
+            },
+
 	        changeLanguage(lang){
 	            console.log('changed language to ' + lang);
 	             // lang = 'pt';

@@ -60,6 +60,8 @@ Vue.component('tags-input', VoerroTagsInput);
 
 window.io = require('socket.io-client');
 
+import Toasted from 'vue-toasted';
+Vue.use(Toasted);
 // Vue.prototype.$eventHub = new Vue();
 
 new Vue({

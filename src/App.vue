@@ -24,6 +24,11 @@
 										<span>PT</span>
 										<!--<md-icon>add</md-icon>-->
 									</md-menu-item>
+
+                                    <md-menu-item @click="changeLanguage('de')">
+                                        <span>DE</span>
+                                        <!--<md-icon>add</md-icon>-->
+                                    </md-menu-item>
 								</md-menu-content>
 							</md-menu>
 						</div>
@@ -122,10 +127,6 @@
 </template>
 
 <script>
-    /* eslint-disable */
-    import axios from 'axios'
-    import { config } from './_services/config'
-    import Echo from 'laravel-echo'
 
     export default {
         name: 'app',
@@ -171,40 +172,6 @@
 				    localStorage.setItem("newSmsFrom", data.message.from);
 				    this.newSms = data.message.from;
 			    }.bind(this));
-
-
-			    /*if (localStorage.getItem("allUserGroups"))
-			    {
-				    // console.log('user E');
-				    // console.log(localStorage.getItem("allUserGroups"));
-				    let userGroups = JSON.parse(localStorage.getItem("allUserGroups"));
-				    // if (userGroups == null || userGroups == undefined) {
-					//     this.$store.dispatch('getUserGroups');
-				    // }
-				    if (userGroups != null || userGroups != undefined) {
-					    window.Echo = new Echo({
-						    broadcaster: 'socket.io',
-						    host: 'http://social.loc:6006',
-						    auth:
-							    {
-								    headers:
-									    {
-										    "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
-									    }
-							    }
-					    });
-
-					    for (let group of userGroups) {
-						    console.log(group.id);
-						    window.Echo.private('group-room.' + group.id)
-							    .listen('PrivateChat', ({data}) => {
-								    console.log(data);
-								    // if (message.name != this.$store.getters.currentUser.name)
-								    // this.messages.push(data.body)
-							    });
-					    }
-				    }
-			    }*/
 		    }
 
 
@@ -217,48 +184,6 @@
                 return this.$store.getters.currentUser
             }
         },
-
-	    /*watch:{
-        	'$store.state.allUserGroups' : function (newVal, oldVal) {
-        		/!*console.log('new ' + val);
-        		console.log('old ' + oldVal);*!/
-		        if (this.$store.state.allUserGroups != null) {
-			        console.log('user E');
-
-			        let userGroups = JSON.parse(localStorage.getItem("allUserGroups"));
-			        console.log(userGroups);
-			        window.Echo = new Echo({
-				        broadcaster: 'socket.io',
-				        host: 'http://social.loc:6006',
-				        auth:
-					        {
-						        headers:
-							        {
-								        "Authorization": `Bearer ${this.$store.getters.currentUser.token}`
-							        }
-					        }
-			        });
-
-			        for (let group of userGroups) {
-				        console.log(group.id);
-				        window.Echo.private('group-room.' + group.id)
-				        // this.channel(group.id)
-					        .listen('PrivateChat', ({data}) => {
-						        console.log(data);
-						        // if (message.name != this.$store.getters.currentUser.name)
-						        // this.messages.push(data.body)
-					        });
-			        }
-		        }
-		        if (newVal == null)
-		        {
-			        for (let group of oldVal) {
-				        window.Echo.leave('group-room.' + group.id);
-			        }
-
-		        }
-	        }
-	    },*/
 
         methods: {
 	        changeLanguage(lang){

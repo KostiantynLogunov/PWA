@@ -14,6 +14,6 @@ export var config = {
     apiGoogleKey: 'AIzaSyAq683PqAoQIv_rBb3OVKoSBDHKt-xCE8M',
     clientIdGoogle: '1056296070886-rso9sr332d4gtscpqmjj29eej47a808l',
 
-	appId: 'c5ab22919ece838b',
-	key: '195f79e11e154501f807dfaa51a25c61'
+	appId: '5a29f50b5d8261b6',
+	key: '19f79703edbea76c72d4818197efe084'
 };

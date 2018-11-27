@@ -1,0 +1,15 @@
+module.exports = {
+  create_account : 'Создать учетную запись',
+  affiliate_code : 'Партнерский код',
+  optional : 'Необязательно',
+  email : 'Электронная почта',
+  name : 'Имя',
+  gender : 'Пол',
+  male : 'Мужчина',
+  female : 'Женщина',
+  other : 'Другое',
+  username : 'Имя пользователя',
+  password : 'Пароль',
+  phone : 'Телефон',
+  sign_and_login : 'Зарегистрироваться и войти',
+};

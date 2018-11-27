@@ -1,128 +1,130 @@
 <template>
 	<div>
-		    <div class="page-container ">
-				<md-app md-mode="reveal">
-					<md-app-toolbar class="md-primary">
-						<md-button class="md-icon-button" @click="menuVisible = !menuVisible">
-							<md-icon>menu</md-icon>
-						</md-button>
-						<span class="md-title">OMC</span>
+		<div class="page-container ">
+			<md-app md-mode="reveal">
+				<md-app-toolbar class="md-primary">
+					<md-button class="md-icon-button" @click="menuVisible = !menuVisible">
+						<md-icon>menu</md-icon>
+					</md-button>
+					<span class="md-title" style="color: #000;">
+						<img src="./icon192px.png" style="height: 32px">
+					</span>
 
-						<div class="md-toolbar-section-end">
+					<div class="md-toolbar-section-end">
+						<md-menu>
+							<md-button class="md-icon-button" @click="" md-menu-trigger>
+								<!--<md-icon>more_vert</md-icon>-->
+								{{language}}
+							</md-button>
+							<md-menu-content>
+								<md-menu-item @click="changeLanguage('en')">
+									<span>EN</span>
+									<!--<md-icon>add</md-icon>-->
+								</md-menu-item>
+
+								<md-menu-item @click="changeLanguage('de')">
+									<span>DE</span>
+									<!--<md-icon>add</md-icon>-->
+								</md-menu-item>
+
+								<md-menu-item @click="changeLanguage('ru')">
+									<span>RU</span>
+									<!--<md-icon>add</md-icon>-->
+								</md-menu-item>
+							</md-menu-content>
+						</md-menu>
+					</div>
+
+				</md-app-toolbar>
+
+				<md-app-drawer :md-active.sync="menuVisible">
+					<md-toolbar class="md-transparent" md-elevation="0">{{$lang.left_menu.main_menu}}</md-toolbar>
+
+					<md-list>
+						<md-list-item @click.prevent="goRegister" v-if="!currentUser">
+							<md-icon><i class="fas fa-user-plus"></i></md-icon>
+							<span class="md-list-item-text">{{$lang.left_menu.sign_up}}</span>
+						</md-list-item>
+
+						<md-list-item @click.prevent="goLogin" v-if="!currentUser">
+							<md-icon><i class="fas fa-sign-in-alt"></i></md-icon>
+							<span class="md-list-item-text">{{$lang.left_menu.login}}</span>
+						</md-list-item>
+
+						<md-list-item @click.prevent="goHome" v-if="currentUser">
+							<md-icon>move_to_inbox</md-icon>
+							<span class="md-list-item-text">{{$lang.left_menu.home}}</span>
+						</md-list-item>
+
+						<md-list-item @click.prevent="goGroups" v-if="currentUser">
+							<md-icon><i class="fas fa-users"></i></md-icon>
+							<span class="md-list-item-text">{{$lang.left_menu.groups}}</span>
+						</md-list-item>
+
+						<md-list-item @click.prevent="goMessenger" v-if="currentUser">
+							<md-icon><i class="far fa-comments"></i></md-icon>
+							<span class="md-list-item-text">{{$lang.left_menu.messenger}}</span>
+						</md-list-item>
+
+						<md-list-item @click.prevent="goMyServices" v-if="currentUser">
+							<md-icon><i class="fas fa-share-square"></i></md-icon>
+							<span class="md-list-item-text">{{$lang.left_menu.sharing}}</span>
+						</md-list-item>
+
+						<md-list-item v-if="currentUser" @click.prevent="logout">
+							<md-icon><i class="fas fa-sign-out-alt"></i></md-icon>
+							<span class="md-list-item-text" >{{$lang.left_menu.logout}}</span>
+						</md-list-item>
+
+						<md-list-item @click.prevent="">
+							<md-icon><i class="fas fa-info-circle"></i></md-icon>
+							<span class="md-list-item-text">{{$lang.left_menu.about}}</span>
+						</md-list-item>
+
+						<md-list-item @click.prevent="">
+							<md-icon><i class="fas fa-user-secret"></i></md-icon>
+							<span class="md-list-item-text">{{$lang.left_menu.privacy}}</span>
+						</md-list-item>
+
+						<md-list-item @click.prevent="">
+							<md-icon><i class="fas fa-at"></i></md-icon>
+							<span class="md-list-item-text">{{$lang.left_menu.contact}}</span>
+						</md-list-item>
+					</md-list>
+				</md-app-drawer>
+
+				<md-app-content  style="background: #EFF3F6" >
+					<!--<div class="phone-viewport">-->
+						<router-view></router-view>
+						<md-bottom-bar md-type="shift" v-if="currentUser">
+							<md-bottom-bar-item md-label="Home" md-icon="home" @click="goHome"></md-bottom-bar-item>
+
+							<md-bottom-bar-item md-label="Chat" class="md-icon-button" @click="goMessenger">
+								<!--<span class="badge badge-danger" v-if="countNewMessages>0"></span>-->
+								<i class="fas fa-envelope fa-pulse text-danger" v-if="newSms"></i>
+								<md-icon>chat</md-icon>
+							</md-bottom-bar-item>
 							<md-menu>
-								<md-button class="md-icon-button" @click="" md-menu-trigger>
-									<!--<md-icon>more_vert</md-icon>-->
-									{{language}}
-								</md-button>
+								<md-bottom-bar-item  md-label="Create" md-icon="add" class="md-icon-button" md-menu-trigger></md-bottom-bar-item>
 								<md-menu-content>
-									<md-menu-item @click="changeLanguage('en')">
-										<span>EN</span>
-										<!--<md-icon>add</md-icon>-->
+									<md-menu-item @click="goCreateNewGroup">
+										<span>New Group</span>
+										<md-icon>add</md-icon>
 									</md-menu-item>
 
-									<md-menu-item @click="changeLanguage('pt')">
-										<span>PT</span>
-										<!--<md-icon>add</md-icon>-->
+									<md-menu-item @click="">
+										<span>New Event</span>
+										<md-icon>add</md-icon>
 									</md-menu-item>
-
-                                    <md-menu-item @click="changeLanguage('de')">
-                                        <span>DE</span>
-                                        <!--<md-icon>add</md-icon>-->
-                                    </md-menu-item>
 								</md-menu-content>
 							</md-menu>
-						</div>
 
-					</md-app-toolbar>
-
-					<md-app-drawer :md-active.sync="menuVisible">
-						<md-toolbar class="md-transparent" md-elevation="0">{{$lang.left_menu.main_menu}}</md-toolbar>
-
-						<md-list>
-							<md-list-item @click.prevent="goRegister" v-if="!currentUser">
-								<md-icon><i class="fas fa-user-plus"></i></md-icon>
-								<span class="md-list-item-text">{{$lang.left_menu.sign_up}}</span>
-							</md-list-item>
-
-							<md-list-item @click.prevent="goLogin" v-if="!currentUser">
-								<md-icon><i class="fas fa-sign-in-alt"></i></md-icon>
-								<span class="md-list-item-text">{{$lang.left_menu.login}}</span>
-							</md-list-item>
-
-							<md-list-item @click.prevent="goHome" v-if="currentUser">
-								<md-icon>move_to_inbox</md-icon>
-								<span class="md-list-item-text">{{$lang.left_menu.home}}</span>
-							</md-list-item>
-
-							<md-list-item @click.prevent="goGroups" v-if="currentUser">
-								<md-icon><i class="fas fa-users"></i></md-icon>
-								<span class="md-list-item-text">{{$lang.left_menu.groups}}</span>
-							</md-list-item>
-
-							<md-list-item @click.prevent="goMessenger" v-if="currentUser">
-								<md-icon><i class="far fa-comments"></i></md-icon>
-								<span class="md-list-item-text">{{$lang.left_menu.messenger}}</span>
-							</md-list-item>
-
-							<md-list-item @click.prevent="goMyServices" v-if="currentUser">
-								<md-icon><i class="fas fa-share-square"></i></md-icon>
-								<span class="md-list-item-text">{{$lang.left_menu.sharing}}</span>
-							</md-list-item>
-
-							<md-list-item v-if="currentUser" @click.prevent="logout">
-								<md-icon><i class="fas fa-sign-out-alt"></i></md-icon>
-								<span class="md-list-item-text" >{{$lang.left_menu.logout}}</span>
-							</md-list-item>
-
-							<md-list-item @click.prevent="">
-								<md-icon><i class="fas fa-info-circle"></i></md-icon>
-								<span class="md-list-item-text">{{$lang.left_menu.about}}</span>
-							</md-list-item>
-
-							<md-list-item @click.prevent="">
-								<md-icon><i class="fas fa-user-secret"></i></md-icon>
-								<span class="md-list-item-text">{{$lang.left_menu.privacy}}</span>
-							</md-list-item>
-
-							<md-list-item @click.prevent="">
-								<md-icon><i class="fas fa-at"></i></md-icon>
-								<span class="md-list-item-text">{{$lang.left_menu.contact}}</span>
-							</md-list-item>
-						</md-list>
-					</md-app-drawer>
-
-					<md-app-content  style="background: #EFF3F6" >
-						<!--<div class="phone-viewport">-->
-							<router-view></router-view>
-							<md-bottom-bar md-type="shift" v-if="currentUser">
-								<md-bottom-bar-item md-label="Home" md-icon="home" @click="goHome"></md-bottom-bar-item>
-
-								<md-bottom-bar-item md-label="Chat" class="md-icon-button" @click="goMessenger">
-									<!--<span class="badge badge-danger" v-if="countNewMessages>0"></span>-->
-									<i class="fas fa-envelope fa-pulse text-danger" v-if="newSms"></i>
-									<md-icon>chat</md-icon>
-								</md-bottom-bar-item>
-								<md-menu>
-									<md-bottom-bar-item  md-label="Create" md-icon="add" class="md-icon-button" md-menu-trigger></md-bottom-bar-item>
-									<md-menu-content>
-										<md-menu-item @click="goCreateNewGroup">
-											<span>New Group</span>
-											<md-icon>add</md-icon>
-										</md-menu-item>
-
-										<md-menu-item @click="">
-											<span>New Event</span>
-											<md-icon>add</md-icon>
-										</md-menu-item>
-									</md-menu-content>
-								</md-menu>
-
-								<md-bottom-bar-item md-label="Settings" md-icon="settings" @click="goSettings"></md-bottom-bar-item>
-							</md-bottom-bar>
-						<!--</div>-->
-					</md-app-content>
-				</md-app>
-		    </div>
+							<md-bottom-bar-item md-label="Settings" md-icon="settings" @click="goSettings"></md-bottom-bar-item>
+						</md-bottom-bar>
+					<!--</div>-->
+				</md-app-content>
+			</md-app>
+		</div>
 	</div>
 </template>
 
@@ -170,7 +172,7 @@
 
 			    var io = require('socket.io-client');
 			    // var socket = io.connect('http://pwa.mybest.com.ua:6001');
-			    var socket = io.connect('http://192.168.13.13:3000');
+			    var socket = io.connect('http://192.168.10.10:3000');
 
 			    socket.on("news-action." + this.user.id + ":App\\Events\\PrivateMessage", function (data)
 			    {
@@ -180,9 +182,9 @@
 
 
 			    // =====================================================================
-                axios.get('http://social.loc:6006/apps/c5ab22919ece838b/channels/private-single-channel.'+this.user.id, {
+                axios.get('http://social.loc:6013/apps/5a29f50b5d8261b6/channels/private-single-channel.'+this.user.id, {
                     headers: {
-                        "Authorization": "Bearer 195f79e11e154501f807dfaa51a25c61"
+                        "Authorization": "Bearer 19f79703edbea76c72d4818197efe084"
                     }
                 })
                     .then((response) => {
@@ -205,7 +207,7 @@
 
                             window.Echo = new Echo({
                                 broadcaster: 'socket.io',
-                                host: 'http://social.loc:6006',
+                                host: 'http://social.loc:6013',
                                 auth:
                                     {
                                         headers:
@@ -249,7 +251,7 @@
                 {
                     window.Echo = new Echo({
                         broadcaster: 'socket.io',
-                        host: 'http://social.loc:6006',
+                        host: 'http://social.loc:6013',
                         auth:
                             {
                                 headers:
@@ -265,15 +267,6 @@
 
                             }*/
                         });
-
-                    /*axios.get('http://social.loc:6006/apps/c5ab22919ece838b/channels/single-channel.'+newVal.id, {
-                        headers: {
-                            "Authorization": "Bearer 195f79e11e154501f807dfaa51a25c61"
-                        }
-                    })
-                        .then((response) => {
-                            console.log(response);
-                        })*/
                 }
             }
         },
@@ -387,10 +380,30 @@
 		border: 1px solid rgba(#000, .26);
 		background: rgba(#EFF3F6, .06);
 	}
+
+</style>
+
+<style lang="scss">
+	/*@import "~vue-material/dist/theme/engine"; // Import the theme engine
+
+	@include md-register-theme("default", (
+			primary: md-get-palette-color(grey, A200), // The primary color of your application
+			accent: md-get-palette-color(red, A200) // The accent or secondary color
+	));*/
+
+	/*@import "~vue-material/dist/theme/all";*/
+
+	/*@import "~vue-material/dist/components/MdButton/theme"; // Apply the Button theme*/
+	/*@import "~vue-material/dist/components/MdContent/theme"; // Apply the Content theme*/
+	/*@import "~vue-material/dist/components/MdToolbar/theme"; // Apply the Toolbar theme*/
+
 </style>
 
 <style>
-    .page-container{
+	.md-toolbar {
+		background: orange;
+	}
+	.page-container{
         background: #EFF3F6;
     }
     md-app-drawer {
@@ -404,6 +417,13 @@
         padding: 0;
     }
 
+	.md-bottom-bar.md-theme-default.md-type-shift{
+		background: orange;
+	}
+
+	.md-toolbar.md-app-toolbar.md-primary.md-theme-default.md-elevation-4.md-reveal-active {
+		background: orange;
+	}
 
 </style>
 

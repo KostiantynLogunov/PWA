@@ -7,7 +7,6 @@
 				</md-card-header>
 
 				<md-card-content>
-
 					<div class="md-layout md-gutter">
 						<div class="md-layout-item md-size-50 md-small-size-50 ">
 							<md-field>
@@ -36,8 +35,8 @@
 								<md-select name="gender" id="gender" v-model="form.gender" md-dense :disabled="sending" required>
 									<!--<md-option disabled>Select gander</md-option>-->
 									<md-option value="male">{{$lang.registerForm.male}}</md-option>
-									<md-option value="female">{{$lang.registerForm.famale}}</md-option>
-									<md-option value="other">{{$lang.registerForm.none}}</md-option>
+									<md-option value="female">{{$lang.registerForm.female}}</md-option>
+									<md-option value="other">{{$lang.registerForm.other}}</md-option>
 								</md-select>
 							</md-field>
 						</div>

@@ -30,7 +30,8 @@ Vue.use(datePicker);
 Vue.use(Vuefire);
 
 Vue.use(VueMasonryPlugin);
-
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
 Vue.use(VueMaterial);
 Vue.config.productionTip = false;
 
@@ -62,6 +63,7 @@ window.io = require('socket.io-client');
 
 import Toasted from 'vue-toasted';
 Vue.use(Toasted);
+
 // Vue.prototype.$eventHub = new Vue();
 
 new Vue({

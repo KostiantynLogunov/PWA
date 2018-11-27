@@ -83,16 +83,8 @@
             }
         },
 
-        created() {
-            /*axios.get('http://social.loc:6006/apps/c5ab22919ece838b/channels/private-single-channel.'+this.$store.getters.currentUser.id, {
-                        headers: {
-                            "Authorization": "Bearer 195f79e11e154501f807dfaa51a25c61"
-                        }
-                    })
-                        .then((response) => {
-                            console.log(response.data.occupied);
-                        });*/
-
+        created()
+        {
             let newSmsFrom = localStorage.getItem("newSmsFrom");
             if (newSmsFrom != null || newSmsFrom != undefined) {
                 this.newSmsFromId = +newSmsFrom;
@@ -102,7 +94,7 @@
 
             window.Echo = new Echo({
                 broadcaster: 'socket.io',
-                host: 'http://social.loc:6006',
+                host: 'http://social.loc:6013',
                 auth:
                     {
                         headers:
@@ -133,7 +125,7 @@
 
             var io = require('socket.io-client');
             // var socket = io.connect('http://pwa.mybest.com.ua:6001');
-            var socket = io.connect('http://192.168.13.13:3000');
+            var socket = io.connect('http://192.168.10.10:3000');
 
 
             socket.on("news-action." + this.user.id + ":App\\Events\\PrivateMessage", function (data) {
